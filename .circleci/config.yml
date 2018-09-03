@@ -1,0 +1,9 @@
+version: 2
+jobs:
+ build:
+   machine: true
+   steps:
+     - checkout
+     - run:
+      name: deploy to gh_pages branch
+      command: ./deploy.sh
