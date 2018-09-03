@@ -1,9 +1,17 @@
 version: 2
 jobs:
- build:
-   machine: true
-   steps:
-     - checkout
-     - run:
-      name: deploy to gh_pages branch
-      command: ./deploy.sh
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run: "./build-pages.sh"
+      - run: "./deploy-to-gh-pages.sh"
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
