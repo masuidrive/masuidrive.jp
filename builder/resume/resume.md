@@ -175,7 +175,7 @@ https://speakerdeck.com/masuidrive
 
 ### DJ
 - 2018/6よりDJ masuidriveとして活動開始
-- [POP TECH PARTY](http://kai-you.net/article/56230) 主催
+- [POP TECH PARTY](http://kai-you.net/article/56230) 共同主催
 - CS Hack BBQ レギュラーDJ
 - iOSDC 2018 プレパーティ ゲストDJ
 
