@@ -1,0 +1,21 @@
+version: "2"
+services:
+  ruby:
+    build:
+      context: .
+      dockerfile: Dockerfile-ruby
+    mem_limit: 384m
+    volumes:
+      - ".:/usr/src/app"
+      - "../config:/usr/src/app/config"
+      - "../shared:/usr/src/app/shared"
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+    mem_limit: 384m
+    volumes:
+      - "/usr/src/app/node_modules"
+      - ".:/usr/src/app"
+      - "../config:/usr/src/app/config"
+      - "../shared:/usr/src/app/shared"

@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="section col-6 col-md-12">
+    <img src="<%= author.icon %>" id="face-photo" alt="masuidrive icon" />
+  </div>
+
+  <div id="personal" class="section col-6 col-md-12">
+    <h3>Personal</h3>
+    <dl>
+      <dt>Name</dt><dd><%= author.name %></dd>
+      <dt>Living in</dt><dd><%= author.living_in %></dd>
+      <dt>Languages</dt><dd><%= author.languages %></dd>
+      <dt>Web</dt><dd><a href="<%= author.website %>"><%= author.website %></a></dd>
+    </dl>
+  </div>
+
+  <div id="socials" class="section col-6 col-md-12">
+  <h3>Socials</h3>
+<% media = {
+    github: ['GitHub', "https://github.com/%s"],
+    facebook: ['Facebook', "https://fb.me/%s"],
+    twitter: ['Twitter', "https://twitter.com/%s"],
+} %>
+
+<% (author.socials || {}).each do |social, account| %>
+    <div class="item">
+      <%= render_file "icons/#{social}.svg" %>
+      <a href="<%= media[social.to_sym][1] % [account] %>"><%= media[social.to_sym][0] %></a>
+    </div>
+<% end %>
+  </div>
+
+  <div id="publications" class="section col-6 col-md-12">
+    <h3>Publications</h3>
+<% (author.publications || {}).each do |label, link| %>
+    <div class="item"><a href="<%= link %>"><%= label %></a></div>
+<% end %>
+  </div>
+
+  <div id="contacts" class="section col-12">
+    <h3>Contact</h3>
+    <%= author.contact %>
+  </div>
+</div>

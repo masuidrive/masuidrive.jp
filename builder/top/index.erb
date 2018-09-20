@@ -23,15 +23,18 @@ end
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="masuidrive projects"/>
   <meta name="keywords" content="masuidrive"/>
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/png" href="https://masuidrive.jp/favicon.png">
   
   <meta property="og:title" content="Yuichiro MASUI(masuidrive) projects" />
   <meta property="og:url" content="https://masuidrive.jp/" />
   <meta property="og:type" content="website"/>
   <meta property="og:image" content="https://masuidrive.jp/images/top.ogp.jpg" />
-  <meta property="og:description" content="Yuichiro MASUI (masuidrive) project" />
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="@masuidrive">
+  <meta property="og:description" content="masuidriveの公式ページ" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@masuidrive" />
+  <meta name="twitter:description" content="masuidriveの公式ページ" />
+  <meta name="twitter:image" content="https://masuidrive.jp/images/top.ogp.jpg" />
+
   <link href="styles/index.css" rel="stylesheet">
 </head>
 <body>
@@ -45,7 +48,7 @@ end
   <div class="projects">
     <div class="row">
       <% project("DJ masuidrive", "http://kai-you.co.jp/news/%E3%80%8C%E3%82%86%E3%82%8B%E3%81%84%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%80%8D%E3%82%92%E3%83%86%E3%83%BC%E3%83%9E%E3%81%A8%E3%81%97%E3%81%9F%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%B8%BB/", "images/frock_256x256.png", "img-icon") do %>
-        <p>DJはじめました。オファーお待ちしています。</p>
+        <p>DJはじめました。<a href="https://airtable.com/shrKX5AdIHUq0iuBN">オファーお待ちしています。</a></p>
       <% end %>
 
       <% project("wri.pe", "https://wri.pe/", "images/wripe128.png", "img-icon") do %>
@@ -63,7 +66,7 @@ end
         <p><a href="https://speakerdeck.com/masuidrive">Speaker Deck</a></p>
       <% end %>
 
-      <% project("blog", "http://blog.masuidrive.jp/", "images/blog_400x128.jpg", "img-icon-400x128") do %>
+      <% project("blog", "https://note.mu/masuidrive", "images/blog_400x128.jpg", "img-icon-400x128") do %>
         <p>
           新<a href="https://note.mu/masuidrive">note</a><br/>
           旧<a href="http://blog.masuidrive.jp/">ブログ</a>
@@ -96,6 +99,16 @@ end
           <a href="http://www.linkedin.com/in/masuidrive" target="_blank" title="LinkedIn">
             <%= render_file "shared/icons/linkedin.svg" %>
           </a>
+          [<a href="#introduction">自己紹介</a>]
+        </p>
+      <% end %>
+
+      <% project("Contact", "https://airtable.com/shrKX5AdIHUq0iuBN", "images/contact_400x128.jpg", "img-icon-400x128") do %>
+        <!--
+        by https://www.maxpixel.net/Contact-Hands-Finger-Man-Hand-Childs-Hand-3065641
+        -->
+        <p>
+          <a href="https://airtable.com/shrKX5AdIHUq0iuBN">問い合わせフォーム</a><br/>
         </p>
       <% end %>
     </div><!--projects-->
@@ -104,9 +117,13 @@ end
        <h2>Current work</h2>　
 
        <div class="row">
+        <% project("Product Founder", "https://masuidrive.jp/resume.html", "images/independent_400x128.jpg", "img-icon-400x128") do %>
+          <p>"<a href="https://masuidrive.jp/resume.html">Project Founder</a>"として個人で仕事を受けています</p>
+        <% end %>
+
         <% project("Toreta, Inc.", "https://toreta.in/", "images/toreta_400x128.png", "img-icon-400x128") do %>
           <p>食の仕事をおもしろく</p>
-          <p><a href="http://corp.toreta.in/">株式会社トレタ</a></p>
+          <p><a href="http://corp.toreta.in/">株式会社トレタ - 技術顧問</a></p>
         <% end %>
       </div><!-- /row -->
     </div><!-- /current-work -->
@@ -147,6 +164,40 @@ end
       </div><!-- /row -->
     </div><!-- /past-work -->
     
+    <div class="projects introduction">
+      <h2><a name="introduction"></a>Self introduction</h2>
+
+      <div class="row">
+        <div class="col-12"><div class="box">
+          <p>増井 雄一郎 (Yuichiro MASUI)</p>
+          <p>Product Founder &amp; Engineer</p>
+          <p>
+            「風呂グラマー」や「IT芸人」の相性で呼ばれ、トレタやミイルを始めとしたB2C、B2Bプロダクトの開発を行う傍、業界著名人へのインタビューや年30回を超える講演、オープンソースへの関わりなど、外部へ向けた発信を積極的に行なっている。
+          <p>
+      
+          <p>
+            「ムダに動いて、面白い事を見つけて、自分で手を動かして、咀嚼して、他人を巻き込んで、新しい物を楽しんで作る」を信条に日夜模索中。
+          </p>
+          
+          <p>
+            日米で計4回の起業をしたのち、2018年10月に独立し"<a href="/resume.html">Product Founder</a>"として広くプロダクトの開発に関わる。
+          </p>
+
+          <p>
+            趣味は、最近始めたDJ。呼ばれればどこでも行きます。
+          </p>
+          
+          <p>
+            <a href="https://masuidrive.jp" title="Twitter">https://masuidrive.jp</a><br/>
+            <a href="https://twitter.com/masuidrive" title="Twitter">https://twitter.com/masuidrive</a>
+          </p>
+
+          <p>
+            [<a href="/photos.zip">広報用写真</a>]
+          </p>
+        </div></div>
+      </div><!-- /row -->
+    </div><!-- /introduction -->
    </div> <!-- /container -->
  <script>
  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;

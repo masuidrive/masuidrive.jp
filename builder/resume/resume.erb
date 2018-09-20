@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Yuichiro MASUI (masuidrive) | Product Founder &amp; Engineer</title>
+  <link rel="icon" type="image/png" href="https://masuidrive.jp/favicon.png">
+  <link rel="stylesheet" type="text/css" href="resume.css">
+
+  <meta property="og:title" content="Yuichiro MASUI(masuidrive) | Product Founder &amp; Engineer" />
+  <meta property="og:url" content="https://masuidrive.jp/resume.html" />
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://masuidrive.jp/images/resume.ogp.png" />
+  <meta property="og:description" content="Yuichiro MASUIのresume。自分の役割を&quot;Product Founder&quot;として定義しました" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@masuidrive" />
+  <meta name="twitter:description" content="Yuichiro MASUIのresume。自分の役割を&quot;Product Founder&quot;として定義しました" />
+  <meta name="twitter:image" content="https://masuidrive.jp/images/resume.ogp.png" />
+
+</head>
+<body>
+  <div id="main-header">
+    <div class="section">
+      <h1><a href="https://masuidrive.jp">Yuichiro MASUI</a></h1>
+      <div class="title">
+        Serial Product Founder &amp; Engineer
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3" id="sidebar">
+        <div class="row">
+          <div class="section col-6 col-md-12">
+            <img src="<%= author.icon %>" id="face-photo" alt="masuidrive icon" />
+          </div>
+        
+          <div id="personal" class="section col-6 col-md-12">
+            <h3>Personal</h3>
+            <dl>
+              <dt>Name</dt><dd><%= author.name %></dd>
+              <dt>Living in</dt><dd><%= author.living_in %></dd>
+              <dt>Languages</dt><dd><%= author.languages %></dd>
+              <dt>Web</dt><dd><a href="<%= author.website %>"><%= author.website %></a></dd>
+            </dl>
+          </div>
+        
+          <div id="socials" class="section col-6 col-md-12">
+          <h3>Socials</h3>
+        <% media = {
+            github: ['GitHub', "https://github.com/%s"],
+            facebook: ['Facebook', "https://fb.me/%s"],
+            twitter: ['Twitter', "https://twitter.com/%s"],
+        } %>
+        
+        <% (author.socials || {}).each do |social, account| %>
+            <div class="item">
+              <%= render_file "shared/icons/#{social}.svg" %>
+              <a href="<%= media[social.to_sym][1] % [account] %>"><%= media[social.to_sym][0] %></a>
+            </div>
+        <% end %>
+          </div>
+        
+          <div id="publications" class="section col-6 col-md-12">
+            <h3>Publications</h3>
+        <% (author.publications || {}).each do |label, link| %>
+            <div class="item"><a href="<%= link %>"><%= label %></a></div>
+        <% end %>
+          </div>
+        
+          <div id="contacts" class="section col-12 d-none d-md-block">
+            <h3>Contact</h3>
+            <%= author.contact %>
+          </div>
+        </div>
+
+        <hr class="d-block d-md-none" />
+      </div><!-- #sidebar -->
+
+      <div class="col-md-9" id="content">
+        
+        <%= content %>
+
+        <div id="contacts-in-content" class="d-block d-md-none section col-12">
+          <header>
+            <h2>Contact</h2>
+          </header>
+          <p>
+            <%= author.contact %>
+          </p>
+        </div>
+      </div><!-- #content -->
+
+    </div>
+  </div>
+  <%= render_file 'resume-footer.erb' %>
+  <script>
+  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+  ga('create', '<%= site.analytics.property_id %>', '<%= site.analytics.domain %>');
+  ga('send', 'pageview');
+  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+ </body>
+</html>
