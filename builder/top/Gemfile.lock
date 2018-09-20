@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    erubis (2.7.0)
+    hashie (3.6.0)
+    redcarpet (3.4.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  erubis
+  hashie
+  redcarpet
+
+BUNDLED WITH
+   1.16.4

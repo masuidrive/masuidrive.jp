@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<%
+def project(name, url, icon_url, icon_size, &block)
+  @output << <<-"__HTML__"
+  <div class="col-12 col-sm-6 col-md-4"><div class="box">
+  <div class="big-icon">
+   <a href="#{url}">
+    <img src="#{icon_url}" class="#{icon_size}">
+    <strong>#{name}</strong>
+   </a>
+  </div>
+  __HTML__
+  yield
+  @output << <<-"__HTML__"
+    </div></div>
+  __HTML__
+end
+%>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8">
+  <title>masuidrive projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="masuidrive projects"/>
+  <meta name="keywords" content="masuidrive"/>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  
+  <meta property="og:title" content="Yuichiro MASUI(masuidrive) projects" />
+  <meta property="og:url" content="https://masuidrive.jp/" />
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://masuidrive.jp/images/top.ogp.jpg" />
+  <meta property="og:description" content="Yuichiro MASUI (masuidrive) project" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@masuidrive">
+  <link href="styles/index.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+  <div class="jumbotron">
+   <h1>masuidrive projects</h1>
+  </div><!-- jumbotron -->
+</div>
+
+<div class="container main">
+  <div class="projects">
+    <div class="row">
+      <% project("DJ masuidrive", "http://kai-you.co.jp/news/%E3%80%8C%E3%82%86%E3%82%8B%E3%81%84%E3%81%A4%E3%81%AA%E3%81%8C%E3%82%8A%E3%80%8D%E3%82%92%E3%83%86%E3%83%BC%E3%83%9E%E3%81%A8%E3%81%97%E3%81%9F%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E4%B8%BB/", "images/frock_256x256.png", "img-icon") do %>
+        <p>DJはじめました。オファーお待ちしています。</p>
+      <% end %>
+
+      <% project("wri.pe", "https://wri.pe/", "images/wripe128.png", "img-icon") do %>
+        <p>Markdownをサポートした<br/>シンプルなノートアプリ</p>
+        <p><a href="https://wri.pe/">https://wri.pe/</a></p>
+      <% end %>
+
+      <% project("miyamotoさん", "https://github.com/masuidrive/miyamoto", "images/miyamoto_400x128.jpg", "img-icon-400x128") do %>
+        <p>「おはよう」「お疲れさま」ってチャットするだけで勤怠管理</p>
+        <p><a href="https://github.com/masuidrive/miyamoto">github/masuidrive/miyamoto</a></p>
+      <% end %>
+
+      <% project("講演資料", "https://speakerdeck.com/masuidrive", "images/publications_400x128.jpg", "img-icon-400x128") do %>
+        <p>講演で使用したスライド</p>
+        <p><a href="https://speakerdeck.com/masuidrive">Speaker Deck</a></p>
+      <% end %>
+
+      <% project("blog", "http://blog.masuidrive.jp/", "images/blog_400x128.jpg", "img-icon-400x128") do %>
+        <p>
+          新<a href="https://note.mu/masuidrive">note</a><br/>
+          旧<a href="http://blog.masuidrive.jp/">ブログ</a>
+        </p>
+      <% end %>
+
+      <% project("Idea list", "https://masuidrive.tadalist.com/lists/1941485/public", "images/idea_400x128.jpg", "img-icon-400x128") do %>
+        <!--
+        idea_338x128.jpg
+        By Daniel Y. Go
+        http://creativecommons.org/licenses/by-nc/2.0/deed.en
+        http://www.flickr.com/photos/danielygo/4995689835/
+        -->
+        <p>作りたい物&amp;試作品リスト</p>
+        <p><a href="https://masuidrive.tadalist.com/lists/1941485/public">Ta-Da lists</a></p>
+      <% end %>
+
+      <% project("masuidrive", "#introduction", "images/masuidrive.jpg", "img-icon user-icon") do %>
+        <p>増井 雄一郎</p>
+        <p>
+        <a href="http://twitter.com/masuidrive" target="_blank" title="Twitter">
+            <%= render_file "shared/icons/twitter.svg" %>
+          </a>
+          <a href="https://facebook.com/masuidrive" target="_blank" title="Facebook">
+            <%= render_file "shared/icons/facebook.svg" %>
+          </a>
+          <a href="https://github.com/masuidrive" target="_blank" title="Github">
+            <%= render_file "shared/icons/github.svg" %>
+          </a>
+          <a href="http://www.linkedin.com/in/masuidrive" target="_blank" title="LinkedIn">
+            <%= render_file "shared/icons/linkedin.svg" %>
+          </a>
+        </p>
+      <% end %>
+    </div><!--projects-->
+
+    <div class="projects current-work">
+       <h2>Current work</h2>　
+
+       <div class="row">
+        <% project("Toreta, Inc.", "https://toreta.in/", "images/toreta_400x128.png", "img-icon-400x128") do %>
+          <p>食の仕事をおもしろく</p>
+          <p><a href="http://corp.toreta.in/">株式会社トレタ</a></p>
+        <% end %>
+      </div><!-- /row -->
+    </div><!-- /current-work -->
+    
+    <div class="projects past-work">
+      <h2>Past work</h2>　
+
+      <div class="row">
+        <% project("→Kitayon", "http://toreta.blog.jp/archives/66523298.html", "images/kitayon.png", "img-icon") do %>
+          <p>有志のエンジニアで構築したオフィス受付システム [<a href="https://jp.techcrunch.com/2017/01/11/kitayon/">記事</a>]</p>
+          <p><a href="https://d-lighted.jp">ディライテッド</a>へ譲渡</p>
+        <% end %>
+
+        <% project("MobiRuby", "https://github.com/mobiruby", "images/mobiruby64.png", "img-icon") do %>
+          <p>mrubyでiOSアプリを作れる<br/>ツールキットを<strike>開発中</strike>開発終了</p>
+          <p><strike><a href="https://github.com/mobiruby">github.com/mobiruby</a></strike></p>
+        <% end %>
+
+      <% project("ミイル", "http://miil.jp/", "images/miil128.jpg", "img-icon") do %>
+          <p>写真を通じて『おいしい』を</p>
+          <p><strike><a href="http://miil.jp/">ミイル株式会社 - 取締役CTO</a></strike></p>
+        <% end %>
+
+        <% project("Titanium Mobile Evangelist", "https://www.appcelerator.com/Titanium/", "images/appc.png", "img-icon") do %>
+          <p>東京ベースのエバンジェリスト [<a href="https://tech.nikkeibp.co.jp/it/article/NEWS/20110428/360023/?ST=keitai">記事</a>]</p>
+          <p><strike>Appceralator, Inc. - Evangelist</strike></p>
+        <% end %>
+
+        <% project("BigCanvas Photoshare", "http://www.itmedia.co.jp/bizid/articles/0810/09/news011.html", "images/bcphotoshare.jpg", "img-icon") do %>
+          <p>世界初の写真共有SNSアプリ [<a href="http://www.itmedia.co.jp/bizid/articles/0810/09/news011.html">記事</a>]</p>
+          <p><strike>BigCanvas, Inc. - Co-founder</strike></p>
+        <% end %>
+
+        <% project("PukiWiki", "http://github.com/pukiwiki", "images/pukiwiki80.png", "img-icon") do %>
+          <p>PHPで書かれたオープンソースのWikiEngine</p>
+          <p><strike>総監督</strike></p>
+        <% end %>
+      </div><!-- /row -->
+    </div><!-- /past-work -->
+    
+   </div> <!-- /container -->
+ <script>
+ window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ ga('create', '<%= site.analytics.property_id %>', '<%= site.analytics.domain %>');
+ ga('send', 'pageview');
+ </script>
+ <script async src='https://www.google-analytics.com/analytics.js'></script>
+</body>
+</html>
+

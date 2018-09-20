@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Build pages!"
+./builder/top/build.sh &&
+mkdir -p tmp/public &&
+cp -r public/* tmp/public ||
+exit 1
