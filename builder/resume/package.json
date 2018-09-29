@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "bootstrap": "^4.1.3",
-    "inliner": "^1.13.1",
+    "html-minify": "^0.3.2",
+    "inline-css-cli": "^0.0.1",
     "sass": "^1.13.0",
     "uncss": "^0.16.2"
   }
