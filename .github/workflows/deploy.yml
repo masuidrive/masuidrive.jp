@@ -25,6 +25,9 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v4
       
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
     - name: Build pages
       run: ./build-pages.sh
       
