@@ -51,11 +51,6 @@ end
         <p>DJはじめました。<a href="https://www.facebook.com/masuidrive">オファーお待ちしています。</a></p>
       <% end %>
 
-      <% project("wri.pe", "https://wri.pe/", "images/wripe128.png", "img-icon") do %>
-        <p>Markdownをサポートした<br/>シンプルなノートアプリ</p>
-        <p><a href="https://wri.pe/">https://wri.pe/</a></p>
-      <% end %>
-
       <% project("miyamotoさん", "https://github.com/masuidrive/miyamoto", "images/miyamoto_400x128.jpg", "img-icon-400x128") do %>
         <p>「おはよう」「お疲れさま」ってチャットするだけで勤怠管理</p>
         <p><a href="https://github.com/masuidrive/miyamoto">github/masuidrive/miyamoto</a></p>
@@ -103,9 +98,9 @@ end
         </p>
       <% end %>
 
-      <% project("Contact", "https://airtable.com/shrKX5AdIHUq0iuBN", "images/contact_400x128.jpg", "img-icon-400x128") do %>
+      <% project("Contact", "https://www.facebook.com/masuidrive", "images/contact_400x128.jpg", "img-icon-400x128") do %>
         <p>
-          <a href="https://airtable.com/shrKX5AdIHUq0iuBN">問い合わせフォーム</a><br/>
+          <a href="https://www.facebook.com/masuidrive">問い合わせフォーム</a><br/>
         </p>
       <% end %>
     </div><!--projects-->
@@ -123,29 +118,37 @@ end
           <p><a href="https://www.bloom-and-co.com/">株式会社Bloom&Co.
  - CTO</a></p>
         <% end %>
-
-        <% project("Toreta, Inc.", "https://toreta.in/", "images/toreta_400x128.png", "img-icon-400x128") do %>
-          <p>食の仕事をおもしろく</p>
-          <p><a href="http://corp.toreta.in/">株式会社トレタ - 技術顧問</a></p>
-        <% end %>
       </div><!-- /row -->
     </div><!-- /current-work -->
     
     <div class="projects past-work">
-      <h2>Past work</h2>　
+      <h2>Past work</h2>
 
       <div class="row">
+        <% project("wri.pe", "https://wri.pe/", "images/wripe128.png", "img-icon") do %>
+          <p>Markdownをサポートした<br/>シンプルなノートアプリ</p>
+          <p><strike>https://wri.pe/</strike> 2024年末close</p>
+        <% end %>
+        
+        <% project("Toreta, Inc.", "https://toreta.in/", "images/toreta_400x128.png", "img-icon-400x128") do %>
+          <p>食の仕事をおもしろく</p>
+          <p><a href="http://corp.toreta.in/">株式会社トレタ - ex-CTO</a></p>
+        <% end %>
+
         <% project("→Kitayon", "http://toreta.blog.jp/archives/66523298.html", "images/kitayon.png", "img-icon") do %>
           <p>有志のエンジニアで構築したオフィス受付システム [<a href="https://jp.techcrunch.com/2017/01/11/kitayon/">記事</a>]</p>
           <p><a href="https://d-lighted.jp">ディライテッド</a>へ譲渡</p>
         <% end %>
 
+      </div><!-- /row -->
+
+      <div class="row">
         <% project("MobiRuby", "https://github.com/mobiruby", "images/mobiruby64.png", "img-icon") do %>
           <p>mrubyでiOSアプリを作れる<br/>ツールキットを<strike>開発中</strike>開発終了</p>
           <p><strike><a href="https://github.com/mobiruby">github.com/mobiruby</a></strike></p>
         <% end %>
 
-      <% project("ミイル", "http://miil.jp/", "images/miil128.jpg", "img-icon") do %>
+        <% project("ミイル", "http://miil.jp/", "images/miil128.jpg", "img-icon") do %>
           <p>写真を通じて『おいしい』を</p>
           <p><strike><a href="http://miil.jp/">ミイル株式会社 - 取締役CTO</a></strike></p>
         <% end %>
@@ -154,12 +157,14 @@ end
           <p>東京ベースのエバンジェリスト [<a href="https://tech.nikkeibp.co.jp/it/article/NEWS/20110428/360023/?ST=keitai">記事</a>]</p>
           <p><strike>Appceralator, Inc. - Evangelist</strike></p>
         <% end %>
+      </div><!-- /row -->
 
+      <div class="row">
         <% project("BigCanvas Photoshare", "http://www.itmedia.co.jp/bizid/articles/0810/09/news011.html", "images/bcphotoshare.jpg", "img-icon") do %>
           <p>世界初の写真共有SNSアプリ [<a href="http://www.itmedia.co.jp/bizid/articles/0810/09/news011.html">記事</a>]</p>
           <p><strike>BigCanvas, Inc. - Co-founder</strike></p>
         <% end %>
-
+        
         <% project("PukiWiki", "http://github.com/pukiwiki", "images/pukiwiki80.png", "img-icon") do %>
           <p>PHPで書かれたオープンソースのWikiEngine</p>
           <p><strike>総監督</strike></p>
