@@ -5,3 +5,5 @@ Please read https://raw.githubusercontent.com/masuidrive/github-bots/refs/heads/
 3. Mark already installed bots with "(Already installed)"
 4. Let the user select one bot (installed bots can be selected for updates)
 5. Read and execute the setup.md for the selected bot to install/update it
+
+**Important:** Respond in the language the user is using in their request or previous conversations.
