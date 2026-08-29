@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>esp-game1 取扱説明書 / User Manual</title>
+<style>
+  :root { color-scheme: dark light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
+                 "Yu Gothic", sans-serif;
+    background: #101828;
+    color: #e6e9ef;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+    line-height: 1.7;
+  }
+  h1 { font-size: 1.6em; margin-bottom: 4px; }
+  h1 span { color: #7cc4ff; }
+  .subtitle { color: #8b93a7; margin-top: 0; margin-bottom: 28px; font-size: .95em; }
+  h2 {
+    font-size: 1.15em;
+    margin-top: 2.2em;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2a3245;
+    color: #cfe2ff;
+  }
+  h3 { font-size: 1em; color: #b8c2d9; margin-top: 1.6em; }
+  a { color: #7cc4ff; }
+  code {
+    background: #1a2233;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: .92em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  pre {
+    background: #0b1220;
+    border: 1px solid #232c40;
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: .88em;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: .93em;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid #232c40;
+    vertical-align: top;
+  }
+  th { color: #8b93a7; font-weight: 600; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: 4px 0; }
+  .note {
+    background: #16233a;
+    border-left: 3px solid #4a7fd9;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: .9em;
+    color: #c3ccdd;
+    margin: 14px 0;
+  }
+  .btn-row a.btn {
+    display: inline-block;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin: 4px 8px 4px 0;
+    font-size: .92em;
+  }
+  hr.section {
+    border: none;
+    border-top: 1px solid #232c40;
+    margin: 40px 0;
+  }
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid #232c40;
+    color: #7a8296;
+    font-size: .85em;
+  }
+  footer a { color: #9db8dd; }
+  @media (prefers-color-scheme: light) {
+    body { background: #f5f7fb; color: #1c2333; }
+    .subtitle { color: #5a6377; }
+    h2 { border-bottom-color: #dbe1ee; color: #1c4fa0; }
+    h3 { color: #33415c; }
+    a { color: #1a5fd0; }
+    code { background: #e8ecf5; }
+    pre { background: #eef1f8; border-color: #d8dfec; }
+    th, td { border-bottom-color: #dbe1ee; }
+    th { color: #5a6377; }
+    .note { background: #e3edff; border-left-color: #2563eb; color: #24344f; }
+    footer { border-top-color: #dbe1ee; color: #5a6377; }
+    footer a { color: #1a5fd0; }
+  }
+</style>
+</head>
+<body>
+
+<h1><span>esp-game1</span> 取扱説明書</h1>
+<p class="subtitle">masuidrive製 ESP32-S3 ポータブルゲーム機 - ユーザーマニュアル</p>
+
+<div class="btn-row">
+  <a class="btn" href="webble.html">BLE ROM転送ページを開く</a>
+  <a class="btn" href="https://github.com/masuidrive/esp-game1" target="_blank" rel="noopener">GitHub リポジトリ</a>
+</div>
+
+<h2>基本操作</h2>
+<table>
+  <tr><th>操作</th><th>動作</th></tr>
+  <tr><td><code>SELECT</code> + <code>START</code> を1秒長押し</td><td>メニューを開く</td></tr>
+  <tr><td><code>PWR</code> 短押し</td><td>メニューを開く</td></tr>
+  <tr><td><code>PWR</code> + <code>UP</code> / <code>DOWN</code></td><td>音量を調整</td></tr>
+  <tr><td><code>PWR</code> + <code>A</code></td><td><code>A</code>ボタンの連射（ターボ）をON/OFF</td></tr>
+  <tr><td><code>PWR</code> + <code>B</code></td><td><code>B</code>ボタンの連射（ターボ）をON/OFF</td></tr>
+  <tr><td><code>PWR</code> + <code>START</code></td><td>セーブして電源OFF</td></tr>
+  <tr><td><code>PWR</code> を3秒長押し</td><td>セーブして電源OFF</td></tr>
+  <tr><td>起動時に <code>START</code> + <code>PWR</code> を押しっぱなし</td><td>設定を初期化（電池が必要）</td></tr>
+</table>
+<p class="note">
+  ターボをONにすると、その場でコイン音が鳴って通知されます。ターボ中の
+  <code>A</code>/<code>B</code>の単押しはゲーム側には渡りません。<br>
+  電源ボタン（PWR）は電池の電圧を読んで検知するため、USB給電のみでは反応しません。
+  開発・操作時は電池を入れておいてください。
+</p>
+
+<h2>メニュー画面</h2>
+<p>
+  メニューを開くとヘッダに<strong>電池アイコンと残り分数</strong>が表示されます。
+  項目は次のとおりです。
+</p>
+<table>
+  <tr><th>項目</th><th>内容</th></tr>
+  <tr><td><strong>VOLUME</strong></td><td>音量を調整（左右キー）</td></tr>
+  <tr><td><strong>BRIGHTNESS</strong></td><td>画面の明るさを調整（左右キー）</td></tr>
+  <tr><td><strong>GAME</strong></td><td>カートリッジ（ROM）を切り替える</td></tr>
+  <tr><td><strong>BLE MODE</strong></td><td>BLEでのROM転送モードに入る（詳細は下記）</td></tr>
+  <tr><td><strong>MANUAL</strong></td><td>このマニュアルへのリンクのQRコードを表示</td></tr>
+  <tr><td><strong>RESET</strong></td><td>ゲームをリセット（セーブデータも削除）</td></tr>
+  <tr><td><strong>POWER OFF</strong></td><td>セーブして電源OFF（USB接続中は非表示）</td></tr>
+</table>
+
+<h3>セーブについて</h3>
+<p>
+  メニューを開くたびに自動でセーブされます。セーブスロットはゲームごとに1つです。
+</p>
+
+<hr class="section">
+
+<h2>BLEモードでのROM転送</h2>
+<p>
+  メニューから <strong>BLE MODE</strong> を選ぶと、本体は
+  <code>NES-S3</code> という名前でBLEアドバタイズする転送モードに再起動します。
+  このモードでは本体に入っているROMの一覧表示・アップロード・削除・起動ゲームの
+  選択ができます。<code>B</code>ボタンを1秒長押しするとゲームに戻ります。
+</p>
+<p>クライアントは次の2種類があります。</p>
+
+<h3>1. WebBLE版（ブラウザから）</h3>
+<p>
+  このサイトの <a href="webble.html">webble.html</a> を Chrome または Edge で開いて
+  <strong>Connect</strong> を押してください。Web Bluetooth に対応したブラウザが必要です。
+  このページ自体が https で配信されているので、そのまま
+  <a href="webble.html">webble.html</a> を直接開いて使えます。
+</p>
+
+<h3>2. CLI版（コマンドラインから）</h3>
+<p>
+  リポジトリ内の <code>scripts/blerom.py</code> を使います。事前に
+  <a href="https://github.com/hbldh/bleak" target="_blank" rel="noopener">bleak</a>
+  のインストールが必要です。
+</p>
+<pre><code>pip install bleak</code></pre>
+<p>コマンド一覧:</p>
+<pre><code>blerom.py list                 本体上のファイル一覧と空き容量を表示
+blerom.py put &lt;file.nes&gt;       ROMをアップロード（同名は上書き）
+blerom.py del &lt;name.nes&gt;       ファイルを削除
+blerom.py boot &lt;name.nes&gt;      そのカートリッジを選んで再起動
+blerom.py exit                 BLEモードを終了（現在のゲームに戻って再起動）</code></pre>
+
+<hr class="section">
+
+<h2>ROMについて</h2>
+<p>
+  <code>oss_roms/</code> にはオープンソースのROMが同梱されています
+  （Nova the Squirrel、240p Test Suite、ベンチマーク用の bench.nes）。
+</p>
+<p>
+  自分で用意したROMを使う場合は、次のいずれかの方法があります。
+</p>
+<ul>
+  <li><code>my_roms/</code> に <code>.nes</code> ファイルを置いてビルド・書き込みする</li>
+  <li>本体を BLE MODE にして、上記の WebBLE または CLI からROMを転送する</li>
+</ul>
+
+<footer>
+  GitHub リポジトリ:
+  <a href="https://github.com/masuidrive/esp-game1" target="_blank" rel="noopener">
+    github.com/masuidrive/esp-game1
+  </a>
+  <br>
+  firmware developed with Claude Fable 5
+</footer>
+
+<hr class="section">
+
+<h2>English Summary</h2>
+<p>
+  <strong>esp-game1</strong> is the NES emulator firmware for masuidrive's custom
+  ESP32-S3 portable game console. Hold <code>SELECT</code>+<code>START</code> for
+  1 second (or press <code>PWR</code>) to open the on-screen menu. Its header shows
+  a battery icon with estimated minutes remaining. Menu items: <strong>VOLUME</strong>,
+  <strong>BRIGHTNESS</strong>, <strong>GAME</strong> (cartridge picker),
+  <strong>BLE MODE</strong>, <strong>MANUAL</strong> (QR code to this page),
+  <strong>RESET</strong>, and <strong>POWER OFF</strong> (hidden while USB is
+  connected). The game auto-saves whenever the menu opens, one save slot per game.
+</p>
+<p>
+  <code>PWR</code>+<code>UP</code>/<code>DOWN</code> adjusts volume,
+  <code>PWR</code>+<code>A</code> / <code>PWR</code>+<code>B</code> toggles turbo
+  (auto-fire) for that button, <code>PWR</code>+<code>START</code> or a 3-second
+  <code>PWR</code> hold saves and powers off. Holding <code>START</code>+<code>PWR</code>
+  at boot resets settings to defaults (a battery must be installed - the power
+  button is sensed from battery voltage and doesn't respond on USB power alone).
+</p>
+<p>
+  <strong>BLE MODE</strong> reboots the device into a transfer mode that
+  advertises as <code>NES-S3</code>, letting you list, upload, delete, and select
+  ROMs over Bluetooth Low Energy. Hold <code>B</code> for 1 second to return to
+  the game. Two clients are available: the browser-based
+  <a href="webble.html">webble.html</a> (Web Bluetooth, works directly from this
+  site in Chrome/Edge), or the CLI <code>scripts/blerom.py</code>
+  (<code>pip install bleak</code>) with <code>list</code> / <code>put</code> /
+  <code>del</code> / <code>boot</code> / <code>exit</code> commands.
+</p>
+<p>
+  Open-source ROMs (Nova the Squirrel, 240p Test Suite, a bench ROM) ship in
+  <code>oss_roms/</code>. Add your own by placing <code>.nes</code> files in
+  <code>my_roms/</code> before building, or by transferring them over BLE.
+</p>
+
+</body>
+</html>
