@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!-- This file is a copy of scripts/webble.html, hosted here for GitHub Pages
+     (https://masuidrive.jp/esp-game1/webble.html). Keep the two in sync -
+     edit scripts/webble.html first, then re-copy it here. -->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>NES-S3 ROM Transfer</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: -apple-system, sans-serif; background:#101828; color:#eee;
+         max-width: 560px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 1.3em; } h1 span { color:#7cc4ff; }
+  button { background:#2563eb; color:#fff; border:0; border-radius:8px;
+           padding:10px 16px; margin:4px 4px 4px 0; font-size:1em; cursor:pointer; }
+  button:disabled { background:#444; cursor:default; }
+  #log { background:#000; border-radius:8px; padding:12px; min-height:180px;
+         font: 12px/1.5 monospace; white-space:pre-wrap; margin-top:12px; }
+  #files li { font: 13px monospace; margin:2px 0; }
+  #files button { padding:2px 10px; font-size:.85em; margin-left:8px; }
+  progress { width:100%; height:14px; }
+  .note { color:#889; font-size:.85em; }
+</style>
+</head>
+<body>
+<h1><span>NES-S3</span> ROM Transfer (Web Bluetooth)</h1>
+<p class="note">本体メニューの BLE MODE に入れてから Connect。
+Chrome/Edge 限定・localhost か https で開くこと
+(例: <code>python3 -m http.server</code> して http://localhost:8000/webble.html)</p>
+
+<button id="connect">Connect</button>
+<button id="refresh" disabled>List files</button>
+<button id="exit" disabled>Exit BLE mode</button>
+<div>
+  <input type="file" id="file" accept=".nes" disabled>
+  <button id="upload" disabled>Upload</button>
+</div>
+<progress id="prog" value="0" max="100" hidden></progress>
+<ul id="files"></ul>
+<div id="log"></div>
+
+<script>
+const SVC  = 'b5f9a100-2f26-4d4f-a7f3-27a13d801e5a';
+const CTRL = 'b5f9a101-2f26-4d4f-a7f3-27a13d801e5a';
+const DATA = 'b5f9a102-2f26-4d4f-a7f3-27a13d801e5a';
+
+let ctrl, data, replyQueue = [], replyWaiters = [];
+
+const $ = id => document.getElementById(id);
+const log = m => { $('log').textContent += m + '\n'; $('log').scrollTop = 1e9; };
+
+function onNotify(e) {
+  const msg = new TextDecoder().decode(e.target.value);
+  log('<< ' + msg);
+  if (msg.startsWith('PROG ')) return;
+  if (replyWaiters.length) replyWaiters.shift()(msg);
+  else replyQueue.push(msg);
+}
+const nextReply = () => replyQueue.length
+  ? Promise.resolve(replyQueue.shift())
+  : new Promise(r => replyWaiters.push(r));
+
+async function send(cmd) {
+  log('>> ' + cmd);
+  await ctrl.writeValueWithResponse(new TextEncoder().encode(cmd));
+}
+
+$('connect').onclick = async () => {
+  const dev = await navigator.bluetooth.requestDevice({
+    filters: [{ name: 'NES-S3' }], optionalServices: [SVC] });
+  dev.addEventListener('gattserverdisconnected', () => {
+    log('disconnected');
+    for (const id of ['refresh','exit','file','upload']) $(id).disabled = true;
+  });
+  const gatt = await dev.gatt.connect();
+  const svc = await gatt.getPrimaryService(SVC);
+  ctrl = await svc.getCharacteristic(CTRL);
+  data = await svc.getCharacteristic(DATA);
+  await ctrl.startNotifications();
+  ctrl.addEventListener('characteristicvaluechanged', onNotify);
+  log('connected');
+  for (const id of ['refresh','exit','file','upload']) $(id).disabled = false;
+  listFiles();
+};
+
+async function listFiles() {
+  replyQueue = [];
+  $('files').innerHTML = '';
+  await send('LIST');
+  for (;;) {
+    const msg = await nextReply();
+    if (msg.startsWith('OK') || msg.startsWith('ERR')) break;
+    const m = msg.match(/^F (\d+) (.+)$/);
+    if (!m) continue;
+    const isRom = /\.nes$/i.test(m[2]);
+    const li = document.createElement('li');
+    li.textContent = `${m[2]} (${(m[1]/1024).toFixed(0)}KB)`;
+    if (!isRom) {
+      /* .ss0 / .ss0.meta are per-game save states - deletable, not bootable */
+      li.style.opacity = '0.5';
+      li.textContent += ' [save data]';
+    }
+    const actions = isRom ? [['BOOT','BOOT'], ['DEL','DEL']] : [['DEL','DEL']];
+    for (const [label, cmd] of actions) {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.onclick = async () => {
+        if (cmd === 'DEL' && !confirm(`delete ${m[2]}?`)) return;
+        await send(`${cmd} ${m[2]}`);
+        await nextReply();
+        if (cmd === 'DEL') listFiles();
+        else log('board is rebooting into ' + m[2]);
+      };
+      li.appendChild(b);
+    }
+    $('files').appendChild(li);
+  }
+}
+$('refresh').onclick = listFiles;
+$('exit').onclick = () => send('EXIT').catch(() => {});
+
+$('upload').onclick = async () => {
+  const f = $('file').files[0];
+  if (!f) return alert('choose a .nes file first');
+  const buf = new Uint8Array(await f.arrayBuffer());
+  await send(`PUT ${buf.length} ${f.name}`);
+  const rdy = await nextReply();
+  if (!rdy.startsWith('OK')) return log('upload refused');
+  $('prog').hidden = false;
+  const chunk = 244;   /* safe for any negotiated MTU >= 247 */
+  const t0 = performance.now();
+  for (let off = 0; off < buf.length; off += chunk) {
+    await data.writeValueWithResponse(buf.slice(off, off + chunk));
+    $('prog').value = 100 * off / buf.length;
+  }
+  const done = await nextReply();
+  const dt = (performance.now() - t0) / 1000;
+  $('prog').hidden = true;
+  log(`${done} - ${(buf.length/1024).toFixed(0)}KB in ${dt.toFixed(1)}s`);
+  listFiles();
+};
+</script>
+</body>
+</html>
