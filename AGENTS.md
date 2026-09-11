@@ -1,29 +1,30 @@
 # masuidrive.jp - エージェント向けメモ
 
 このリポジトリは https://masuidrive.jp の静的サイト。**ビルドステップは存在しない**。
-`public/` 以下のファイルがそのまま GitHub Pages で配信される。
+`docs/` 以下のファイルがそのまま GitHub Pages で配信される。
 
 ## 大原則
 
-- 編集対象は `public/` 以下の HTML / CSS / 画像そのもの。中間ソースやテンプレートは無い。
-- ビルドコマンドを追加しない。新しいページが必要なら素の HTML を `public/` に置く。
-- `master` への push で `.github/workflows/deploy.yml` が `public/` をデプロイする。
+- 編集対象は `docs/` 以下の HTML / CSS / 画像そのもの。中間ソースやテンプレートは無い。
+- ビルドコマンドを追加しない。新しいページが必要なら素の HTML を `docs/` に置く。
+- `master` への push で GitHub Pages が `docs/` をそのまま配信する。CI もビルドも無い。
+- `docs/.nojekyll` は Jekyll 処理を止めるためのもの。消さないこと。
 
 ## ファイル配置
 
 | パス | 内容 |
 | --- | --- |
-| `public/index.html` | トップページ (プロジェクト一覧 + 自己紹介) |
-| `public/resume.html` | レジュメ |
-| `public/styles/index.css` | トップページ専用 CSS |
-| `public/styles/resume.css` | レジュメ専用 CSS |
-| `public/images/` | 両ページの画像 |
-| `public/favicons/`, `favicon.ico`, `manifest.json`, `browserconfig.xml` | favicon 一式 |
-| `public/CNAME` | 独自ドメイン設定。消さないこと |
-| `public/bots.html`, `public/m.html` | 単体の小さなページ |
-| `public/esp-game1/` | 独立したサブページの例 |
+| `docs/index.html` | トップページ (プロジェクト一覧 + 自己紹介) |
+| `docs/resume.html` | レジュメ |
+| `docs/styles/index.css` | トップページ専用 CSS |
+| `docs/styles/resume.css` | レジュメ専用 CSS |
+| `docs/images/` | 両ページの画像 |
+| `docs/favicons/`, `favicon.ico`, `manifest.json`, `browserconfig.xml` | favicon 一式 |
+| `docs/CNAME` | 独自ドメイン設定。消さないこと |
+| `docs/bots.html`, `docs/m.html` | 単体の小さなページ |
+| `docs/esp-game1/` | 独立したサブページの例 |
 
-新しいコンテンツは `public/<名前>/index.html` のようにディレクトリを掘って追加してよい。
+新しいコンテンツは `docs/<名前>/index.html` のようにディレクトリを掘って追加してよい。
 既存ページの構成に合わせる必要はない。
 
 ## CSS についての注意
@@ -39,7 +40,7 @@
 ## 確認方法
 
 ```
-$ python3 -m http.server 8000 --directory public
+$ python3 -m http.server 8000 --directory docs
 ```
 
 HTML を書き換えたらこれでブラウザ確認する。リンク切れと OGP 画像の URL
@@ -47,5 +48,5 @@ HTML を書き換えたらこれでブラウザ確認する。リンク切れと
 
 ## レジュメを更新するとき
 
-`public/resume.html` を直接編集する。本文は `<div id="content">` の中。
+`docs/resume.html` を直接編集する。本文は `<div id="content">` の中。
 更新したら末尾の `<div id="generated-at">` の日付も直す。
