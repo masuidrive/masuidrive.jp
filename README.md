@@ -23,8 +23,8 @@ docs/              ← ここが丸ごと https://masuidrive.jp/ になる
 
 ## 編集とデプロイ
 
-HTML / CSS を直接編集して `master` に push するだけ。GitHub Pages が
-`master` ブランチの `/docs` を直接配信する (Settings → Pages → Deploy from a branch)。
+HTML / CSS を直接編集して `main` に push するだけ。GitHub Pages が
+`main` ブランチの `/docs` を直接配信する (Settings → Pages → Deploy from a branch)。
 ビルドも GitHub Actions も経由しないので、push から反映まで数十秒。
 
 ## ローカルプレビュー

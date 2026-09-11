@@ -7,7 +7,7 @@
 
 - 編集対象は `docs/` 以下の HTML / CSS / 画像そのもの。中間ソースやテンプレートは無い。
 - ビルドコマンドを追加しない。新しいページが必要なら素の HTML を `docs/` に置く。
-- `master` への push で GitHub Pages が `docs/` をそのまま配信する。CI もビルドも無い。
+- `main` への push で GitHub Pages が `docs/` をそのまま配信する。CI もビルドも無い。
 - `docs/.nojekyll` は Jekyll 処理を止めるためのもの。消さないこと。
 
 ## ファイル配置
