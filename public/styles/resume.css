@@ -1,0 +1,358 @@
+img, svg {
+  vertical-align: middle;
+}
+
+dl, h1, h2, h3, h4, p, ul {
+  margin-top: 0;
+}
+
+dd, h1, h2, h3, h4 {
+  margin-bottom: 0.5rem;
+}
+
+dl, hr, p, ul {
+  margin-bottom: 1rem;
+}
+
+:root {
+  --blue:#007bff;
+  --indigo:#6610f2;
+  --purple:#6f42c1;
+  --pink:#e83e8c;
+  --red:#dc3545;
+  --orange:#fd7e14;
+  --yellow:#ffc107;
+  --green:#28a745;
+  --teal:#20c997;
+  --cyan:#17a2b8;
+  --white:#fff;
+  --gray:#6c757d;
+  --gray-dark:#343a40;
+  --primary:#007bff;
+  --secondary:#6c757d;
+  --success:#28a745;
+  --info:#17a2b8;
+  --warning:#ffc107;
+  --danger:#dc3545;
+  --light:#f8f9fa;
+  --dark:#343a40;
+  --breakpoint-xs:0;
+  --breakpoint-sm:576px;
+  --breakpoint-md:768px;
+  --breakpoint-lg:992px;
+  --breakpoint-xl:1200px;
+  --font-family-sans-serif:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  --font-family-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -ms-overflow-style: scrollbar;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@-ms-viewport {
+  width: device-width;
+}
+header {
+  display: block;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+  background-color: #f4f4f4;
+}
+
+dt {
+  font-weight: 700;
+}
+
+dd {
+  margin-left: 0;
+}
+
+strong {
+  font-weight: bolder;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+  word-break: break-all;
+}
+
+a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+img {
+  border-style: none;
+}
+
+#content header h2, #content header h3 {
+  border-left: 6px solid #e02613;
+  border-bottom: 1px solid #e02613;
+}
+
+svg {
+  overflow: hidden;
+}
+
+::-webkit-file-upload-button {
+  font: inherit;
+  -webkit-appearance: button;
+}
+
+h1, h2, h3, h4 {
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  color: inherit;
+}
+
+h1 {
+  font-size: 60px;
+}
+
+h2 {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 18.7px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+  margin-top: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-12, .col-6, .col-md-12, .col-md-3, .col-md-9 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+.col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+@media (min-width: 768px) {
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-md-9 {
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+  .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .d-md-none {
+    display: none !important;
+  }
+  .d-md-block {
+    display: block !important;
+  }
+}
+.text-center {
+  text-align: center !important;
+}
+
+@media print {
+  *, ::after, ::before {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  a:not(.btn) {
+    text-decoration: underline;
+  }
+  img {
+    page-break-inside: avoid;
+  }
+  h2, h3, p {
+    orphans: 3;
+    widows: 3;
+  }
+  h2, h3 {
+    page-break-after: avoid;
+  }
+  @page {
+    size: a3;
+  }
+  body {
+    min-width: 992px !important;
+  }
+}
+.container-fluid {
+  padding: 0 64px;
+}
+
+@media (max-width: 991.98px) {
+  .container-fluid {
+    padding: 0 1em;
+    overflow: hidden;
+  }
+}
+p {
+  text-indent: 1em;
+}
+
+#main-header {
+  height: 148px;
+  background: url(https://masuidrive.jp/images/frock_256x256.png) right 44px bottom no-repeat #fff;
+  background-size: 128px 128px;
+  padding-left: 56px;
+  padding-right: 64px;
+  margin-bottom: 15px;
+}
+
+#main-header .section {
+  position: relative;
+  top: 32px;
+}
+
+#main-header .section h1 {
+  font-weight: 600;
+  letter-spacing: -0.065em;
+  line-height: 1;
+  margin: 0;
+}
+
+#main-header .section h1 a {
+  text-decoration: none;
+  color: #343a40;
+}
+
+@media (max-width: 575.98px) {
+  #main-header {
+    text-align: center;
+    background-size: 64px 65px;
+    background-position: right 4px bottom;
+  }
+  #main-header .section h1 {
+    font-size: 30px;
+    padding-top: 15px;
+  }
+  #main-header .section .title {
+    font-size: 11.5px;
+  }
+}
+#content h2:first-child {
+  margin: 18px 0 24px;
+}
+
+#content h2, #content h3, #content h4 {
+  width: 100%;
+  margin: 24px 0 9px;
+}
+
+#content ul {
+  margin: 9px 0 8px;
+}
+
+#content header {
+  margin-top: 32px;
+}
+
+#content header h2 {
+  padding: 5px 0 4px 8px;
+}
+
+#content header h3 {
+  padding: 4px 0 4px 8px;
+}
+
+#sidebar #face-photo {
+  width: 190px;
+  height: 190px;
+}
+
+@media (max-width: 575.98px) {
+  #sidebar #face-photo {
+    width: 120px;
+    height: 120px;
+  }
+}
+#sidebar .section {
+  margin: 0 0 24px;
+}
+
+#sidebar .section dd {
+  margin-left: 2em;
+}
+
+#sidebar .section dt {
+  font-weight: 400;
+  color: #6c757d;
+}
+
+#sidebar .section .icon-social {
+  margin-right: 4px;
+  margin-bottom: 3px;
+}
+
+#generated-at {
+  margin-top: 36px;
+  border-top: 1px solid #dee2e6;
+  padding: 12px 0;
+  font-size: 12px;
+  color: #adb5bd;
+}
