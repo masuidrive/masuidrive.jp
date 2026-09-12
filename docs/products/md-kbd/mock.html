@@ -141,12 +141,13 @@
   #ios-keyboard-demo .trackpad-status[hidden] { display:none; }
   #ios-keyboard-demo .voice .key.voice-cancel .key-face { font-size:13px; }
   #ios-keyboard-demo .voice .voice-bottom { position:relative; }
+  #ios-keyboard-demo .voice .key.return { position:static; width:auto; height:100%; z-index:auto; }
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; height:45px; margin:0 0 10px; padding:0 14px; overflow:hidden; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font:400 15px/45px inherit; text-align:left; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
-  #ios-keyboard-demo .voice-status { position:absolute; left:calc(20% + 8px); top:0; height:45px; display:flex; align-items:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .voice-status { position:absolute; left:20%; top:0; width:20%; height:45px; display:flex; align-items:center; justify-content:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
   #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
   #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
@@ -423,6 +424,7 @@
   function beginVoiceDemo(p) {
     if(voiceDemo.active)return;
     p.voiceTriggered=true;
+    clearComposition();
     Object.assign(voiceDemo,{active:true,returnState:{language,layer},turn:0});
     navigator.vibrate?.([35,45,35]);announce('模擬音声認識を開始');
     startVoiceDemoRecognition();
@@ -511,14 +513,18 @@
     renderedCandidateContentKey=contentKey;
     candidateBar.scrollLeft=0;
   }
-  function insert(text) {
+  function insert(text,{bypassComposition=false}={}) {
     if (!text) return;
-    if(composition.converted)clearComposition();
+    const directVoiceEdit=bypassComposition||voiceDemo.active;
+    if(directVoiceEdit||composition.converted)clearComposition();
     preferredCursorX=null;
     clearInitialDemoTextForInput();
     editor.focus({preventScroll:true});
     editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');
+    const previousPreserve=preserveComposition;
+    if(directVoiceEdit)preserveComposition=true;
     editor.dispatchEvent(new Event('input',{bubbles:true}));
+    preserveComposition=previousPreserve;
     announce(text==='\n'?'改行':text===' '?'空白':text);
   }
   function insertEmoji(emoji) {
@@ -610,6 +616,16 @@
   function action(id,modifier=currentModifier()) {
     if(voiceDemo.active&&id==='voice-cancel') {leaveVoiceDemo(true);return true;}
     if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
+    if(voiceDemo.active&&['space','return','paste','ctrl-j','left','right','up','down'].includes(id)) {
+      const voiceGeneration=voiceDemo.generation;
+      if(id==='space')insert(' ',{bypassComposition:true});
+      else if(id==='return')insert('\n',{bypassComposition:true});
+      else if(id==='ctrl-j')applyModified('j','Control');
+      else if(id==='left'||id==='right')moveCursor(id==='left'?-1:1);
+      else if(id==='up'||id==='down')moveVertical(id==='up'?-1:1);
+      else if(id==='paste')pasteText(voiceGeneration);
+      render();return true;
+    }
     const specialKeys={backspace:'Backspace',space:' ',return:'Enter',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',home:'Home',end:'End'};
     if(specialKeys[id]&&applyModified(specialKeys[id],modifier)) {render();return true;}
     if(id!=='space')lastSpace=-Infinity;
@@ -639,8 +655,7 @@
       }else {insert(' ');lastSpace=now;}
     }else if(id==='paste') {
       clearComposition();
-      if(navigator.clipboard?.readText)navigator.clipboard.readText().then(text=>{if(text)insert(text);else announce('クリップボードは空です');render();}).catch(()=>{announce('Pasteを利用できません');render();});
-      else announce('Pasteを利用できません');
+      pasteText();
     }else if(id==='modifier-gesture') {if(pendingModifier){pendingModifier=null;announce('修飾キーを解除');}}
     else if(id==='symbols') {if(language==='kana'){language='english';layer='symbols';}else layer=layer==='letters'?'symbols':'letters';clearComposition();}
     else if(id==='symbol-layer') {language='english';layer='symbols';pendingModifier=null;clearComposition();}
@@ -651,6 +666,14 @@
     else if(id==='emoji') {language='kana';layer='emoji';emojiScrollTop=0;clearComposition();}
     else if(['english','kana'].includes(id)) {language=id;layer='letters';pendingModifier=null;clearComposition();}
     render();
+  }
+  function pasteText(voiceGeneration=null) {
+    const isCurrentVoiceSession=()=>voiceGeneration===null||(voiceDemo.active&&voiceDemo.generation===voiceGeneration);
+    if(navigator.clipboard?.readText)navigator.clipboard.readText().then(text=>{
+      if(!isCurrentVoiceSession())return;
+      if(text)insert(text,{bypassComposition:voiceGeneration!==null});else announce('クリップボードは空です');render();
+    }).catch(()=>{if(!isCurrentVoiceSession())return;announce('Pasteを利用できません');render();});
+    else if(isCurrentVoiceSession())announce('Pasteを利用できません');
   }
   // Layout data, DOM creation and runtime state are kept separate so this
   // remains one portable HTML file without turning render() into a monolith.
@@ -740,6 +763,7 @@
       emoji:'絵文字レイヤーへ切り替える',
       space:'Space。フリックでカーソル移動',
       return:composition.reading?'確定。上フリックで無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
+      'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！',
       numbers:'テンキーへ切り替える',
       kana:'タップで日本語。'+layerDirections,
       symbols:language==='kana'?'記号へ切り替える':layer==='letters'?'記号へ切り替える':'QWERTYへ戻る',
@@ -844,7 +868,10 @@
     if(voiceDemo.active) {
       const bottomRow=[
         makeKey('voice-cancel','キャンセル',{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
-        ...[1,2,3,4].map(()=>makeKey(null,''))
+        makeKey(null,''),
+        makeKey('voice-punct','、。？！',{flick:['、','。','？','！',null],preview:'press'}),
+        makeKey('space','Space',{hint:'←↓↑→'}),
+        makeKey('return','Enter',{hint:'paste',navigation:pasteNavigation})
       ];
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice';
       const viewport=document.createElement('div');viewport.className='voice-candidate-viewport';viewport.setAttribute('aria-label','音声認識候補');
@@ -856,7 +883,7 @@
         const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
       }
       const bottom=document.createElement('div');bottom.className='key-row voice-bottom';bottom.append(...bottomRow.map(createKeyElement));
-      if(voiceDemo.phase==='listening'){const status=document.createElement('span');status.className='voice-status';status.textContent='認識中';status.setAttribute('role','status');bottom.append(status);}
+      if(['listening','ready'].includes(voiceDemo.phase)){const status=document.createElement('span');status.className='voice-status';status.textContent='認識中';status.setAttribute('role','status');bottom.append(status);}
       keys.append(viewport,bottom);
       return;
     }
