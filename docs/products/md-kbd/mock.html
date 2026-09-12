@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>masuidrive-kbd 操作モック</title>
+  <style>html,body{margin:0;background:transparent}</style>
+</head>
+<body>
+<div id="ios-keyboard-demo" data-device="cover" data-theme="light">
+  <div class="device-picker" role="group" aria-label="モックの表示設定">
+    <span class="device-name">masuidrive-kbd</span>
+    <button type="button" data-theme="light" aria-pressed="true">Light</button>
+    <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+    <button type="button" data-device="cover" aria-pressed="true">Mobile</button>
+    <button type="button" data-device="inner" aria-pressed="false">Tablet</button>
+    <button type="button" data-dual aria-pressed="false">Dual Flick</button>
+    <button type="button" data-english-candidates aria-pressed="false">英字候補</button>
+    <span class="device-size">6.5″ · 2520 × 1080</span>
+  </div>
+  <div class="phone">
+    <div class="editor-wrap">
+      <label class="editor-label" for="ios-typing-area">キーをタップ、または指で上下左右へフリックして入力を試す<span class="count">0 文字</span></label>
+      <textarea id="ios-typing-area" aria-label="キーをタップ、または指で上下左右へフリックして入力を試す" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" rows="4" readonly>ここで実際に下のキーボードを操作できます</textarea>
+    </div>
+    <div class="sr-status" role="status" aria-live="polite"><span class="mode-label">QWERTY</span><span class="last-input">準備完了</span></div>
+    <div class="keyboard" role="group" aria-label="画面キーボード">
+      <div class="candidate-bar" role="listbox" aria-label="入力候補" hidden></div>
+      <div class="keys"></div>
+      <div class="trackpad-status" role="status" aria-live="polite" hidden>←↓↑→</div>
+      <div class="popup" aria-hidden="true" hidden></div>
+    </div>
+  </div>
+</div>
+<style>
+  #ios-keyboard-demo { --ik-paper:light-dark(#fff,#1c1c1e); --ik-editor:light-dark(#f3f4f7,#1c1c1e); --ik-ink:light-dark(#19191b,#f4f4f6); --ik-muted:light-dark(#63636b,#b5b5bd); --ik-bg:light-dark(#d3d5db,#29292c); --ik-key:light-dark(#fff,#636366); --ik-special:light-dark(#aeb3bd,#414144); --ik-line:light-dark(#e5e5ea,#38383a); --ik-blue:light-dark(#007aff,#0a84ff); --ik-active:light-dark(#e8f1ff,#263951); display:flow-root; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Noto Sans JP",sans-serif; color:var(--ik-ink); width:100%; -webkit-tap-highlight-color:transparent; }
+  #ios-keyboard-demo[data-theme=light] { color-scheme:light; }
+  #ios-keyboard-demo[data-theme=dark] { color-scheme:dark; }
+  #ios-keyboard-demo[data-embed=hero] [data-english-candidates], #ios-keyboard-demo[data-embed=hero] .device-size { display:none; }
+  #ios-keyboard-demo[data-embed=hero] .editor-wrap { height:112px; padding:10px 16px 8px; }
+  #ios-keyboard-demo[data-embed=hero] textarea { height:78px; min-height:78px; font-size:20px; }
+  #ios-keyboard-demo * { box-sizing:border-box; }
+  #ios-keyboard-demo { --ik-key:light-dark(#fff,#414144); --ik-special:light-dark(#aeb3bd,#303034); --ik-key-muted:light-dark(#73737b,#b5b5bf); --ik-selected:light-dark(#174ea6,#a8ceff); --ik-selected-ink:light-dark(#fff,#102844); --ik-popup:light-dark(#fff,#55555a); --ik-popup-ink:light-dark(#19191b,#f4f4f6); --ik-popup-line:light-dark(#d0d2d8,#74747a); }
+  #ios-keyboard-demo .device-picker { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; width:max-content; max-width:100%; gap:4px; margin:12px auto; padding:4px; border:1px solid var(--ik-line); border-radius:11px; background:var(--ik-paper); }
+  #ios-keyboard-demo .device-picker .device-name { margin:0 8px; color:var(--ik-muted); font-size:11px; white-space:nowrap; }
+  #ios-keyboard-demo .device-picker button { border:0; border-radius:7px; padding:7px 12px; background:transparent; color:var(--ik-muted); font-size:12px; }
+  #ios-keyboard-demo .device-picker button[aria-pressed=true] { background:var(--ik-active); color:var(--ik-ink); }
+  #ios-keyboard-demo .device-size { min-width:126px; margin:0 8px; color:var(--ik-muted); font:500 10px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:nowrap; }
+  #ios-keyboard-demo .phone { display:flex; flex-direction:column; width:min(100%,412px); margin:0 auto; background:var(--ik-paper); overflow:hidden; }
+  #ios-keyboard-demo[data-device=inner] .phone { width:min(100%,840px); }
+  #ios-keyboard-demo button { font-family:inherit; cursor:pointer; color:inherit; margin:0; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  #ios-keyboard-demo .topbar { display:flex; align-items:center; justify-content:space-between; padding:20px 20px 16px; }
+  #ios-keyboard-demo .app-title { font-size:19px; font-weight:500; letter-spacing:-.5px; }
+  #ios-keyboard-demo .editor-wrap { height:164px; padding:14px 20px 10px; background:var(--ik-editor); }
+  #ios-keyboard-demo .editor-label { display:flex; justify-content:space-between; font-size:11px; color:var(--ik-muted); margin-bottom:10px; }
+  #ios-keyboard-demo textarea { display:block; width:100%; height:124px; min-height:124px; resize:vertical; background:var(--ik-editor); color:var(--ik-ink); border:0; outline:0; padding:4px 0; font:400 23px/1.65 inherit; font-family:inherit; font-size:23px; line-height:1.65; caret-color:var(--ik-blue); border-radius:0; }
+  #ios-keyboard-demo textarea:focus, #ios-keyboard-demo textarea:focus-visible { outline:0; }
+  #ios-keyboard-demo textarea::placeholder { color:var(--ik-muted); opacity:.65; }
+  #ios-keyboard-demo .sr-status { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  #ios-keyboard-demo .mode-label { color:var(--ik-muted); }
+  #ios-keyboard-demo .last-input { color:var(--ik-blue); }
+  #ios-keyboard-demo .keyboard { background:var(--ik-bg); position:relative; padding:8px 3px 0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  #ios-keyboard-demo .candidate-bar { box-sizing:border-box; display:flex; align-items:center; gap:5px; height:50px; padding:10px 3px 2px; overflow-x:auto; scrollbar-width:none; }
+  #ios-keyboard-demo .candidate-bar::-webkit-scrollbar { display:none; }
+  #ios-keyboard-demo .candidate-bar[hidden] { display:flex; visibility:hidden; }
+  #ios-keyboard-demo .candidate-bar button { flex:0 0 auto; min-width:82px; height:38px; padding:0 14px; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:15px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .candidate-bar.emoji-category-bar { padding:0 5px; gap:1px; overflow-x:auto; }
+  #ios-keyboard-demo .candidate-bar.emoji-category-bar button { flex:0 0 48px; min-width:48px; width:48px; height:48px; padding:0; border-radius:0; background:transparent; box-shadow:none; font-size:20px; color:var(--ik-key-muted); }
+  #ios-keyboard-demo .candidate-bar.emoji-category-bar button[aria-selected=true] { color:var(--ik-blue); border-bottom:2px solid var(--ik-blue); }
+  #ios-keyboard-demo .candidate-bar button[aria-selected=true] { background:var(--ik-selected); color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .keys { position:relative; }
+  #ios-keyboard-demo .key-row { display:flex; justify-content:center; height:45px; margin-bottom:10px; gap:0; }
+  #ios-keyboard-demo .key { display:flex; position:relative; justify-content:center; align-items:center; flex:1; min-width:0; height:100%; background:none; border:0; padding:0 3px; font-size:25px; font-weight:400; touch-action:none; }
+  #ios-keyboard-demo .key-face { display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--ik-key); border-radius:5px; box-shadow:0 1px 0 light-dark(#898c94,#141416); width:100%; height:100%; pointer-events:none; }
+  #ios-keyboard-demo .special .key-face { background:var(--ik-special); font-size:16px; }
+  #ios-keyboard-demo .key small { font-size:10px; line-height:1.1; margin-top:2px; opacity:.7; letter-spacing:.7px; }
+  #ios-keyboard-demo .key.pressed .key-face, #ios-keyboard-demo .key.mode-on .key-face { background:var(--ik-selected); color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .key.cursor .key-face { font-size:13px; }
+  #ios-keyboard-demo .cursor-cross { position:relative; width:34px; height:34px; }
+  #ios-keyboard-demo .cursor-arrow { position:absolute; font-size:13px; line-height:1; }
+  #ios-keyboard-demo .cursor-arrow.up { top:0; left:50%; transform:translateX(-50%); }
+  #ios-keyboard-demo .cursor-arrow.left { top:50%; left:1px; transform:translateY(-50%); }
+  #ios-keyboard-demo .cursor-arrow.right { top:50%; right:1px; transform:translateY(-50%); }
+  #ios-keyboard-demo .cursor-arrow.down { bottom:0; left:50%; transform:translateX(-50%); }
+  #ios-keyboard-demo .key.home .key-face, #ios-keyboard-demo .key.end .key-face { font-size:18px; }
+  #ios-keyboard-demo .key.modifier-gesture .key-face { position:relative; }
+  #ios-keyboard-demo .key.modifier-gesture .key-main { font-size:18px; line-height:1; }
+  #ios-keyboard-demo .key.modifier-gesture .modifier-direction { position:absolute; left:0; right:0; margin:0; color:var(--ik-key-muted); font-size:10px; line-height:1; letter-spacing:0; opacity:1; transition:opacity .09s ease; }
+  #ios-keyboard-demo .key.modifier-gesture .modifier-up { top:6px; }
+  #ios-keyboard-demo .key.modifier-gesture .modifier-down { bottom:6px; }
+  #ios-keyboard-demo .key.modifier-gesture.mode-on .modifier-direction, #ios-keyboard-demo .key.modifier-gesture.choice-active .modifier-direction { opacity:0; }
+  #ios-keyboard-demo .key .key-corner { position:absolute; right:5px; bottom:4px; margin:0; color:var(--ik-key-muted); font-size:10px; line-height:1; letter-spacing:0; opacity:.76; }
+  #ios-keyboard-demo .key.mode-on .key-corner { opacity:0; }
+  #ios-keyboard-demo .popup.letter.modifier-popup { min-width:90px; font-size:24px; }
+  #ios-keyboard-demo .key.return .key-face { font-size:15px; }
+  #ios-keyboard-demo .kana .key.side { flex:1; }
+  #ios-keyboard-demo .kana .key-slot { flex:1; min-width:0; }
+  #ios-keyboard-demo .kana .key-row { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); }
+  #ios-keyboard-demo .kana.emoji-layer .key-row { grid-template-columns:repeat(8,minmax(0,1fr)); }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport::-webkit-scrollbar { display:none; }
+  #ios-keyboard-demo .kana .key-row { position:relative; }
+  #ios-keyboard-demo .kana .key.return { position:absolute; top:0; right:0; width:20%; height:calc(200% + 10px); z-index:1; }
+  #ios-keyboard-demo .kana .key, #ios-keyboard-demo .kana .key-slot { width:auto; }
+  #ios-keyboard-demo .kana .punct .key-face, #ios-keyboard-demo .kana .modifier .key-face { font-size:18px; }
+  #ios-keyboard-demo .kana .key-row { height:45px; margin-bottom:10px; }
+  #ios-keyboard-demo .english .key-row { height:45px; margin-bottom:10px; }
+  #ios-keyboard-demo .english .key { font-size:24px; }
+  #ios-keyboard-demo .english .key.has-flick { font-size:22px; }
+  #ios-keyboard-demo .english .key-row:nth-child(2) { justify-content:flex-start; padding-left:0; }
+  #ios-keyboard-demo .english .key-row:nth-child(2) .key { flex:0 0 10%; }
+  #ios-keyboard-demo .english .key-row:nth-child(2) .modifier-gesture,
+  #ios-keyboard-demo .english .key-row:nth-child(2) .flick-backspace { flex-basis:5%; }
+  #ios-keyboard-demo .english .flick-backspace .key-face { font-size:13px; }
+  #ios-keyboard-demo .key.has-flick .key-face { position:relative; overflow:hidden; padding-top:10px; }
+  #ios-keyboard-demo .key .key-main { transition:transform .09s ease,opacity .09s ease; }
+  #ios-keyboard-demo .key.letter-layer-toggle .key-face { position:relative; }
+  #ios-keyboard-demo .key.letter-layer-toggle .key-main { position:relative; z-index:1; transform:translateX(-3px); }
+  #ios-keyboard-demo .key.letter-layer-toggle .key-ghost { position:absolute; z-index:0; left:50%; top:50%; transform:translate(2px,-35%); color:var(--ik-key-muted); font-size:75%; opacity:.72; }
+  #ios-keyboard-demo .key.pressed .key-ghost, #ios-keyboard-demo .key.mode-on .key-ghost { color:var(--ik-selected-ink); opacity:1; }
+  #ios-keyboard-demo .key.letter-layer-toggle.navigation-selected .key-ghost { opacity:0; }
+  #ios-keyboard-demo .key .key-alt { position:absolute; top:3px; left:0; right:0; text-align:center; color:var(--ik-key-muted); font-size:11px; line-height:12px; transition:transform .09s ease,color .09s ease; }
+  #ios-keyboard-demo .key .key-hint { order:3; transform-origin:center; transition:transform .09s ease,color .09s ease,opacity .09s ease; }
+  #ios-keyboard-demo .key.space .key-hint { order:-1; margin:0 0 2px; }
+  #ios-keyboard-demo .key.return .key-hint { order:-1; margin:0 0 2px; }
+  #ios-keyboard-demo .key.return.mode-on .key-hint { opacity:0; }
+  #ios-keyboard-demo .key.pressed .key-alt { color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .key.flick-selected .key-alt { transform:translateY(13px) scale(1.7); color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .key.flick-selected .key-main { transform:translateY(22px); opacity:0; }
+  #ios-keyboard-demo .key.uppercase-selected .key-main { transform:translateY(-3px); color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .key.uppercase-selected .key-alt { opacity:0; }
+  #ios-keyboard-demo .trackpad .key-face, #ios-keyboard-demo .trackpad .key-face * { color:transparent!important; }
+  @media(prefers-reduced-motion:reduce) { #ios-keyboard-demo .key .key-main, #ios-keyboard-demo .key .key-alt, #ios-keyboard-demo .key .key-hint { transition:none; } }
+  #ios-keyboard-demo .english .key.backspace .key-face, #ios-keyboard-demo .english .key.return .key-face { background:var(--ik-key); }
+  #ios-keyboard-demo .english .key-row:last-child .key { flex:1.45; }
+  #ios-keyboard-demo .english .key-row:last-child .space { flex:4.2; }
+  #ios-keyboard-demo .english .space .key-face { font-size:16px; }
+  #ios-keyboard-demo .english .key-row:last-child .return { flex:2; }
+  #ios-keyboard-demo .trackpad-status { position:absolute; z-index:8; inset:8px 3px 0; display:flex; align-items:center; justify-content:center; color:var(--ik-ink); font-size:22px; font-weight:500; letter-spacing:.08em; pointer-events:none; }
+  #ios-keyboard-demo .trackpad-status[hidden] { display:none; }
+  #ios-keyboard-demo .voice .key.voice-cancel .key-face { font-size:13px; }
+  #ios-keyboard-demo .voice .voice-bottom { position:relative; }
+  #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
+  #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
+  #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; height:45px; margin:0 0 10px; padding:0 14px; overflow:hidden; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font:400 15px/45px inherit; text-align:left; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
+  #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
+  #ios-keyboard-demo .voice-status { position:absolute; left:calc(20% + 8px); top:0; height:45px; display:flex; align-items:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
+  #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
+  #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
+  #ios-keyboard-demo .popup span { position:absolute; width:50px; height:50px; background:var(--ik-popup); color:var(--ik-popup-ink); display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:27px; border:1px solid var(--ik-popup-line); }
+  #ios-keyboard-demo .popup span.chosen, #ios-keyboard-demo .popup.letter.modifier-popup { background:var(--ik-selected); color:var(--ik-selected-ink); border-color:var(--ik-selected); }
+  #ios-keyboard-demo .popup.letter { min-width:58px; height:66px; padding:4px 10px; background:var(--ik-popup); color:var(--ik-popup-ink); border:1px solid var(--ik-popup-line); border-radius:9px 9px 5px 5px; text-align:center; font-size:40px; line-height:56px; }
+  #ios-keyboard-demo .popup.accents { display:flex; background:var(--ik-popup); border:1px solid var(--ik-popup-line); border-radius:8px; padding:3px; }
+  #ios-keyboard-demo .popup.accents span { position:relative; width:34px; height:48px; font-size:25px; border:0; }
+  #ios-keyboard-demo[data-device=inner] .topbar, #ios-keyboard-demo[data-device=inner] .editor-wrap { padding-left:28px; padding-right:28px; }
+  #ios-keyboard-demo[data-device=inner] .keyboard { padding-left:10px; padding-right:10px; }
+  #ios-keyboard-demo .kana.dual .key-row { grid-template-columns:repeat(8,minmax(0,1fr)); }
+  #ios-keyboard-demo .kana.dual .key.return { width:12.5%; }
+  #ios-keyboard-demo .key.return.has-paste.flick-selected .key-hint { transform:translateY(13px) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
+  #ios-keyboard-demo .key.return.has-paste.flick-selected .key-main { transform:translateY(22px); opacity:0; }
+  #ios-keyboard-demo .key.return.control-j-selected .key-main { transform:scale(1.06); color:var(--ik-selected-ink); }
+  @media(max-width:560px) { #ios-keyboard-demo .device-picker .device-name { display:none; } #ios-keyboard-demo .device-size { min-width:0; } }
+  @media(max-width:360px) { #ios-keyboard-demo .key { padding:0 2px; } #ios-keyboard-demo .topbar { padding-top:16px; } #ios-keyboard-demo .device-size { display:none; } }
+</style>
+<script>
+(() => {
+  'use strict';
+  const root = document.getElementById('ios-keyboard-demo');
+  const $ = selector => root.querySelector(selector);
+  const editor = $('textarea'), keyboard = $('.keyboard'), keys = $('.keys'), popup = $('.popup');
+  const candidateBar = $('.candidate-bar'), trackpadStatus = $('.trackpad-status');
+  const kanaRows = [
+    [['emoji','☺'],['あ',['あ','い','う','え','お']],['か',['か','き','く','け','こ']],['さ',['さ','し','す','せ','そ']],['backspace','⌫']],
+    [['symbols','#'],['た',['た','ち','つ','て','と']],['な',['な','に','ぬ','ね','の']],['は',['は','ひ','ふ','へ','ほ']],['space','Space']],
+    [['numbers','123'],['ま',['ま','み','む','め','も']],['や',['や','（','ゆ','）','よ']],['ら',['ら','り','る','れ','ろ']],['return','Enter']],
+    [['english','ABC',{layerSwitch:true}],['modifier','小'],['わ',['わ','を','ん','ー','〜']],['punct',['、','。','？','！',''],{label:'、。?!'}],[null,'']]
+  ];
+  const tenkeyRows = [
+    [['emoji','☺'],['1','1',{text:true}],['2','2',{text:true}],['3','3',{text:true}],['backspace','⌫']],
+    [['symbols','#'],['4','4',{text:true}],['5','5',{text:true}],['6','6',{text:true}],['space','Space']],
+    [['letters','あいう'],['7','7',{text:true}],['8','8',{text:true}],['9','9',{text:true}],['return','Enter']],
+    [['english','ABC',{layerSwitch:true}],['-',['-','+','/','*',',']],['0','0',{text:true}],['.','.',{text:true}],[null,'']]
+  ];
+  const kanaRowsByLayer = {letters:kanaRows,numbers:tenkeyRows};
+  const layerToggleLabels = {
+    numbers:{main:'1',ghost:'9'},
+    letters:{main:'あ',ghost:'ん'},
+    english:{main:'A',ghost:'Z'},
+    symbols:{main:'#',ghost:'!'}
+  };
+  const layerNavigation = {left:{label:'音声',action:'voice'},up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
+  const voiceNavigation = {up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
+  const pasteNavigation = {up:{label:'C-j',action:'ctrl-j'},down:{label:'paste',action:'paste'}};
+  const conversionNavigation = {up:{label:'無変換',action:'raw-conversion'},left:{label:'カタカナ',action:'katakana-conversion'}};
+  const repeatKeys = ['backspace','left','right','up','down'];
+  const accents = {a:'àáâäæãåā',e:'èéêëēėę',i:'îïíīįì',o:'ôöòóœøōõ',u:'ûüùúū',c:'çćč',n:'ñń',s:'ßśš',y:'ÿ'};
+  const modifierCycles = ['あぁ','いぃ','うぅゔ','えぇ','おぉ','かが','きぎ','くぐ','けげ','こご','さざ','しじ','すず','せぜ','そぞ','ただ','ちぢ','つっづ','てで','とど','はばぱ','ひびぴ','ふぶぷ','へべぺ','ほぼぽ','やゃ','ゆゅ','よょ','わゎ'];
+  const conversionDictionary = {
+    'にほんご':['日本語','日本語入力'],'きょう':['今日','京都','きょう'],'あした':['明日','あした'],
+    'わたし':['私','わたし'],'かんじ':['漢字','感じ'],'へんかん':['変換','返還'],'にゅうりょく':['入力'],
+    'こんにちは':['こんにちは','今日は'],'ありがとう':['ありがとう','有難う'],'おねがいします':['お願いします'],
+    'とうきょう':['東京'],'おおさか':['大阪'],'じかん':['時間','次官'],'かいしゃ':['会社'],'かいぎ':['会議']
+  };
+  const segmenter = new Intl.Segmenter('ja',{granularity:'grapheme'});
+  const active = new Map();
+  const emojiViewportStarts = new Map(), emojiViewportDrags = new Set();
+  const composition = {reading:'',start:0,end:0,candidates:[],index:0,converted:false};
+  let preserveComposition = false;
+  // BEGIN KEY FLICK LOGIC
+  // QWERTY secondary legends, compacted to the phone-size surface.
+  const flickSymbols = Object.fromEntries([
+    ...[...'qwertyuiop'].map((key,i)=>[key,'1234567890'[i]]),
+    ...[...'asdfghjkl'].map((key,i)=>[key, '@#$&*()\'"'[i]]),
+    ...[...'zxcvbnm,.'].map((key,i)=>[key, '%-+=/;:!?'[i]])
+  ]);
+  function updateKeyFlick(p,dx,dy) {
+    if(!p.flickKey)return false;
+    const canUppercase=/^[a-z]$/.test(p.flickKey);
+    if(!p.flickAxis && Math.hypot(dx,dy)>=12) {
+      p.flickAxis=Math.abs(dy)>Math.abs(dx)&&(dy>0||canUppercase)?'vertical':'slide';
+    }
+    if(p.flickAxis==='slide')return false;
+    p.altSelected=p.flickAxis==='vertical' && dy>=(p.altSelected?10:18);
+    p.upperSelected=canUppercase && p.flickAxis==='vertical' && dy<=-(p.upperSelected?10:18);
+    return true;
+  }
+  function keyOutput(p) {
+    if(p.altSelected)return p.key.alt||p.key.gestureAlt;
+    if(p.variants)return p.variants[p.accentIndex];
+    return p.upperSelected||p.upper?p.key.text.toUpperCase():p.key.text;
+  }
+  function updateModifierFlick(p,dx,dy) {
+    if(!p.modifierFlick)return false;
+    if(!p.modifierAxis&&Math.hypot(dx,dy)>=12)p.modifierAxis=Math.abs(dy)>Math.abs(dx)?'vertical':'slide';
+    if(p.modifierAxis==='slide')return false;
+    const ctrl=dy>=(p.modifierChoice==='Control'?10:18);
+    const alt=dy<=-(p.modifierChoice==='Alt'?10:18);
+    p.modifierChoice=p.modifierAxis==='vertical'?(ctrl?'Control':alt?'Alt':null):null;
+    return true;
+  }
+  function updateNavigationFlick(p,dx,dy) {
+    if(!p.key.navigation)return false;
+    const horizontal=Boolean(p.key.navigation.left||p.key.navigation.right);
+    const vertical=Boolean(p.key.navigation.up||p.key.navigation.down);
+    if(!p.navigationAxis&&Math.hypot(dx,dy)>=12)p.navigationAxis=horizontal&&Math.abs(dx)>Math.abs(dy)?'horizontal':vertical&&Math.abs(dy)>Math.abs(dx)?'vertical':'slide';
+    if(p.navigationAxis==='slide')return false;
+    if(p.navigationAxis==='horizontal') {
+      const left=dx<=-(p.navigationChoice==='left'?10:18),right=dx>=(p.navigationChoice==='right'?10:18);
+      p.navigationChoice=left?'left':right?'right':null;
+    } else if(vertical) {
+      const up=dy<=-(p.navigationChoice==='up'?10:18),down=dy>=(p.navigationChoice==='down'?10:18);
+      p.navigationChoice=up?'up':down?'down':null;
+    } else p.navigationChoice=null;
+    return true;
+  }
+  function lockSwipeAxis(currentAxis,dx,dy) {
+    if(currentAxis)return currentAxis;
+    if(Math.hypot(dx,dy)<10)return null;
+    return Math.abs(dx)>Math.abs(dy)?'horizontal':'vertical';
+  }
+  function modifiedKey(text,modifier,shifted=false) {
+    const letter=/^[a-z]$/i.test(text);
+    return {key:letter?(shifted?text.toUpperCase():text.toLowerCase()):text,ctrlKey:modifier==='Control',altKey:modifier==='Alt',shiftKey:shifted};
+  }
+  function verticalTarget(stops,pos,amount,preferredX) {
+    const current=stops.find(s=>s.pos===pos)||stops[0];
+    const x=preferredX??current.x;
+    const nextRows=stops.filter(s=>amount<0?s.y<current.y-2:s.y>current.y+2);
+    if(!nextRows.length)return {pos:amount<0?stops[0].pos:stops.at(-1).pos,x};
+    const y=amount<0?Math.max(...nextRows.map(s=>s.y)):Math.min(...nextRows.map(s=>s.y));
+    const row=nextRows.filter(s=>Math.abs(s.y-y)<2);
+    return {pos:row.reduce((best,s)=>Math.abs(s.x-x)<Math.abs(best.x-x)?s:best).pos,x};
+  }
+  // END KEY FLICK LOGIC
+  const params=new URLSearchParams(location.search);
+  const heroEmbed=params.get('embed')==='hero';
+  const requestedVoiceDelayMs=Number(params.get('voiceDelayMs'));
+  const voiceDemoDurationMs=Number.isFinite(requestedVoiceDelayMs)
+    ?Math.min(10000,Math.max(1,requestedVoiceDelayMs)):10000;
+  if(heroEmbed) {
+    root.dataset.embed='hero';
+  }
+  const demoStateVersion=2;
+  const isDesktopVisitor=matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const defaultDevice=isDesktopVisitor?'inner':root.getBoundingClientRect().width>=600?'inner':'cover';
+  let device=defaultDevice;
+  let language = isDesktopVisitor?'kana':'english', layer = 'letters', pendingModifier = null, lastSpace = -Infinity;
+  let dualEnabled = isDesktopVisitor, englishCandidatesEnabled = false;
+  const slashCommands=['/compact','/clear','/quit'];
+  const emojiCategories=[
+    ['recent','◷',[]],['faces','😀',['😀','😂','🥹','😍','😭','😊','🤔','😎','🙌','👏','✨','💯','❤️','🔥','🎉','🙏','😅','🤣','😉','🙂','🙃','😇','🥳','😴','🤗','🤩','😋','😜','😡','🥺','😱','🤭']],
+    ['people','👋',['👋','👍','👎','👏','🙏','💪','👀','🧑','👩','👨','👶','👵','🧠','🫶','🤝','✍️','🙋','🙆','🙇','🤷','💁','🧑‍💻','👩‍🍳','👨‍🚀','🧑‍🎓','👮','👷','🕵️','💂','🥷','🤴','👸']],
+    ['nature','🌿',['🌸','🍀','🌈','🌞','🌙','⭐','🐶','🐱','🦊','🌳','🌊','🔥','❄️','🌍','🪴','🐝','🐼','🐸','🐵','🦁','🐯','🐨','🐰','🐻','🐙','🐳','🦋','🌵','🌴','🍁','🌻','🌧️']],
+    ['food','🍣',['🍣','☕','🍜','🍙','🍺','🍰','🍎','🍓','🥑','🍕','🍔','🍩','🧃','🍷','🥂','🍫','🍇','🍉','🍌','🍒','🥝','🍋','🥕','🥦','🌽','🥐','🍞','🧀','🥗','🍛','🍱','🍤']],
+    ['travel','🏙️',['🚗','🚕','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🛻','🚚','🚲','🛵','🏍️','🚂','🚆','🚇','✈️','🚀','🚁','⛵','🚢','🏠','🏢','🏫','🏥','🏰','🗼','🗽','⛩️','🌋','🏖️']],
+    ['activities','🏆',['⚽','🏀','🏈','⚾','🎾','🏐','🏉','🥏','🎱','🏓','🏸','🥅','⛳','🏹','🎣','🤿','🥊','🥋','🎽','🛹','🛼','🛷','⛸️','🥌','🎿','🏂','🏋️','🤸','🎯','🎮','🎲','🏆']],
+    ['objects','💡',['💡','📌','🚀','🎈','📷','💻','📱','⌚','🎵','🎁','📚','✏️','🔑','💎','🧸','🛠️','💰','💳','💊','🧪','🔬','💡','🔋','🖥️','🖨️','📺','🎧','🎸','🏆','⚙️','🧲','🪄']],
+    ['symbols','✓',['✅','❌','⚽','💯','🧡','♻️','⚠️','❓','‼️','💤','💬','🔔','🔒','❤️‍🔥','➕','⭐','☑️','⭕','🚫','🔴','🟢','🔵','🟡','⬆️','⬇️','⬅️','➡️','↗️','♠️','♥️','♦️','♣️']],
+    ['flags','🏳️',['🏳️','🏴','🏁','🚩','🏳️‍🌈','🏳️‍⚧️','🇯🇵','🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇮🇹','🇨🇦','🇦🇺','🇨🇳','🇰🇷','🇮🇳','🇧🇷','🇲🇽','🇪🇸','🇹🇼','🇭🇰','🇸🇬','🇹🇭','🇻🇳','🇵🇭','🇮🇩','🇲🇾','🇳🇿','🇿🇦','🇪🇺','🏴‍☠️']],
+  ];
+  let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
+  const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,turn:0};
+  let renderedCandidateContentKey=null;
+  try {
+    const saved=JSON.parse(localStorage.getItem('gesture-ime-demo-state')||'null');
+    if(saved?.version===demoStateVersion) {
+      if(['cover','inner'].includes(saved.device))device=saved.device;
+      if(['english','kana'].includes(saved.language))language=saved.language;
+      if(['letters','symbols','numbers','emoji'].includes(saved.layer))layer=saved.layer;
+      if(Array.isArray(saved.emojiRecents))emojiRecents=[...new Set(saved.emojiRecents.filter(value=>typeof value==='string'&&value))].slice(0,100);
+      if(Number.isFinite(saved.emojiScrollTop))emojiScrollTop=Math.max(0,saved.emojiScrollTop);
+      dualEnabled=Boolean(saved.dualEnabled);
+      englishCandidatesEnabled=Boolean(saved.englishCandidatesEnabled);
+      if(['light','dark'].includes(saved.theme))root.dataset.theme=saved.theme;
+    }
+  } catch (_) {}
+  root.dataset.device=device;
+  const initialDemoText=editor.value;
+  let showingInitialDemoText=editor.value===initialDemoText;
+  function clearInitialDemoTextForInput() {
+    if(!showingInitialDemoText)return;
+    editor.value='';editor.setSelectionRange(0,0);showingInitialDemoText=false;
+  }
+  const persistState=()=>{try{localStorage.setItem('gesture-ime-demo-state',JSON.stringify({version:demoStateVersion,device,language,layer,dualEnabled,englishCandidatesEnabled,emojiRecents,emojiScrollTop,theme:root.dataset.theme}));}catch(_){}};
+  let keyMap = new Map();
+  let preferredCursorX = null;
+  const segments = text => [...segmenter.segment(text)];
+  function updateCount() { $('.count').textContent = segments(editor.value).length+' 文字'; }
+  function announce(text) { $('.last-input').textContent = text; }
+  const modifierLabel=value=>value==='Control'?'Ctrl':value;
+  function currentModifier() { return [...active.values()].find(p=>p.modifierChoice&&!p.used)?.modifierChoice||pendingModifier; }
+  function applyModified(text,modifier=currentModifier(),shifted=false) {
+    if(!modifier)return false;
+    const detail=modifiedKey(text,modifier,shifted);
+    pendingModifier=null;lastSpace=-Infinity;
+    for(const held of active.values())if(held.modifierChoice===modifier)held.used=true;
+    const event=new CustomEvent('virtualkey',{detail,bubbles:true,cancelable:true});
+    const useDefault=editor.dispatchEvent(event);
+    if(useDefault&&detail.ctrlKey&&detail.key.toLowerCase()==='a') {
+      editor.focus({preventScroll:true});editor.setSelectionRange(0,editor.value.length);
+    }
+    announce(modifierLabel(modifier)+(detail.shiftKey?' + Shift':'')+' + '+(detail.key===' '?'Space':detail.key.length===1?detail.key.toUpperCase():detail.key));
+    return true;
+  }
+  function clearComposition() {
+    Object.assign(composition,{reading:'',start:0,end:0,candidates:[],index:0,converted:false});
+  }
+  function conversionCandidates(reading) {
+    const katakana=reading.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
+    return [...new Set([...(conversionDictionary[reading]||[]),reading,katakana])];
+  }
+  function syncComposition() {
+    if(language!=='kana'||layer!=='letters'||editor.selectionStart!==editor.selectionEnd) {clearComposition();return;}
+    const end=editor.selectionStart,match=editor.value.slice(0,end).match(/[\u3041-\u3096ー〜]+$/u);
+    if(!match) {clearComposition();return;}
+    Object.assign(composition,{reading:match[0],start:end-match[0].length,end,candidates:conversionCandidates(match[0]),index:0,converted:false});
+  }
+  function replaceComposition(index,commit=false) {
+    if(!composition.reading||!composition.candidates.length)return false;
+    const choice=composition.candidates[(index+composition.candidates.length)%composition.candidates.length];
+    preserveComposition=true;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});
+    editor.setRangeText(choice,composition.start,composition.end,'end');
+    composition.end=composition.start+choice.length;composition.index=(index+composition.candidates.length)%composition.candidates.length;composition.converted=true;
+    editor.dispatchEvent(new Event('input',{bubbles:true}));preserveComposition=false;
+    announce(commit?'確定：'+choice:'変換：'+choice);
+    if(commit)clearComposition();
+    render();return true;
+  }
+  function commitCompositionValue(value) {
+    if(!composition.reading)return false;
+    preserveComposition=true;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});
+    editor.setRangeText(value,composition.start,composition.end,'end');
+    editor.dispatchEvent(new Event('input',{bubbles:true}));preserveComposition=false;
+    announce('確定：'+value);clearComposition();render();return true;
+  }
+  const englishSuggestionWords=['compact','clear','quit','project','prompt','program','product','problem','keyboard','gesture','android','candidate'];
+  function englishPrefix() {
+    if(language!=='english'||layer!=='letters'||editor.selectionStart!==editor.selectionEnd)return null;
+    const end=editor.selectionStart,match=editor.value.slice(0,end).match(/[A-Za-z]+$/);
+    return match&&match[0].length>=1?{raw:match[0],start:end-match[0].length,end}:null;
+  }
+  function replaceEnglishCandidate(candidate) {
+    const prefix=englishPrefix();if(!prefix)return;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});editor.setRangeText(candidate,prefix.start,prefix.end,'end');
+    editor.dispatchEvent(new Event('input',{bubbles:true}));announce('候補を確定：'+candidate);render();
+  }
+  function slashPrefix() {
+    if(language!=='english'||layer!=='letters'||editor.selectionStart!==editor.selectionEnd)return null;
+    const end=editor.selectionStart,match=editor.value.slice(0,end).match(/\/[A-Za-z]*$/);
+    return match?{raw:match[0],start:end-match[0].length,end}:null;
+  }
+  function replaceSlashCommand(candidate) {
+    const prefix=slashPrefix();if(!prefix)return;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});editor.setRangeText(candidate,prefix.start,prefix.end,'end');
+    editor.dispatchEvent(new Event('input',{bubbles:true}));announce('コマンドを確定：'+candidate);render();
+  }
+  function clearVoiceTimers() {voiceDemo.timers.forEach(clearTimeout);voiceDemo.timers=[];}
+  function startVoiceDemoRecognition() {
+    const generation=++voiceDemo.generation;
+    const turn=voiceDemo.turn;
+    const results=turn%2===0
+      ?['こんにちは、音声入力を試しています','こんにちは。音声入力を試しています','音声入力を試しています']
+      :['続けて入力しています'];
+    Object.assign(voiceDemo,{phase:'listening',partial:'聞き取っています…',candidates:[],index:0,committed:false});
+    clearVoiceTimers();
+    const isCurrent=()=>voiceDemo.active&&voiceDemo.generation===generation;
+    voiceDemo.timers=[
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは';render(true);announce('認識途中：こんにちは');},voiceDemoDurationMs*.045),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは、音声入力を';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.095),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial=turn%2===0?'こんにちは、音声入力を試しています':'続けて入力しています';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.85),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.phase='ready';voiceDemo.candidates=results;voiceDemo.index=0;render(true);announce(turn%2===0?'認識結果を選べます':'最終結果がないため、最後の途中結果を選べます');},voiceDemoDurationMs)
+    ];
+  }
+  function beginVoiceDemo(p) {
+    if(voiceDemo.active)return;
+    p.voiceTriggered=true;
+    Object.assign(voiceDemo,{active:true,returnState:{language,layer},turn:0});
+    navigator.vibrate?.([35,45,35]);announce('模擬音声認識を開始');
+    startVoiceDemoRecognition();
+    render(true);
+  }
+  function leaveVoiceDemo(canceled) {
+    if(!voiceDemo.active)return;
+    clearVoiceTimers();
+    const previous=voiceDemo.returnState||{language:'english',layer:'letters'};
+    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,generation:voiceDemo.generation+1});
+    language=previous.language;layer=previous.layer;
+    announce(canceled?'音声入力を取り消し':'音声入力を終了');render(true);
+  }
+  function commitVoiceCandidate(index) {
+    if(!voiceDemo.active||voiceDemo.phase!=='ready'||voiceDemo.committed)return;
+    const text=voiceDemo.candidates[index];if(!text)return;
+    voiceDemo.committed=true;clearVoiceTimers();
+    preserveComposition=true;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');
+    editor.dispatchEvent(new Event('input',{bubbles:true}));preserveComposition=false;clearComposition();
+    voiceDemo.turn++;
+    announce('音声入力：'+text+'。次の認識を開始');
+    startVoiceDemoRecognition();render(true);
+  }
+  function leaveVoiceForLayer(actionId) {
+    if(!voiceDemo.active)return;
+    clearVoiceTimers();
+    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,committed:false,generation:voiceDemo.generation+1});
+    if(actionId==='english') {language='english';layer='letters';}
+    else if(actionId==='kana-numbers') {language='kana';layer='numbers';}
+    else {language='kana';layer='letters';}
+    pendingModifier=null;clearComposition();announce('レイヤーを切り替え');render(true);
+  }
+  function renderCandidates() {
+    candidateBar.replaceChildren();
+    candidateBar.classList.toggle('emoji-category-bar',!voiceDemo.active&&language==='kana'&&layer==='emoji');
+    if(voiceDemo.active) {
+      candidateBar.hidden=true;
+      candidateBar.setAttribute('role','listbox');candidateBar.setAttribute('aria-label','入力候補');
+      resetCandidateScrollIfChanged('voice');return;
+    }
+    if(language==='kana'&&layer==='emoji') {
+      candidateBar.hidden=false;
+      candidateBar.setAttribute('role','tablist');candidateBar.setAttribute('aria-label','絵文字カテゴリ');
+      emojiCategories.forEach(([id,icon])=>{
+        const button=document.createElement('button');button.type='button';button.dataset.emojiCategory=id;
+        button.textContent=icon;button.setAttribute('aria-label',id==='recent'?'最近使った絵文字':id+'カテゴリ');
+        button.setAttribute('role','tab');button.setAttribute('aria-selected',String(id===emojiCategory));candidateBar.append(button);
+      });
+      resetCandidateScrollIfChanged('emoji-category');return;
+    }
+    candidateBar.setAttribute('role','listbox');candidateBar.setAttribute('aria-label','入力候補');
+    if(language==='kana'&&layer==='letters'&&composition.reading) {
+      candidateBar.hidden=false;
+      composition.candidates.forEach((candidate,index)=>{
+        const button=document.createElement('button');button.type='button';button.dataset.candidateIndex=String(index);
+        button.setAttribute('role','option');button.setAttribute('aria-selected',String(composition.converted&&index===composition.index));
+        button.textContent=candidate;candidateBar.append(button);
+      });
+      resetCandidateScrollIfChanged('kana\0'+composition.candidates.join('\0'));return;
+    }
+    const command=slashPrefix();
+    if(command) {
+      const candidates=slashCommands.filter(value=>value.startsWith(command.raw));
+      candidateBar.hidden=!candidates.length;
+      candidates.forEach(candidate=>{
+        const button=document.createElement('button');button.type='button';button.dataset.slashCandidate=candidate;
+        button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
+      });
+      resetCandidateScrollIfChanged('slash\0'+candidates.join('\0'));return;
+    }
+    const prefix=englishCandidatesEnabled?englishPrefix():null;
+    const candidates=prefix?englishSuggestionWords
+      .filter(word=>word.startsWith(prefix.raw.toLowerCase())&&word!==prefix.raw.toLowerCase()).slice(0,5)
+      .map(word=>prefix.raw===prefix.raw.toUpperCase()?word.toUpperCase():prefix.raw+word.slice(prefix.raw.length)):[];
+    candidateBar.hidden=!candidates.length;
+    candidates.forEach(candidate=>{
+      const button=document.createElement('button');button.type='button';button.dataset.englishCandidate=candidate;
+      button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
+    });
+    resetCandidateScrollIfChanged(candidates.length?'english\0'+candidates.join('\0'):'none');
+  }
+  function resetCandidateScrollIfChanged(contentKey) {
+    if(contentKey===renderedCandidateContentKey)return;
+    renderedCandidateContentKey=contentKey;
+    candidateBar.scrollLeft=0;
+  }
+  function insert(text) {
+    if (!text) return;
+    if(composition.converted)clearComposition();
+    preferredCursorX=null;
+    clearInitialDemoTextForInput();
+    editor.focus({preventScroll:true});
+    editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');
+    editor.dispatchEvent(new Event('input',{bubbles:true}));
+    announce(text==='\n'?'改行':text===' '?'空白':text);
+  }
+  function insertEmoji(emoji) {
+    insert(emoji);
+    emojiRecents=[emoji,...emojiRecents.filter(value=>value!==emoji)].slice(0,100);
+    emojiCategory='recent'; emojiScrollTop=0;
+    render();
+  }
+  function erase() {
+    preferredCursorX=null;
+    const start=editor.selectionStart,end=editor.selectionEnd;
+    if(start===end && start===0)return;
+    showingInitialDemoText=false;
+    const previous=segments(editor.value.slice(0,start)).at(-1);
+    editor.setRangeText('',start===end ? previous.index : start,end,'end');
+    editor.focus({preventScroll:true});editor.dispatchEvent(new Event('input',{bubbles:true}));lastSpace=-Infinity;announce('削除');
+  }
+  const cursorDirectionLabel = (horizontal,vertical) => {
+    if(vertical<0)return '↑ 上';
+    if(vertical>0)return '↓ 下';
+    if(horizontal<0)return '← 左';
+    if(horizontal>0)return '→ 右';
+    return 'カーソル';
+  };
+  function moveCursor(amount) {
+    preferredCursorX=null;
+    const boundaries=[0,...segments(editor.value).map(s=>s.index+s.segment.length)];
+    const selected=editor.selectionStart!==editor.selectionEnd;
+    const start=amount>0?editor.selectionEnd:editor.selectionStart;
+    let index=boundaries.findIndex(p=>p>=start);
+    const delta=selected?amount-Math.sign(amount):amount;
+    setCursor(boundaries[Math.max(0,Math.min(boundaries.length-1,index+delta))],null,cursorDirectionLabel(amount,0));
+  }
+  function caretStops() {
+    // Measure the same text and wrapping as the textarea, without changing it.
+    const mirror=document.createElement('div'),style=getComputedStyle(editor);
+    for(const name of ['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','paddingTop','paddingBottom','paddingLeft','paddingRight','tabSize','direction','wordBreak'])mirror.style[name]=style[name];
+    Object.assign(mirror.style,{position:'absolute',visibility:'hidden',pointerEvents:'none',left:'0',top:'0',width:editor.clientWidth+'px',boxSizing:'border-box',whiteSpace:'pre-wrap',overflowWrap:'break-word'});
+    mirror.setAttribute('aria-hidden','true');
+    const text=document.createTextNode(editor.value+'\u200b');mirror.append(text);root.append(mirror);
+    try {
+      const base=mirror.getBoundingClientRect(),range=document.createRange();
+      return [0,...segments(editor.value).map(s=>s.index+s.segment.length)].map(pos=>{
+        range.setStart(text,pos);range.collapse(true);
+        const rect=range.getBoundingClientRect();
+        return {pos,x:rect.x-base.x,y:rect.y-base.y};
+      });
+    } finally {mirror.remove();}
+  }
+  function setCursor(pos,stops=null,label='カーソル移動') {
+    clearComposition();
+    editor.focus({preventScroll:true});editor.setSelectionRange(pos,pos);lastSpace=-Infinity;
+    if(stops) {
+      const caret=stops.find(s=>s.pos===pos),lineHeight=parseFloat(getComputedStyle(editor).lineHeight);
+      if(caret.y<editor.scrollTop)editor.scrollTop=caret.y;
+      else if(caret.y+lineHeight>editor.scrollTop+editor.clientHeight)editor.scrollTop=caret.y+lineHeight-editor.clientHeight;
+    }
+    announce(label);
+  }
+  function moveVertical(amount) {
+    const stops=caretStops(),pos=amount>0?editor.selectionEnd:editor.selectionStart;
+    const target=verticalTarget(stops,pos,amount,preferredCursorX);
+    preferredCursorX=target.x;setCursor(target.pos,stops,cursorDirectionLabel(0,amount));
+  }
+  function beginTrackpad(p,dx=0,dy=0) {
+    clearTimeout(p.timer);p.trackpad=true;p.trackpadAxis=lockSwipeAxis(null,dx,dy);p.cursorX=p.x;p.cursorY=p.y;lastSpace=-Infinity;
+    keyboard.classList.add('trackpad');keyboard.classList.remove('popup-active');popup.hidden=true;
+    trackpadStatus.hidden=false;trackpadStatus.textContent='←↓↑→';announce('カーソル移動');
+  }
+  function modify() {
+    const end=editor.selectionStart;if(end!==editor.selectionEnd)return;
+    const prev=segments(editor.value.slice(0,end)).at(-1);if(!prev)return;
+    const cycle=modifierCycles.find(c=>c.includes(prev.segment));if(!cycle)return;
+    const next=cycle[(cycle.indexOf(prev.segment)+1)%cycle.length];
+    editor.setSelectionRange(prev.index,end);insert(next);
+  }
+  function transformKana(kind) {
+    if(kind==='cycle')return modify();
+    const maps={
+      small:'あぁいぃうぅえぇおぉつっやゃゆゅよょわゎ',
+      dakuten:'かがきぎくぐけげこござじすずせぜそぞただちぢつづてでとどはばひびふぶへべほぼうゔ',
+      handakuten:'はぱひぴふぷへぺほぽ'
+    };
+    const end=editor.selectionStart;if(end!==editor.selectionEnd)return;
+    const prev=segments(editor.value.slice(0,end)).at(-1),pairs=maps[kind];if(!prev||!pairs)return;
+    const index=pairs.indexOf(prev.segment);if(index<0)return;
+    const next=pairs[index%2===0?index+1:index-1];editor.setSelectionRange(prev.index,end);insert(next);
+  }
+  function action(id,modifier=currentModifier()) {
+    if(voiceDemo.active&&id==='voice-cancel') {leaveVoiceDemo(true);return true;}
+    if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
+    const specialKeys={backspace:'Backspace',space:' ',return:'Enter',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',home:'Home',end:'End'};
+    if(specialKeys[id]&&applyModified(specialKeys[id],modifier)) {render();return true;}
+    if(id!=='space')lastSpace=-Infinity;
+    if(id==='backspace'||id==='flick-backspace')erase();
+    else if(id==='left'||id==='right')moveCursor(id==='left'?-1:1);
+    else if(id==='up'||id==='down')moveVertical(id==='up'?-1:1);
+    else if(id==='home'||id==='end') {preferredCursorX=null;setCursor(id==='home'?0:editor.value.length,null,id==='home'?'⇤ 先頭':'⇥ 末尾');editor.scrollTop=id==='home'?0:editor.scrollHeight;}
+    else if(id==='modifier')modify();
+    else if(id==='escape')announce('ESC');
+    else if(id==='ctrl-j')applyModified('j','Control');
+    else if(id==='voice')announce('音声入力レイヤーを開きます');
+    else if(id==='raw-conversion'&&composition.reading) {commitCompositionValue(composition.reading);}
+    else if(id==='katakana-conversion'&&composition.reading) {
+      const katakana=composition.reading.replace(/[\u3041-\u3096]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
+      commitCompositionValue(katakana);
+    }
+    else if(id==='return') {
+      if(composition.reading) {announce('確定');clearComposition();}
+      else insert('\n');
+    }
+    else if(id==='space') {
+      const now=performance.now(),pos=editor.selectionStart;
+      if(language==='kana'&&layer==='letters'&&composition.reading) {
+        replaceComposition(composition.converted?composition.index+1:0);return true;
+      }else if(language==='english'&&now-lastSpace<350&&pos===editor.selectionEnd&&/[\p{L}\p{N}][ ]$/u.test(editor.value.slice(0,pos))) {
+        editor.setSelectionRange(pos-1,pos);insert('. ');lastSpace=-Infinity;
+      }else {insert(' ');lastSpace=now;}
+    }else if(id==='paste') {
+      clearComposition();
+      if(navigator.clipboard?.readText)navigator.clipboard.readText().then(text=>{if(text)insert(text);else announce('クリップボードは空です');render();}).catch(()=>{announce('Pasteを利用できません');render();});
+      else announce('Pasteを利用できません');
+    }else if(id==='modifier-gesture') {if(pendingModifier){pendingModifier=null;announce('修飾キーを解除');}}
+    else if(id==='symbols') {if(language==='kana'){language='english';layer='symbols';}else layer=layer==='letters'?'symbols':'letters';clearComposition();}
+    else if(id==='symbol-layer') {language='english';layer='symbols';pendingModifier=null;clearComposition();}
+    else if(id==='kana-numbers') {language='kana';layer='numbers';pendingModifier=null;clearComposition();}
+    else if(id==='kana-emoji') {language='kana';layer='emoji';emojiScrollTop=0;clearComposition();}
+    else if(id==='numbers') {layer='numbers';clearComposition();}
+    else if(id==='letters') {layer='letters';clearComposition();}
+    else if(id==='emoji') {language='kana';layer='emoji';emojiScrollTop=0;clearComposition();}
+    else if(['english','kana'].includes(id)) {language=id;layer='letters';pendingModifier=null;clearComposition();}
+    render();
+  }
+  // Layout data, DOM creation and runtime state are kept separate so this
+  // remains one portable HTML file without turning render() into a monolith.
+  const makeKey=(id,label,options={})=>({id,label,...options});
+  const textKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,preview:'press'}));
+  const letterKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,alt:flickSymbols[c],preview:'press'}));
+  const modifierGesture=()=>makeKey('modifier-gesture','',{modifierFlick:true,preview:'selection'});
+  const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'ESC',altAction:'escape',preview:'selection'});
+  const modifierGlyph=value=>value==='Control'?'C':value==='Alt'?'A':'';
+  function emojiRows() {
+    const category=emojiCategories.find(([id])=>id===emojiCategory)||emojiCategories[0];
+    const values=emojiCategory==='recent'?emojiRecents:category[2];
+    const entries=values.map((emoji,index)=>makeKey('emoji-'+index,emoji,{text:emoji,emoji:true,preview:'press'}));
+    const content=[];
+    for(let index=0;index<entries.length;index+=8)content.push([...entries.slice(index,index+8),...Array(Math.max(0,8-entries.slice(index,index+8).length)).fill(null).map(()=>makeKey(null,''))]);
+    return {content,controls:[makeKey('english','ABC',{special:true,navigation:layerNavigation,gridSpan:2}),makeKey(null,'',{gridSpan:4}),makeKey('backspace','⌫',{special:true,gridSpan:2})]};
+  }
+  function createKanaKey([id,value,options={}],index) {
+    if(id===null)return makeKey(null,'');
+    const transform=id==='modifier'?['小','゛','小','゜','']:null;
+    const flick=transform||Array.isArray(value)?(transform||value):null;
+    const toggle=layerToggleLabels[id];
+    const text=options.text?value:null;
+    const converting=id==='return'&&Boolean(composition.reading);
+    return makeKey(id,converting?'確定':toggle?.main??options.label??(flick?flick[0]:value),{
+      flick,
+      transformActions:transform?['cycle','dakuten','small','handakuten',null]:null,
+      text,
+      hint:converting?null:id==='return'?'paste':options.hint??null,
+      ghost:toggle?.ghost??null,
+      navigation:converting?conversionNavigation:id==='return'?pasteNavigation:options.layerSwitch?layerNavigation:null,
+      preview:flick||text?'press':null,
+      visual:options.visual??null,
+      special:index===0||index===4,
+      side:index===0||index===4
+    });
+  }
+  function englishBottomRow() {
+    return [
+      makeKey('kana','あ',{special:true,ghost:'ん',navigation:layerNavigation}),
+      makeKey('space','Space',{hint:'←↓↑→'}),
+      makeKey('return','Enter',{hint:'paste',navigation:pasteNavigation})
+    ];
+  }
+  function qwertyRows() {
+    return [
+      letterKeys('qwertyuiop'),
+      [modifierGesture(),...letterKeys('asdfghjkl'),flickBackspace()],
+      [makeKey('symbols','#',{special:true,ghost:'!'}),...letterKeys('zxcvbnm,.')],
+      englishBottomRow()
+    ];
+  }
+  function symbolRows() {
+    return [
+      textKeys('1234567890'),
+      [modifierGesture(),...textKeys('^_\\|~{}[]'),flickBackspace()],
+      [makeKey('symbols','A',{special:true,ghost:'Z'}),makeKey('escape','ESC'),...textKeys('`!?;:<>-')],
+      englishBottomRow()
+    ];
+  }
+  function keyboardRows() {
+    if(language==='kana') {
+      if(layer==='emoji') return emojiRows();
+      const rows=kanaRowsByLayer[layer].map(row=>row.map(createKanaKey));
+      return dualEnabled&&keyboard.getBoundingClientRect().width>=600&&layer==='letters'
+        ?rows.map(row=>[row[0],...row.slice(1,4),...row.slice(1,4),row[4]])
+        :rows;
+    }
+    return layer==='letters'?qwertyRows():symbolRows();
+  }
+  function keyAriaLabel(key) {
+    const layerDirections='左フリックで音声入力レイヤー、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー';
+    const names={
+      backspace:'削除',
+      'flick-backspace':'タップで削除、下フリックでESC',
+      'modifier-gesture':pendingModifier
+        ?modifierLabel(pendingModifier)+' 選択中。タップで解除、下スワイプでCtrl、上スワイプでAlt'
+        :'下スワイプでCtrl、上スワイプでAlt、タップは無効',
+      modifier:'小文字・濁点・半濁点',
+      left:'カーソルを左へ',
+      right:'カーソルを右へ',
+      up:'カーソルを上の行へ',
+      down:'カーソルを下の行へ',
+      home:'文章の先頭へ',
+      end:'文章の末尾へ',
+      escape:'ESC',
+      emoji:'絵文字レイヤーへ切り替える',
+      space:'Space。フリックでカーソル移動',
+      return:composition.reading?'確定。上フリックで無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
+      numbers:'テンキーへ切り替える',
+      kana:'タップで日本語。'+layerDirections,
+      symbols:language==='kana'?'記号へ切り替える':layer==='letters'?'記号へ切り替える':'QWERTYへ戻る',
+      letters:'日本語へ戻る',
+      english:key.navigation?'タップでQWERTY。'+layerDirections:'QWERTYへ切り替える',
+    };
+    if(names[key.id])return names[key.id];
+    const baseLabel=key.flick?key.flick.filter(Boolean).join(' '):key.label;
+    if(!key.alt)return baseLabel;
+    const uppercaseHint=/^[a-z]$/.test(key.id)?'、上スワイプで大文字':'';
+    return baseLabel+'、下フリックで '+key.alt+uppercaseHint;
+  }
+  function createCursorCross() {
+    const cross=document.createElement('span');
+    cross.className='cursor-cross';
+    const directions=['up','left','right','down'];
+    ['↑','←','→','↓'].forEach((glyph,index)=>{
+      const arrow=document.createElement('span');
+      arrow.className='cursor-arrow '+directions[index];
+      arrow.textContent=glyph;
+      cross.append(arrow);
+    });
+    return cross;
+  }
+  function createKeyElement(key) {
+    if(key.id===null) {
+      const slot=document.createElement('span');
+      slot.className='key-slot';
+      if(key.gridSpan)slot.style.gridColumn='span '+key.gridSpan;
+      slot.setAttribute('aria-hidden','true');
+      return slot;
+    }
+    keyMap.set(key.id,key);
+    const button=document.createElement('button');
+    const classNames=[
+      'key',key.id,
+      key.special?'special':null,
+      key.side?'side':null,
+      key.ghost?'letter-layer-toggle':null,
+      key.id==='return'&&key.hint==='paste'?'has-paste':null,
+      key.id==='modifier-gesture'&&pendingModifier?'mode-on':null,
+      key.alt||key.gestureAlt?'has-flick':null
+    ].filter(Boolean);
+    button.type='button';
+    button.dataset.key=key.id;
+    button.className=classNames.join(' ');
+    if(key.gridSpan) button.style.gridColumn='span '+key.gridSpan;
+    button.setAttribute('aria-label',keyAriaLabel(key));
+    if(key.id==='emoji') {
+      button.classList.toggle('mode-on',layer==='emoji');
+      button.setAttribute('aria-pressed',String(layer==='emoji'));
+    }
+    const face=document.createElement('span');
+    face.className='key-face';
+    const main=document.createElement('span');
+    main.className='key-main';
+    main.textContent=key.id==='modifier-gesture'?modifierGlyph(pendingModifier):key.visual==='cursor-cross'?'':key.label;
+    face.append(main);
+    if(key.visual==='cursor-cross')face.append(createCursorCross());
+    if(key.ghost) {
+      const ghost=document.createElement('span');
+      ghost.className='key-ghost';
+      ghost.textContent=key.ghost;
+      face.prepend(ghost);
+    }
+    if(key.id==='modifier-gesture') {
+      const up=document.createElement('small');
+      const down=document.createElement('small');
+      up.className='modifier-direction modifier-up';
+      down.className='modifier-direction modifier-down';
+      up.textContent='C';
+      down.textContent='A';
+      up.setAttribute('aria-hidden','true');
+      down.setAttribute('aria-hidden','true');
+      face.prepend(up);
+      face.append(down);
+    }
+    if(key.alt) {
+      const alt=document.createElement('span');
+      alt.className='key-alt';
+      alt.textContent=key.alt;
+      alt.setAttribute('aria-hidden','true');
+      face.append(alt);
+    }
+    if(key.hint) {
+      const hint=document.createElement('small');
+      hint.className='key-hint';
+      hint.textContent=key.hint;
+      face.append(hint);
+    }
+    if(key.corner) {
+      const corner=document.createElement('small');
+      corner.className='key-corner';
+      corner.textContent=key.corner;
+      corner.setAttribute('aria-hidden','true');
+      face.append(corner);
+    }
+    button.append(face);
+    return button;
+  }
+  function renderKeys() {
+    if(voiceDemo.active) {
+      const bottomRow=[
+        makeKey('voice-cancel','キャンセル',{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
+        ...[1,2,3,4].map(()=>makeKey(null,''))
+      ];
+      keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice';
+      const viewport=document.createElement('div');viewport.className='voice-candidate-viewport';viewport.setAttribute('aria-label','音声認識候補');
+      if(voiceDemo.phase==='ready') {
+        voiceDemo.candidates.forEach((candidate,index)=>{
+          const button=document.createElement('button');button.type='button';button.className='voice-candidate';button.dataset.voiceCandidate=String(index);button.textContent=candidate;viewport.append(button);
+        });
+      } else if(voiceDemo.phase==='error'||voiceDemo.phase==='unavailable') {
+        const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
+      }
+      const bottom=document.createElement('div');bottom.className='key-row voice-bottom';bottom.append(...bottomRow.map(createKeyElement));
+      if(voiceDemo.phase==='listening'){const status=document.createElement('span');status.className='voice-status';status.textContent='認識中';status.setAttribute('role','status');bottom.append(status);}
+      keys.append(viewport,bottom);
+      return;
+    }
+    const dualActive=language==='kana'&&layer==='letters'&&dualEnabled&&keyboard.getBoundingClientRect().width>=600;
+    keyMap=new Map();keys.replaceChildren();keys.className='keys '+(language==='kana'?'kana':'english')+(language==='kana'&&layer==='letters'?' kana-letters':'')+(language==='kana'&&layer==='emoji'?' emoji-layer':'')+(dualActive?' dual':'');
+    if(language==='kana'&&layer==='emoji') {
+      const emoji=emojiRows(),viewport=document.createElement('div');
+      viewport.className='emoji-scroll-viewport';
+      for(const row of emoji.content) {const line=document.createElement('div');line.className='key-row';line.append(...row.map(createKeyElement));viewport.append(line);}
+      viewport.scrollTop=emojiScrollTop;
+      viewport.addEventListener('scroll',()=>{emojiScrollTop=viewport.scrollTop;persistState();},{passive:true});
+      const controls=document.createElement('div');controls.className='key-row';controls.append(...emoji.controls.map(createKeyElement));
+      keys.append(viewport,controls);
+      return;
+    }
+    for(const row of keyboardRows()) {const line=document.createElement('div');line.className='key-row';line.append(...row.map(createKeyElement));keys.append(line);}
+  }
+  function render(force=false) {
+    if(active.size&&!force)return;
+    renderCandidates();renderKeys();
+    $('.mode-label').textContent=voiceDemo.active?'音声入力':language==='kana'?(layer==='emoji'?'絵文字':layer==='letters'?'日本語':'テンキー'):layer==='letters'?'QWERTY':'記号';
+    if(pendingModifier)$('.mode-label').textContent+=' · '+modifierLabel(pendingModifier)+'（次のキー）';
+    const dualButton=$('[data-dual]');
+    dualButton.setAttribute('aria-pressed',String(dualEnabled));
+    dualButton.title=keyboard.getBoundingClientRect().width>=600?'中央のかなキーを左右に表示':'広い画面で有効になります';
+    $('[data-english-candidates]').setAttribute('aria-pressed',String(englishCandidatesEnabled));
+    persistState();
+    postDemoHeight();
+  }
+
+  function postDemoHeight() {
+    requestAnimationFrame(()=>parent.postMessage({type:'gesture-ime-demo-height',height:Math.ceil(root.getBoundingClientRect().height)},location.origin));
+  }
+  function direction(dx,dy) {
+    if(Math.hypot(dx,dy)<18)return 0;
+    return Math.abs(dx)>Math.abs(dy)?(dx<0?1:3):(dy<0?2:4);
+  }
+  function showPopup(p) {
+    const rect=p.element.getBoundingClientRect(), base=keyboard.getBoundingClientRect();
+    keyboard.classList.add('popup-active');popup.replaceChildren();popup.hidden=false;
+    if(p.key.flick) {
+      popup.className='popup flick';
+      const positions=[[50,50],[0,50],[50,0],[100,50],[50,100]];
+      p.key.flick.forEach((c,i)=>{if(!c)return;const s=document.createElement('span');s.textContent=c;s.style.left=positions[i][0]+'px';s.style.top=positions[i][1]+'px';s.classList.toggle('chosen',i===p.dir);popup.append(s);});
+      popup.style.left=Math.max(0,Math.min(base.width-150,rect.x+rect.width/2-base.x-75))+'px';popup.style.top=rect.y-base.y-50+'px';
+    } else {
+    const isModifier=p.modifierFlick&&p.key.id==='modifier-gesture',width=isModifier?90:58;
+      popup.className='popup letter'+(isModifier?' modifier-popup':'');popup.textContent=isModifier?(modifierLabel(p.modifierChoice)||'Ctrl / Alt'):keyOutput(p);
+      popup.style.left=Math.max(0,Math.min(base.width-width,rect.x+rect.width/2-base.x-width/2))+'px';popup.style.top=rect.y-base.y-62+'px';
+    }
+  }
+  function hidePopup() {popup.hidden=true;keyboard.classList.remove('popup-active');}
+  function updateSelectionPopup(p,selected) {if(selected)showPopup(p);else hidePopup();}
+  function showAccents(p) {
+    p.variants=[p.key.text,...accents[p.key.text]].map(c=>p.upper?c.toUpperCase():c);p.accentIndex=0;
+    const rect=p.element.getBoundingClientRect(),base=keyboard.getBoundingClientRect(),width=p.variants.length*34+6;
+    p.accentLeft=Math.max(base.x,Math.min(base.right-width,rect.x-8));
+    keyboard.classList.add('popup-active');popup.className='popup accents';popup.replaceChildren();popup.hidden=false;
+    p.variants.forEach((c,i)=>{const s=document.createElement('span');s.textContent=c;s.classList.toggle('chosen',i===0);popup.append(s);});
+    popup.style.left=p.accentLeft-base.x+'px';popup.style.top=rect.y-base.y-56+'px';
+  }
+  function clearTimers(p) { clearTimeout(p.timer);clearInterval(p.repeat); }
+  function cancelEmojiViewportGestures() {
+    const pointerIds=[...emojiViewportStarts.keys()];
+    emojiViewportStarts.clear();emojiViewportDrags.clear();
+    pointerIds.forEach(pointerId=>{if(keyboard.hasPointerCapture(pointerId))keyboard.releasePointerCapture(pointerId);});
+  }
+  function cancelAll() {
+    cancelEmojiViewportGestures();
+    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');}
+    active.clear();if(voiceDemo.active)leaveVoiceDemo(true);pendingModifier=null;popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
+    trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
+  }
+  function cancelGestures() {
+    cancelEmojiViewportGestures();
+    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');}
+    active.clear();popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
+    trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
+  }
+  keyboard.addEventListener('contextmenu',e=>e.preventDefault());
+  keyboard.addEventListener('pointerdown',e=>{
+    const element=e.target.closest('.key');if(!element||e.button!==0)return;
+    const key=keyMap.get(element.dataset.key);
+    const emojiViewport=element.closest('.emoji-scroll-viewport');
+    if(emojiViewport) {emojiViewportStarts.set(e.pointerId,{y:e.clientY,scrollTop:emojiViewport.scrollTop,viewport:emojiViewport,key});keyboard.setPointerCapture(e.pointerId);e.preventDefault();editor.focus({preventScroll:true});return;}
+    e.preventDefault();editor.focus({preventScroll:true});
+    if([...active.values()].some(p=>p.trackpad))return;
+    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false};
+    active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
+    if(key.id==='modifier-gesture') {
+      p.modifierFlick=true;p.modifierChoice=null;
+      element.querySelector('.key-main').textContent=modifierGlyph(pendingModifier);
+    }
+    if(key.text)for(const held of active.values())if(held!==p&&held.key.id==='modifier-gesture')held.used=true;
+    if(key.preview==='press')showPopup(p);
+    if(repeatKeys.includes(key.id)) {
+      const modified=action(key.id,p.keyModifier);if(!modified)p.timer=setTimeout(()=>{p.repeat=setInterval(()=>action(key.id),65);action(key.id);},420);
+    } else if(key.id==='space') {
+      if(!p.keyModifier)p.timer=setTimeout(()=>beginTrackpad(p),450);
+    } else if(key.text&&accents[key.text]&&language==='english'&&layer==='letters')p.timer=setTimeout(()=>showAccents(p),450);
+  });
+  keyboard.addEventListener('pointermove',e=>{
+    const emojiStart=emojiViewportStarts.get(e.pointerId);
+    if(emojiStart) {
+      if(Math.abs(e.clientY-emojiStart.y)>12)emojiViewportDrags.add(e.pointerId);
+      if(emojiViewportDrags.has(e.pointerId))emojiStart.viewport.scrollTop=emojiStart.scrollTop+emojiStart.y-e.clientY;
+      e.preventDefault();return;
+    }
+    const p=active.get(e.pointerId);if(!p)return;e.preventDefault();
+    const dx=e.clientX-p.x,dy=e.clientY-p.y;
+    if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
+    if(updateModifierFlick(p,dx,dy)) {
+      p.element.classList.toggle('choice-active',Boolean(p.modifierChoice));
+      p.element.querySelector('.key-main').textContent=modifierGlyph(p.modifierChoice||pendingModifier);
+      updateSelectionPopup(p,Boolean(p.modifierChoice));
+      return;
+    }
+    if(updateNavigationFlick(p,dx,dy)) {
+      const selection=p.navigationChoice&&p.key.navigation[p.navigationChoice];
+      p.element.classList.toggle('mode-on',Boolean(selection));
+      p.element.classList.toggle('navigation-selected',Boolean(selection));
+      p.element.classList.toggle('flick-selected',p.navigationChoice==='down'&&p.key.id==='return');
+      p.element.classList.toggle('control-j-selected',p.navigationChoice==='up'&&p.key.id==='return'&&selection?.action==='ctrl-j');
+      p.element.querySelector('.key-main').textContent=p.key.id==='return'&&p.key.hint&&p.navigationChoice==='down'?p.key.label:selection?.label||p.key.label;
+      if(selection?.action==='voice')beginVoiceDemo(p);
+      if(selection)announce(selection.label);
+      return;
+    }
+    if(p.trackpad) {
+      p.trackpadAxis=lockSwipeAxis(p.trackpadAxis,dx,dy);
+      if(!p.trackpadAxis)return;
+      const steps=p.trackpadAxis==='horizontal'?Math.trunc((e.clientX-p.cursorX)/8):0;
+      const lines=p.trackpadAxis==='vertical'?Math.trunc((e.clientY-p.cursorY)/24):0;
+      if(steps){moveCursor(steps);p.cursorX+=steps*8;}
+      if(lines){for(let i=0;i<Math.abs(lines);i++)moveVertical(Math.sign(lines));p.cursorY+=lines*24;}
+      if(steps||lines) {
+        const label=cursorDirectionLabel(steps,lines);
+        trackpadStatus.textContent=label;announce(label);
+      }
+      return;
+    }
+    if(p.variants) {
+      p.accentIndex=Math.max(0,Math.min(p.variants.length-1,Math.floor((e.clientX-p.accentLeft-3)/34)));
+      [...popup.children].forEach((s,i)=>s.classList.toggle('chosen',i===p.accentIndex));return;
+    }
+    if(p.key.flick) {p.dir=direction(dx,dy);showPopup(p);return;}
+    if(Math.hypot(dx,dy)>12)clearTimeout(p.timer);
+    if(updateKeyFlick(p,dx,dy)) {
+      p.element.classList.toggle('flick-selected',p.altSelected);
+      p.element.classList.toggle('uppercase-selected',p.upperSelected);
+      p.element.querySelector('.key-main').textContent=p.upperSelected||p.upper?p.key.text.toUpperCase():p.key.text;
+      if(p.key.preview==='selection')updateSelectionPopup(p,p.altSelected||p.upperSelected);
+      else showPopup(p);
+      return;
+    }
+    if(p.key.text) {
+      const over=document.elementFromPoint(e.clientX,e.clientY)?.closest('.key');
+      const next=over&&keyMap.get(over.dataset.key);
+      if(next?.text) {p.element.classList.remove('pressed');p.key=next;p.element=over;over.classList.add('pressed');p.outside=false;showPopup(p);}
+      else {p.outside=true;popup.hidden=true;keyboard.classList.remove('popup-active');}
+    }
+  });
+  function finish(e,canceled=false) {
+    const p=active.get(e.pointerId);if(!p)return;
+    clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');
+    const remaining=[...active.values()].at(-1);
+    if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
+    if(!remaining?.trackpad)keyboard.classList.remove('trackpad');
+    trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';
+    if(p.voiceTriggered) { /* The dedicated voice layer owns completion. */ }
+    else if(!canceled&&!p.trackpad) {
+      if(p.navigationChoice&&p.key.navigation[p.navigationChoice])action(p.key.navigation[p.navigationChoice].action,p.keyModifier);
+      else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
+      else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
+      else if(p.key.flick) {insert(p.key.flick[p.dir]||'');lastSpace=-Infinity;}
+      else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
+      else if(p.key.text&&!p.outside) {
+        if(!applyModified(keyOutput(p),p.keyModifier,Boolean(p.upperSelected))) {
+          if(p.key.emoji)insertEmoji(keyOutput(p));else insert(keyOutput(p));
+        }
+        lastSpace=-Infinity;
+      }else if(!repeatKeys.includes(p.key.id))action(p.key.id,p.keyModifier);
+    }
+    if(keyboard.hasPointerCapture(e.pointerId))keyboard.releasePointerCapture(e.pointerId);
+    render();
+  }
+  function finishEmojiViewportGesture(pointerId,commit) {
+    const gesture=emojiViewportStarts.get(pointerId);if(!gesture)return;
+    emojiViewportStarts.delete(pointerId);
+    if(commit&&!emojiViewportDrags.has(pointerId)&&gesture.key.text&&!applyModified(gesture.key.text,currentModifier())) {
+      if(gesture.key.emoji)insertEmoji(gesture.key.text);else insert(gesture.key.text);
+    }
+    if(commit) {emojiViewportDrags.add(pointerId);setTimeout(()=>emojiViewportDrags.delete(pointerId),0);}else emojiViewportDrags.delete(pointerId);
+    if(keyboard.hasPointerCapture(pointerId))keyboard.releasePointerCapture(pointerId);
+  }
+  keyboard.addEventListener('pointerup',e=>{finishEmojiViewportGesture(e.pointerId,true);finish(e)});
+  keyboard.addEventListener('pointercancel',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
+  keyboard.addEventListener('lostpointercapture',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
+  root.addEventListener('click',e=>{
+    const voiceCancel=e.target.closest('button[data-voice-cancel]');
+    if(voiceCancel) {leaveVoiceDemo(true);return;}
+    const voiceCandidate=e.target.closest('button[data-voice-candidate]');
+    if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate));return;}
+    const slashCandidate=e.target.closest('button[data-slash-candidate]');
+    if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
+    const englishCandidate=e.target.closest('button[data-english-candidate]');
+    if(englishCandidate) {replaceEnglishCandidate(englishCandidate.dataset.englishCandidate);return;}
+    const candidate=e.target.closest('button[data-candidate-index]');
+    if(candidate) {replaceComposition(Number(candidate.dataset.candidateIndex),true);return;}
+    const emojiCategoryButton=e.target.closest('button[data-emoji-category]');
+    if(emojiCategoryButton) {emojiCategory=emojiCategoryButton.dataset.emojiCategory;emojiScrollTop=0;render();return;}
+    const b=e.target.closest('button[data-key]');if(!b)return;
+    if(b.classList.contains('key')) {
+      if(e.detail!==0)return;
+      if(emojiViewportDrags.size)return;
+      const k=keyMap.get(b.dataset.key);if(k.flick)insert(k.flick[0]);else if(k.text){if(!applyModified(k.text,currentModifier())){if(k.emoji)insertEmoji(k.text);else insert(k.text);}render();}else action(k.id);
+    }else {cancelAll();action(b.dataset.key);}
+  });
+  editor.addEventListener('input',()=>{preferredCursorX=null;updateCount();if(!preserveComposition)syncComposition();if(!active.size)render();});
+  editor.addEventListener('pointerup',()=>{preferredCursorX=null;lastSpace=-Infinity;syncComposition();render();});
+  editor.addEventListener('keydown',e=>{
+    if(pendingModifier&&!e.isComposing&&!['Shift','Control','Alt','Meta'].includes(e.key)) {
+      e.preventDefault();
+      if(e.key==='Escape') {pendingModifier=null;announce('修飾キーを解除');}
+      else applyModified(e.key,pendingModifier,e.shiftKey);
+      render();return;
+    }
+    if(e.key==='Escape')cancelAll();
+    lastSpace=-Infinity;
+  });
+  root.addEventListener('keydown',e=>{
+    if(!e.target.closest('.key.modifier-gesture')||!['ArrowUp','ArrowDown'].includes(e.key))return;
+    e.preventDefault();pendingModifier=e.key==='ArrowDown'?'Control':'Alt';
+    announce(modifierLabel(pendingModifier)+'：次のキーに適用');render();$('.key.modifier-gesture').focus();
+  });
+  window.addEventListener('blur',cancelAll);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAll();});
+  // Mobile browser chrome can change height during a gesture. Only a width
+  // change invalidates the keyboard layout (rotation, split view, resizing).
+  let layoutWidth=root.getBoundingClientRect().width;
+  window.addEventListener('resize',()=>{
+    const width=root.getBoundingClientRect().width;
+    if(Math.abs(width-layoutWidth)>1)cancelGestures();
+    layoutWidth=width;
+  });
+  const displayModes={
+    cover:{label:'スマホ幅 · 412 dp'},
+    inner:{label:'タブレット幅 · 840 dp'}
+  };
+  root.querySelectorAll('.device-picker [data-device]').forEach(button=>button.addEventListener('click',()=>{
+    cancelGestures();device=button.dataset.device;root.dataset.device=device;
+    root.querySelectorAll('.device-picker [data-device]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+    $('.device-size').textContent=displayModes[button.dataset.device].label;
+    render();
+  }));
+  root.querySelectorAll('.device-picker [data-theme]').forEach(button=>button.addEventListener('click',()=>{
+    root.dataset.theme=button.dataset.theme;
+    root.querySelectorAll('.device-picker [data-theme]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+    persistState();
+  }));
+  $('[data-dual]').addEventListener('click',()=>{cancelGestures();dualEnabled=!dualEnabled;render();});
+  $('[data-english-candidates]').addEventListener('click',()=>{cancelGestures();englishCandidatesEnabled=!englishCandidatesEnabled;render();});
+  root.querySelectorAll('.device-picker [data-device]').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.device===root.dataset.device)));
+  root.querySelectorAll('.device-picker [data-theme]').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.theme===root.dataset.theme)));
+  $('.device-size').textContent=displayModes[root.dataset.device].label;
+  updateCount();
+  render();
+})();
+</script>
+</div>
+</body>
+</html>
