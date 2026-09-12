@@ -333,6 +333,14 @@
   function announce(text) { $('.last-input').textContent = text; }
   const modifierLabel=value=>value==='Control'?'Ctrl':value;
   function currentModifier() { return [...active.values()].find(p=>p.modifierChoice&&!p.used)?.modifierChoice||pendingModifier; }
+  function clearModifierState() {
+    pendingModifier=null;
+    for(const held of active.values()) {
+      held.modifierChoice=null;
+      held.keyModifier=null;
+      held.used=true;
+    }
+  }
   function applyModified(text,modifier=currentModifier(),shifted=false) {
     if(!modifier)return false;
     const detail=modifiedKey(text,modifier,shifted);
@@ -424,6 +432,7 @@
   function beginVoiceDemo(p) {
     if(voiceDemo.active)return;
     p.voiceTriggered=true;
+    clearModifierState();
     clearComposition();
     Object.assign(voiceDemo,{active:true,returnState:{language,layer},turn:0});
     navigator.vibrate?.([35,45,35]);announce('模擬音声認識を開始');
