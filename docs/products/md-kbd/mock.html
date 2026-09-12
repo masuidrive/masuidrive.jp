@@ -772,7 +772,7 @@
       emoji:'絵文字レイヤーへ切り替える',
       space:'Space。フリックでカーソル移動',
       return:composition.reading?'確定。上フリックで無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
-      'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！',
+      'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
       kana:'タップで日本語。'+layerDirections,
       symbols:language==='kana'?'記号へ切り替える':layer==='letters'?'記号へ切り替える':'QWERTYへ戻る',
@@ -878,7 +878,7 @@
       const bottomRow=[
         makeKey('voice-cancel','キャンセル',{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
         makeKey(null,''),
-        makeKey('voice-punct','、。？！',{flick:['、','。','？','！',null],preview:'press'}),
+        makeKey('voice-punct','、。？！',{flick:['、','。','？','！','、'],preview:'press'}),
         makeKey('space','Space',{hint:'←↓↑→'}),
         makeKey('return','Enter',{hint:'paste',navigation:pasteNavigation})
       ];
