@@ -705,14 +705,14 @@
   }
   function createKanaKey([id,value,options={}],index) {
     if(id===null)return makeKey(null,'');
-    const transform=id==='modifier'?['小','゛','小','゜','']:null;
+    const transform=id==='modifier'?['小','゛','゛','゜','']:null;
     const flick=transform||Array.isArray(value)?(transform||value):null;
     const toggle=layerToggleLabels[id];
     const text=options.text?value:null;
     const converting=id==='return'&&Boolean(composition.reading);
     return makeKey(id,converting?'確定':toggle?.main??options.label??(flick?flick[0]:value),{
       flick,
-      transformActions:transform?['cycle','dakuten','small','handakuten',null]:null,
+      transformActions:transform?['cycle','dakuten','dakuten','handakuten',null]:null,
       text,
       hint:converting?null:id==='return'?'paste':options.hint??null,
       ghost:toggle?.ghost??null,
