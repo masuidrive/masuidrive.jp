@@ -140,14 +140,14 @@
   #ios-keyboard-demo .trackpad-status { position:absolute; z-index:8; inset:8px 3px 0; display:flex; align-items:center; justify-content:center; color:var(--ik-ink); font-size:22px; font-weight:500; letter-spacing:.08em; pointer-events:none; }
   #ios-keyboard-demo .trackpad-status[hidden] { display:none; }
   #ios-keyboard-demo .voice .key.voice-cancel .key-face { font-size:13px; }
-  #ios-keyboard-demo .voice .voice-bottom { position:relative; }
+  #ios-keyboard-demo .voice .voice-bottom { position:relative; grid-template-columns:repeat(6,minmax(0,1fr)); }
   #ios-keyboard-demo .voice .key.return { position:static; width:auto; height:100%; z-index:auto; }
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; height:45px; margin:0 0 10px; padding:0 14px; overflow:hidden; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font:400 15px/45px inherit; text-align:left; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
-  #ios-keyboard-demo .voice-status { position:absolute; left:20%; top:0; width:20%; height:45px; display:flex; align-items:center; justify-content:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .voice-status { position:absolute; left:16.666667%; top:0; width:16.666667%; height:45px; display:flex; align-items:center; justify-content:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
   #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
   #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
@@ -625,7 +625,7 @@
   function action(id,modifier=currentModifier()) {
     if(voiceDemo.active&&id==='voice-cancel') {leaveVoiceDemo(true);return true;}
     if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
-    if(voiceDemo.active&&['space','return','paste','ctrl-j','left','right','up','down'].includes(id)) {
+    if(voiceDemo.active&&['space','return','paste','ctrl-j','left','right','up','down','voice-backspace'].includes(id)) {
       const voiceGeneration=voiceDemo.generation;
       if(id==='space')insert(' ',{bypassComposition:true});
       else if(id==='return')insert('\n',{bypassComposition:true});
@@ -633,6 +633,9 @@
       else if(id==='left'||id==='right')moveCursor(id==='left'?-1:1);
       else if(id==='up'||id==='down')moveVertical(id==='up'?-1:1);
       else if(id==='paste')pasteText(voiceGeneration);
+      else if(id==='voice-backspace') {
+        const preserve=preserveComposition;preserveComposition=true;clearComposition();erase();preserveComposition=preserve;
+      }
       render();return true;
     }
     const specialKeys={backspace:'Backspace',space:' ',return:'Enter',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',home:'Home',end:'End'};
@@ -757,6 +760,7 @@
     const layerDirections='左フリックで音声入力レイヤー、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー';
     const names={
       backspace:'削除',
+      'voice-backspace':'タップで削除',
       'flick-backspace':'タップで削除、下フリックでESC',
       'modifier-gesture':pendingModifier
         ?modifierLabel(pendingModifier)+' 選択中。タップで解除、下スワイプでCtrl、上スワイプでAlt'
@@ -880,6 +884,7 @@
         makeKey(null,''),
         makeKey('voice-punct','、。？！',{flick:['、','。','？','！','、'],preview:'press'}),
         makeKey('space','Space',{hint:'←↓↑→'}),
+        makeKey('voice-backspace','⌫'),
         makeKey('return','Enter',{hint:'paste',navigation:pasteNavigation})
       ];
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice';
@@ -972,6 +977,12 @@
     active.clear();popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
   }
+  function updateVoiceBackspaceSelection(p,x,y) {
+    if(p.origin!=='voice-backspace')return;
+    const distance=Math.hypot(x-p.x,y-p.y);
+    if(p.voiceBackspaceNonCenter&&distance<=10)p.voiceBackspaceNonCenter=false;
+    else if(!p.voiceBackspaceNonCenter&&distance>=18)p.voiceBackspaceNonCenter=true;
+  }
   keyboard.addEventListener('contextmenu',e=>e.preventDefault());
   keyboard.addEventListener('pointerdown',e=>{
     const element=e.target.closest('.key');if(!element||e.button!==0)return;
@@ -980,7 +991,7 @@
     if(emojiViewport) {emojiViewportStarts.set(e.pointerId,{y:e.clientY,scrollTop:emojiViewport.scrollTop,viewport:emojiViewport,key});keyboard.setPointerCapture(e.pointerId);e.preventDefault();editor.focus({preventScroll:true});return;}
     e.preventDefault();editor.focus({preventScroll:true});
     if([...active.values()].some(p=>p.trackpad))return;
-    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false};
+    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,voiceBackspaceNonCenter:false};
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
       p.modifierFlick=true;p.modifierChoice=null;
@@ -1003,6 +1014,7 @@
     }
     const p=active.get(e.pointerId);if(!p)return;e.preventDefault();
     const dx=e.clientX-p.x,dy=e.clientY-p.y;
+    updateVoiceBackspaceSelection(p,e.clientX,e.clientY);
     if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
     if(updateModifierFlick(p,dx,dy)) {
       p.element.classList.toggle('choice-active',Boolean(p.modifierChoice));
@@ -1057,13 +1069,14 @@
   });
   function finish(e,canceled=false) {
     const p=active.get(e.pointerId);if(!p)return;
+    updateVoiceBackspaceSelection(p,e.clientX,e.clientY);
     clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');
     const remaining=[...active.values()].at(-1);
     if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
     if(!remaining?.trackpad)keyboard.classList.remove('trackpad');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';
     if(p.voiceTriggered) { /* The dedicated voice layer owns completion. */ }
-    else if(!canceled&&!p.trackpad) {
+    else if(!canceled&&!p.trackpad&&!p.voiceBackspaceNonCenter) {
       if(p.navigationChoice&&p.key.navigation[p.navigationChoice])action(p.key.navigation[p.navigationChoice].action,p.keyModifier);
       else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
