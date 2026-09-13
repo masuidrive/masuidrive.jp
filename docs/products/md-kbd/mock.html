@@ -195,7 +195,7 @@
   const layerNavigation = {left:{label:'音声',action:'voice'},up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
   const voiceNavigation = {up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
   const pasteNavigation = {up:{label:'C-j',action:'ctrl-j'},down:{label:'paste',action:'paste'}};
-  const conversionNavigation = {up:{label:'無変換',action:'raw-conversion'},left:{label:'カタカナ',action:'katakana-conversion'}};
+  const conversionNavigation = {up:{label:'カタカナ',action:'katakana-conversion'},left:{label:'カタカナ',action:'katakana-conversion'}};
   const repeatKeys = ['backspace','left','right','up','down'];
   const accents = {a:'àáâäæãåā',e:'èéêëēėę',i:'îïíīįì',o:'ôöòóœøōõ',u:'ûüùúū',c:'çćč',n:'ñń',s:'ßśš',y:'ÿ'};
   const modifierCycles = ['あぁ','いぃ','うぅゔ','えぇ','おぉ','かが','きぎ','くぐ','けげ','こご','さざ','しじ','すず','せぜ','そぞ','ただ','ちぢ','つっづ','てで','とど','はばぱ','ひびぴ','ふぶぷ','へべぺ','ほぼぽ','やゃ','ゆゅ','よょ','わゎ'];
@@ -646,7 +646,8 @@
     else if(id==='up'||id==='down')moveVertical(id==='up'?-1:1);
     else if(id==='home'||id==='end') {preferredCursorX=null;setCursor(id==='home'?0:editor.value.length,null,id==='home'?'⇤ 先頭':'⇥ 末尾');editor.scrollTop=id==='home'?0:editor.scrollHeight;}
     else if(id==='modifier')modify();
-    else if(id==='escape')announce('ESC');
+    else if(id==='escape')announce('Esc');
+    else if(id==='tab')insert('\t');
     else if(id==='ctrl-j')applyModified('j','Control');
     else if(id==='voice')announce('音声入力レイヤーを開きます');
     else if(id==='raw-conversion'&&composition.reading) {commitCompositionValue(composition.reading);}
@@ -742,7 +743,7 @@
     return [
       textKeys('1234567890'),
       [modifierGesture(),...textKeys('^_\\|~{}[]'),flickBackspace()],
-      [makeKey('symbols','A',{special:true,ghost:'Z'}),makeKey('escape','ESC'),...textKeys('`!?;:<>-')],
+      [makeKey('symbols','A',{special:true,ghost:'Z'}),makeKey('escape','Esc'),...textKeys('`!?;'),makeKey('tab','Tab',{preview:'press'}),...textKeys('<>-')],
       englishBottomRow()
     ];
   }
@@ -772,10 +773,11 @@
       down:'カーソルを下の行へ',
       home:'文章の先頭へ',
       end:'文章の末尾へ',
-      escape:'ESC',
+      escape:'Esc',
+      tab:'Tab',
       emoji:'絵文字レイヤーへ切り替える',
       space:'Space。フリックでカーソル移動',
-      return:composition.reading?'無変換。上フリックも無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
+      return:composition.reading?'無変換。上または左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
       'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
       kana:'タップで日本語。'+layerDirections,
