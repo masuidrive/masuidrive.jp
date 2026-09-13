@@ -655,7 +655,7 @@
       commitCompositionValue(katakana);
     }
     else if(id==='return') {
-      if(composition.reading) {announce('確定');clearComposition();}
+      if(composition.reading) {commitCompositionValue(composition.reading);}
       else insert('\n');
     }
     else if(id==='space') {
@@ -710,7 +710,7 @@
     const toggle=layerToggleLabels[id];
     const text=options.text?value:null;
     const converting=id==='return'&&Boolean(composition.reading);
-    return makeKey(id,converting?'確定':toggle?.main??options.label??(flick?flick[0]:value),{
+    return makeKey(id,converting?'無変換':toggle?.main??options.label??(flick?flick[0]:value),{
       flick,
       transformActions:transform?['cycle','dakuten','dakuten','handakuten',null]:null,
       text,
@@ -775,7 +775,7 @@
       escape:'ESC',
       emoji:'絵文字レイヤーへ切り替える',
       space:'Space。フリックでカーソル移動',
-      return:composition.reading?'確定。上フリックで無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
+      return:composition.reading?'無変換。上フリックも無変換、左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
       'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
       kana:'タップで日本語。'+layerDirections,
