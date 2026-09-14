@@ -145,6 +145,7 @@
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; height:45px; margin:0 0 10px; padding:0 14px; overflow:hidden; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font:400 15px/45px inherit; text-align:left; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
   #ios-keyboard-demo .voice-status { position:absolute; left:16.666667%; top:0; width:16.666667%; height:45px; display:flex; align-items:center; justify-content:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
@@ -412,12 +413,37 @@
     editor.focus({preventScroll:true});editor.setRangeText(candidate,prefix.start,prefix.end,'end');
     editor.dispatchEvent(new Event('input',{bubbles:true}));announce('コマンドを確定：'+candidate);render();
   }
+  function voiceLcsMatches(left,right) {
+    const leftMatches=Array(left.length).fill(false),rightMatches=Array(right.length).fill(false),sharedLimit=Math.min(left.length,right.length);let prefix=0,suffix=0;
+    while(prefix<sharedLimit&&left[prefix]===right[prefix]){leftMatches[prefix]=true;rightMatches[prefix]=true;prefix++;}
+    while(suffix<sharedLimit-prefix&&left[left.length-1-suffix]===right[right.length-1-suffix]){leftMatches[left.length-1-suffix]=true;rightMatches[right.length-1-suffix]=true;suffix++;}
+    const leftLength=left.length-prefix-suffix,rightLength=right.length-prefix-suffix,rowWidth=rightLength+1,matrixCells=(leftLength+1)*rowWidth;if(matrixCells>262144)return null;
+    const lengths=new Uint32Array(matrixCells),at=(i,j)=>lengths[i*rowWidth+j];
+    for(let i=leftLength-1;i>=0;i--)for(let j=rightLength-1;j>=0;j--)lengths[i*rowWidth+j]=left[prefix+i]===right[prefix+j]?at(i+1,j+1)+1:Math.max(at(i+1,j),at(i,j+1));
+    let i=0,j=0;while(i<leftLength&&j<rightLength){if(left[prefix+i]===right[prefix+j]){leftMatches[prefix+i++]=true;rightMatches[prefix+j++]=true;}else if(at(i+1,j)>=at(i,j+1))i++;else j++;}
+    return [leftMatches,rightMatches];
+  }
+  function voiceCandidateDifferenceMasks(candidates) {
+    const values=candidates.map(value=>Array.from(value)),none=()=>values.map(value=>Array(value.length).fill(false));if(values.length<2||values.length>8)return none();
+    const common=values.map(value=>Array(value.length).fill(true));
+    for(let left=0;left<values.length-1;left++)for(let right=left+1;right<values.length;right++){
+      const matches=voiceLcsMatches(values[left],values[right]);if(!matches)return none();const [leftMatches,rightMatches]=matches;
+      common[left]=common[left].map((value,index)=>value&&leftMatches[index]);common[right]=common[right].map((value,index)=>value&&rightMatches[index]);
+    }
+    return common.map(flags=>flags.map(value=>!value));
+  }
+  function renderVoiceCandidateText(button,candidate,differences) {
+    const characters=Array.from(candidate);let index=0;
+    while(index<characters.length){const highlighted=differences[index];let end=index+1;while(end<characters.length&&differences[end]===highlighted)end++;
+      const part=document.createElement('span');if(highlighted)part.className='voice-candidate-diff';part.textContent=characters.slice(index,end).join('');button.append(part);index=end;
+    }
+  }
   function clearVoiceTimers() {voiceDemo.timers.forEach(clearTimeout);voiceDemo.timers=[];}
   function startVoiceDemoRecognition() {
     const generation=++voiceDemo.generation;
     const turn=voiceDemo.turn;
     const results=turn%2===0
-      ?['こんにちは、音声入力を試しています','こんにちは。音声入力を試しています','音声入力を試しています']
+      ?['タブレットとかでも横幅を大きめにしてほしい','タブレットとかでも横幅を大きめにして欲しい','タブレットとかでも横幅が大きめにして欲しい']
       :['続けて入力しています'];
     Object.assign(voiceDemo,{phase:'listening',partial:'聞き取っています…',candidates:[],index:0,committed:false});
     clearVoiceTimers();
@@ -892,8 +918,9 @@
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice';
       const viewport=document.createElement('div');viewport.className='voice-candidate-viewport';viewport.setAttribute('aria-label','音声認識候補');
       if(voiceDemo.phase==='ready') {
+        const differences=voiceCandidateDifferenceMasks(voiceDemo.candidates);
         voiceDemo.candidates.forEach((candidate,index)=>{
-          const button=document.createElement('button');button.type='button';button.className='voice-candidate';button.dataset.voiceCandidate=String(index);button.textContent=candidate;viewport.append(button);
+          const button=document.createElement('button');button.type='button';button.className='voice-candidate';button.dataset.voiceCandidate=String(index);renderVoiceCandidateText(button,candidate,differences[index]);viewport.append(button);
         });
       } else if(voiceDemo.phase==='error'||voiceDemo.phase==='unavailable') {
         const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
