@@ -97,9 +97,12 @@
   #ios-keyboard-demo .kana .key.side { flex:1; }
   #ios-keyboard-demo .kana .key-slot { flex:1; min-width:0; }
   #ios-keyboard-demo .kana .key-row { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); }
-  #ios-keyboard-demo .kana.emoji-layer .key-row { grid-template-columns:repeat(8,minmax(0,1fr)); }
-  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
+  #ios-keyboard-demo .kana.emoji-layer .key-row { grid-template-columns:repeat(7,minmax(0,1fr)); }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport { height:165px; margin-left:12.5%; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport::-webkit-scrollbar { display:none; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-controls { margin-left:12.5%; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-rail { position:absolute; inset:0 auto auto 0; z-index:1; width:12.5%; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-rail .key { width:100%; height:45px; margin-bottom:10px; }
   #ios-keyboard-demo .kana .key-row { position:relative; }
   #ios-keyboard-demo .kana .key.return { position:absolute; top:0; right:0; width:20%; height:calc(200% + 10px); z-index:1; }
   #ios-keyboard-demo .kana .key, #ios-keyboard-demo .kana .key-slot { width:auto; }
@@ -148,7 +151,9 @@
   #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
-  #ios-keyboard-demo .voice-status { position:absolute; left:16.666667%; top:0; width:16.666667%; height:45px; display:flex; align-items:center; justify-content:center; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .voice-status { position:absolute; left:16.666667%; top:0; width:16.666667%; height:45px; display:flex; align-items:center; justify-content:center; gap:4px; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .voice-waveform { width:14px; height:16px; display:flex; align-items:center; justify-content:space-between; flex:0 0 14px; }
+  #ios-keyboard-demo .voice-waveform i { display:block; width:2px; min-height:2px; border-radius:1px; background:currentColor; }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
   #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
   #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
@@ -304,7 +309,7 @@
     ['flags','🏳️',['🏳️','🏴','🏁','🚩','🏳️‍🌈','🏳️‍⚧️','🇯🇵','🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇮🇹','🇨🇦','🇦🇺','🇨🇳','🇰🇷','🇮🇳','🇧🇷','🇲🇽','🇪🇸','🇹🇼','🇭🇰','🇸🇬','🇹🇭','🇻🇳','🇵🇭','🇮🇩','🇲🇾','🇳🇿','🇿🇦','🇪🇺','🏴‍☠️']],
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
-  const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,turn:0};
+  const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,turn:0,level:0};
   let renderedCandidateContentKey=null;
   try {
     const saved=JSON.parse(localStorage.getItem('gesture-ime-demo-state')||'null');
@@ -438,21 +443,27 @@
       const part=document.createElement('span');if(highlighted)part.className='voice-candidate-diff';part.textContent=characters.slice(index,end).join('');button.append(part);index=end;
     }
   }
-  function clearVoiceTimers() {voiceDemo.timers.forEach(clearTimeout);voiceDemo.timers=[];}
+  function clearVoiceTimers() {voiceDemo.timers.forEach(timer=>{clearTimeout(timer);clearInterval(timer);});voiceDemo.timers=[];}
+  function updateVoiceWaveform() {
+    const factors=[.55,1,.72,.42];
+    root.querySelectorAll('.voice-waveform i').forEach((bar,index)=>{bar.style.height=(2+12*voiceDemo.level*factors[index])+'px';});
+  }
   function startVoiceDemoRecognition() {
     const generation=++voiceDemo.generation;
     const turn=voiceDemo.turn;
     const results=turn%2===0
       ?['タブレットとかでも横幅を大きめにしてほしい','タブレットとかでも横幅を大きめにして欲しい','タブレットとかでも横幅が大きめにして欲しい']
       :['続けて入力しています'];
-    Object.assign(voiceDemo,{phase:'listening',partial:'聞き取っています…',candidates:[],index:0,committed:false});
+    Object.assign(voiceDemo,{phase:'listening',partial:'聞き取っています…',candidates:[],index:0,committed:false,level:0});
     clearVoiceTimers();
     const isCurrent=()=>voiceDemo.active&&voiceDemo.generation===generation;
+    let waveStep=0;
     voiceDemo.timers=[
+      setInterval(()=>{if(!isCurrent())return;waveStep++;voiceDemo.level=Math.max(0,Math.min(1,.12+.52*Math.abs(Math.sin(waveStep*.73))+.2*Math.abs(Math.sin(waveStep*1.91))));updateVoiceWaveform();},140),
       setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは';render(true);announce('認識途中：こんにちは');},voiceDemoDurationMs*.045),
       setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは、音声入力を';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.095),
       setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial=turn%2===0?'こんにちは、音声入力を試しています':'続けて入力しています';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.85),
-      setTimeout(()=>{if(!isCurrent())return;voiceDemo.phase='ready';voiceDemo.candidates=results;voiceDemo.index=0;render(true);announce(turn%2===0?'認識結果を選べます':'最終結果がないため、最後の途中結果を選べます');},voiceDemoDurationMs)
+      setTimeout(()=>{if(!isCurrent())return;clearVoiceTimers();voiceDemo.phase='ready';voiceDemo.level=0;voiceDemo.candidates=results;voiceDemo.index=0;render(true);announce(turn%2===0?'認識結果を選べます':'最終結果がないため、最後の途中結果を選べます');},voiceDemoDurationMs)
     ];
   }
   function beginVoiceDemo(p) {
@@ -469,7 +480,7 @@
     if(!voiceDemo.active)return;
     clearVoiceTimers();
     const previous=voiceDemo.returnState||{language:'english',layer:'letters'};
-    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,generation:voiceDemo.generation+1});
+    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,generation:voiceDemo.generation+1,level:0});
     language=previous.language;layer=previous.layer;
     announce(canceled?'音声入力を取り消し':'音声入力を終了');render(true);
   }
@@ -488,7 +499,7 @@
   function leaveVoiceForLayer(actionId) {
     if(!voiceDemo.active)return;
     clearVoiceTimers();
-    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,committed:false,generation:voiceDemo.generation+1});
+    Object.assign(voiceDemo,{active:false,phase:'idle',partial:'',candidates:[],index:0,returnState:null,committed:false,generation:voiceDemo.generation+1,level:0});
     if(actionId==='english') {language='english';layer='letters';}
     else if(actionId==='kana-numbers') {language='kana';layer='numbers';}
     else {language='kana';layer='letters';}
@@ -727,8 +738,17 @@
     const values=emojiCategory==='recent'?emojiRecents:category[2];
     const entries=values.map((emoji,index)=>makeKey('emoji-'+index,emoji,{text:emoji,emoji:true,preview:'press'}));
     const content=[];
-    for(let index=0;index<entries.length;index+=8)content.push([...entries.slice(index,index+8),...Array(Math.max(0,8-entries.slice(index,index+8).length)).fill(null).map(()=>makeKey(null,''))]);
-    return {content,controls:[makeKey('english','ABC',{special:true,navigation:layerNavigation,gridSpan:2}),makeKey(null,'',{gridSpan:4}),makeKey('backspace','⌫',{special:true,gridSpan:2})]};
+    for(let index=0;index<entries.length;index+=7)content.push([...entries.slice(index,index+7),...Array(Math.max(0,7-entries.slice(index,index+7).length)).fill(null).map(()=>makeKey(null,''))]);
+    return {
+      content,
+      rail:[
+        makeKey('emoji','☺',{special:true}),
+        makeKey('symbol-layer','#',{special:true,ghost:'!'}),
+        makeKey('kana-numbers','19',{special:true}),
+        makeKey('english','A',{special:true,ghost:'Z',navigation:layerNavigation}),
+      ],
+      controls:[makeKey(null,'',{gridSpan:6}),makeKey('backspace','⌫',{special:true})]
+    };
   }
   function createKanaKey([id,value,options={}],index) {
     if(id===null)return makeKey(null,'');
@@ -926,7 +946,16 @@
         const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
       }
       const bottom=document.createElement('div');bottom.className='key-row voice-bottom';bottom.append(...bottomRow.map(createKeyElement));
-      if(['listening','ready'].includes(voiceDemo.phase)){const status=document.createElement('span');status.className='voice-status';status.textContent='認識中';status.setAttribute('role','status');bottom.append(status);}
+      if(['listening','ready'].includes(voiceDemo.phase)){
+        const status=document.createElement('span');status.className='voice-status';status.setAttribute('role','status');
+        const label=document.createElement('span');label.textContent='認識中';status.append(label);
+        if(voiceDemo.phase==='listening'){
+          const waveform=document.createElement('span');waveform.className='voice-waveform';waveform.setAttribute('aria-hidden','true');
+          for(let index=0;index<4;index++)waveform.append(document.createElement('i'));
+          status.append(waveform);
+        }
+        bottom.append(status);updateVoiceWaveform();
+      }
       keys.append(viewport,bottom);
       return;
     }
@@ -938,8 +967,9 @@
       for(const row of emoji.content) {const line=document.createElement('div');line.className='key-row';line.append(...row.map(createKeyElement));viewport.append(line);}
       viewport.scrollTop=emojiScrollTop;
       viewport.addEventListener('scroll',()=>{emojiScrollTop=viewport.scrollTop;persistState();},{passive:true});
-      const controls=document.createElement('div');controls.className='key-row';controls.append(...emoji.controls.map(createKeyElement));
-      keys.append(viewport,controls);
+      const rail=document.createElement('div');rail.className='emoji-rail';rail.append(...emoji.rail.map(createKeyElement));
+      const controls=document.createElement('div');controls.className='key-row emoji-controls';controls.append(...emoji.controls.map(createKeyElement));
+      keys.append(viewport,rail,controls);
       return;
     }
     for(const row of keyboardRows()) {const line=document.createElement('div');line.className='key-row';line.append(...row.map(createKeyElement));keys.append(line);}
