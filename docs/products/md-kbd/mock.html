@@ -98,11 +98,12 @@
   #ios-keyboard-demo .kana .key-slot { flex:1; min-width:0; }
   #ios-keyboard-demo .kana .key-row { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); }
   #ios-keyboard-demo .kana.emoji-layer .key-row { grid-template-columns:repeat(7,minmax(0,1fr)); }
-  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport { height:165px; margin-left:12.5%; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport { height:220px; margin-left:20%; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .kana.emoji-layer .emoji-scroll-viewport::-webkit-scrollbar { display:none; }
-  #ios-keyboard-demo .kana.emoji-layer .emoji-controls { margin-left:12.5%; }
-  #ios-keyboard-demo .kana.emoji-layer .emoji-rail { position:absolute; inset:0 auto auto 0; z-index:1; width:12.5%; }
+  #ios-keyboard-demo .kana.emoji-layer .emoji-rail { position:absolute; inset:0 auto auto 0; z-index:1; width:20%; }
   #ios-keyboard-demo .kana.emoji-layer .emoji-rail .key { width:100%; height:45px; margin-bottom:10px; }
+  #ios-keyboard-demo .kana.emoji-layer.dual .emoji-scroll-viewport { margin-left:12.5%; }
+  #ios-keyboard-demo .kana.emoji-layer.dual .emoji-rail { width:12.5%; }
   #ios-keyboard-demo .kana .key-row { position:relative; }
   #ios-keyboard-demo .kana .key.return { position:absolute; top:0; right:0; width:20%; height:calc(200% + 10px); z-index:1; }
   #ios-keyboard-demo .kana .key, #ios-keyboard-demo .kana .key-slot { width:auto; }
@@ -166,6 +167,8 @@
   #ios-keyboard-demo[data-device=inner] .keyboard { padding-left:10px; padding-right:10px; }
   #ios-keyboard-demo .kana.dual .key-row { grid-template-columns:repeat(8,minmax(0,1fr)); }
   #ios-keyboard-demo .kana.dual .key.return { width:12.5%; }
+  /* The emoji catalog keeps seven content columns even when a wide kana layer is dual. */
+  #ios-keyboard-demo .kana.emoji-layer.dual .emoji-scroll-viewport .key-row { grid-template-columns:repeat(7,minmax(0,1fr)); }
   #ios-keyboard-demo .key.return.has-paste.flick-selected .key-hint { transform:translateY(13px) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
   #ios-keyboard-demo .key.return.has-paste.flick-selected .key-main { transform:translateY(22px); opacity:0; }
   #ios-keyboard-demo .key.return.control-j-selected .key-main { transform:scale(1.06); color:var(--ik-selected-ink); }
@@ -576,7 +579,6 @@
   function insertEmoji(emoji) {
     insert(emoji);
     emojiRecents=[emoji,...emojiRecents.filter(value=>value!==emoji)].slice(0,100);
-    emojiCategory='recent'; emojiScrollTop=0;
     render();
   }
   function erase() {
@@ -659,6 +661,9 @@
     const index=pairs.indexOf(prev.segment);if(index<0)return;
     const next=pairs[index%2===0?index+1:index-1];editor.setSelectionRange(prev.index,end);insert(next);
   }
+  function enterEmojiLayer() {
+    language='kana';layer='emoji';emojiCategory='recent';emojiScrollTop=0;clearComposition();
+  }
   function action(id,modifier=currentModifier()) {
     if(voiceDemo.active&&id==='voice-cancel') {leaveVoiceDemo(true);return true;}
     if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
@@ -710,10 +715,10 @@
     else if(id==='symbols') {if(language==='kana'){language='english';layer='symbols';}else layer=layer==='letters'?'symbols':'letters';clearComposition();}
     else if(id==='symbol-layer') {language='english';layer='symbols';pendingModifier=null;clearComposition();}
     else if(id==='kana-numbers') {language='kana';layer='numbers';pendingModifier=null;clearComposition();}
-    else if(id==='kana-emoji') {language='kana';layer='emoji';emojiScrollTop=0;clearComposition();}
+    else if(id==='kana-emoji') {enterEmojiLayer();}
     else if(id==='numbers') {layer='numbers';clearComposition();}
     else if(id==='letters') {layer='letters';clearComposition();}
-    else if(id==='emoji') {language='kana';layer='emoji';emojiScrollTop=0;clearComposition();}
+    else if(id==='emoji') {enterEmojiLayer();}
     else if(['english','kana'].includes(id)) {language=id;layer='letters';pendingModifier=null;clearComposition();}
     render();
   }
@@ -739,15 +744,15 @@
     const entries=values.map((emoji,index)=>makeKey('emoji-'+index,emoji,{text:emoji,emoji:true,preview:'press'}));
     const content=[];
     for(let index=0;index<entries.length;index+=7)content.push([...entries.slice(index,index+7),...Array(Math.max(0,7-entries.slice(index,index+7).length)).fill(null).map(()=>makeKey(null,''))]);
+    while(content.length<4)content.push(Array.from({length:7},()=>makeKey(null,'')));
     return {
       content,
       rail:[
-        makeKey('emoji','☺',{special:true}),
+        makeKey('kana','あ',{special:true}),
         makeKey('symbol-layer','#',{special:true,ghost:'!'}),
         makeKey('kana-numbers','19',{special:true}),
         makeKey('english','A',{special:true,ghost:'Z',navigation:layerNavigation}),
-      ],
-      controls:[makeKey(null,'',{gridSpan:6}),makeKey('backspace','⌫',{special:true})]
+      ]
     };
   }
   function createKanaKey([id,value,options={}],index) {
@@ -826,7 +831,9 @@
       return:composition.reading?'無変換。上または左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
       'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
-      kana:'タップで日本語。'+layerDirections,
+      'symbol-layer':'記号へ切り替える',
+      'kana-numbers':'テンキーへ切り替える',
+      kana:key.navigation?'タップで日本語。'+layerDirections:'日本語へ切り替える',
       symbols:language==='kana'?'記号へ切り替える':layer==='letters'?'記号へ切り替える':'QWERTYへ戻る',
       letters:'日本語へ戻る',
       english:key.navigation?'タップでQWERTY。'+layerDirections:'QWERTYへ切り替える',
@@ -959,7 +966,7 @@
       keys.append(viewport,bottom);
       return;
     }
-    const dualActive=language==='kana'&&layer==='letters'&&dualEnabled&&keyboard.getBoundingClientRect().width>=600;
+    const dualActive=language==='kana'&&dualEnabled&&keyboard.getBoundingClientRect().width>=600;
     keyMap=new Map();keys.replaceChildren();keys.className='keys '+(language==='kana'?'kana':'english')+(language==='kana'&&layer==='letters'?' kana-letters':'')+(language==='kana'&&layer==='emoji'?' emoji-layer':'')+(dualActive?' dual':'');
     if(language==='kana'&&layer==='emoji') {
       const emoji=emojiRows(),viewport=document.createElement('div');
@@ -968,8 +975,7 @@
       viewport.scrollTop=emojiScrollTop;
       viewport.addEventListener('scroll',()=>{emojiScrollTop=viewport.scrollTop;persistState();},{passive:true});
       const rail=document.createElement('div');rail.className='emoji-rail';rail.append(...emoji.rail.map(createKeyElement));
-      const controls=document.createElement('div');controls.className='key-row emoji-controls';controls.append(...emoji.controls.map(createKeyElement));
-      keys.append(viewport,rail,controls);
+      keys.append(viewport,rail);
       return;
     }
     for(const row of keyboardRows()) {const line=document.createElement('div');line.className='key-row';line.append(...row.map(createKeyElement));keys.append(line);}
