@@ -115,6 +115,7 @@
   #ios-keyboard-demo .english .key-row:nth-child(2) { justify-content:flex-start; padding-left:0; }
   #ios-keyboard-demo .english .key-row:nth-child(2) .key { flex:0 0 10%; }
   #ios-keyboard-demo .english .key-row:nth-child(2) .modifier-gesture,
+  #ios-keyboard-demo .english .key-row:nth-child(2) .period-flick,
   #ios-keyboard-demo .english .key-row:nth-child(2) .flick-backspace { flex-basis:5%; }
   #ios-keyboard-demo .english .flick-backspace .key-face { font-size:13px; }
   #ios-keyboard-demo .key.has-flick .key-face { position:relative; overflow:hidden; padding-top:10px; }
@@ -228,8 +229,19 @@
   ]);
   function updateKeyFlick(p,dx,dy) {
     if(!p.flickKey)return false;
+    const distance=Math.hypot(dx,dy);
+    if(p.key.strictFlickDirections) {
+      if(distance<=10) {p.strictFlickSelected=false;p.flickAxis=null;p.altSelected=false;p.upperSelected=false;return true;}
+      if(!p.strictFlickSelected&&distance>=18) {
+        p.strictFlickSelected=true;
+        p.flickAxis=Math.abs(dy)>Math.abs(dx)?'vertical':'strict-unassigned';
+      }
+      if(!p.strictFlickSelected)return true;
+      p.altSelected=p.flickAxis==='vertical'&&dy>=(p.altSelected?10:18);
+      return true;
+    }
     const canUppercase=/^[a-z]$/.test(p.flickKey);
-    if(!p.flickAxis && Math.hypot(dx,dy)>=12) {
+    if(!p.flickAxis && distance>=12) {
       p.flickAxis=Math.abs(dy)>Math.abs(dx)&&(dy>0||canUppercase)?'vertical':'slide';
     }
     if(p.flickAxis==='slide')return false;
@@ -736,7 +748,9 @@
   const textKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,preview:'press'}));
   const letterKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,alt:flickSymbols[c],preview:'press'}));
   const modifierGesture=()=>makeKey('modifier-gesture','',{modifierFlick:true,preview:'selection'});
+  const qwertyPeriod=()=>makeKey('.','.',{text:'.',alt:flickSymbols['.'],periodFlick:true,strictFlickDirections:true,preview:'press'});
   const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'ESC',altAction:'escape',preview:'selection'});
+  const qwertyBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'ESC',altAction:'escape',strictFlickDirections:true,preview:'selection'});
   const modifierGlyph=value=>value==='Control'?'C':value==='Alt'?'A':'';
   function emojiRows() {
     const category=emojiCategories.find(([id])=>id===emojiCategory)||emojiCategories[0];
@@ -785,8 +799,8 @@
   function qwertyRows() {
     return [
       letterKeys('qwertyuiop'),
-      [modifierGesture(),...letterKeys('asdfghjkl'),flickBackspace()],
-      [makeKey('symbols','#',{special:true,ghost:'!'}),...letterKeys('zxcvbnm,.')],
+      [modifierGesture(),...letterKeys('asdfghjkl'),qwertyPeriod()],
+      [makeKey('symbols','#',{special:true,ghost:'!'}),...letterKeys('zxcvbnm,'),qwertyBackspace()],
       englishBottomRow()
     ];
   }
@@ -872,6 +886,7 @@
       key.side?'side':null,
       key.ghost?'letter-layer-toggle':null,
       key.id==='return'&&key.hint==='paste'?'has-paste':null,
+      key.periodFlick?'period-flick':null,
       key.id==='modifier-gesture'&&pendingModifier?'mode-on':null,
       key.alt||key.gestureAlt?'has-flick':null
     ].filter(Boolean);
@@ -1056,7 +1071,7 @@
     if(emojiViewport) {emojiViewportStarts.set(e.pointerId,{y:e.clientY,scrollTop:emojiViewport.scrollTop,viewport:emojiViewport,key});keyboard.setPointerCapture(e.pointerId);e.preventDefault();editor.focus({preventScroll:true});return;}
     e.preventDefault();editor.focus({preventScroll:true});
     if([...active.values()].some(p=>p.trackpad))return;
-    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,voiceBackspaceNonCenter:false};
+    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false,voiceBackspaceNonCenter:false};
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
       p.modifierFlick=true;p.modifierChoice=null;
@@ -1147,6 +1162,7 @@
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
       else if(p.key.flick) {insert(p.key.flick[p.dir]||'');lastSpace=-Infinity;}
       else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
+      else if(p.key.strictFlickDirections&&p.strictFlickSelected&&!p.altSelected) { /* selected but unassigned direction */ }
       else if(p.key.text&&!p.outside) {
         if(!applyModified(keyOutput(p),p.keyModifier,Boolean(p.upperSelected))) {
           if(p.key.emoji)insertEmoji(keyOutput(p));else insert(keyOutput(p));
