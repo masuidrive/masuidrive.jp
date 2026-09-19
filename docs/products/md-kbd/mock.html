@@ -749,8 +749,8 @@
   const letterKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,alt:flickSymbols[c],preview:'press'}));
   const modifierGesture=()=>makeKey('modifier-gesture','',{modifierFlick:true,preview:'selection'});
   const qwertyPeriod=()=>makeKey('.','.',{text:'.',alt:flickSymbols['.'],periodFlick:true,strictFlickDirections:true,preview:'press'});
-  const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'ESC',altAction:'escape',preview:'selection'});
-  const qwertyBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'ESC',altAction:'escape',strictFlickDirections:true,preview:'selection'});
+  const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
+  const qwertyBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
   const modifierGlyph=value=>value==='Control'?'C':value==='Alt'?'A':'';
   function emojiRows() {
     const category=emojiCategories.find(([id])=>id===emojiCategory)||emojiCategories[0];
@@ -827,7 +827,7 @@
     const names={
       backspace:'削除',
       'voice-backspace':'タップで削除',
-      'flick-backspace':'タップで削除、下フリックでESC',
+      'flick-backspace':'タップで削除、下フリックでEsc',
       'modifier-gesture':pendingModifier
         ?modifierLabel(pendingModifier)+' 選択中。タップで解除、下スワイプでCtrl、上スワイプでAlt'
         :'下スワイプでCtrl、上スワイプでAlt、タップは無効',
@@ -924,10 +924,11 @@
       face.prepend(up);
       face.append(down);
     }
-    if(key.alt) {
+    const auxiliaryLabel=key.alt||key.gestureAlt;
+    if(auxiliaryLabel) {
       const alt=document.createElement('span');
       alt.className='key-alt';
-      alt.textContent=key.alt;
+      alt.textContent=auxiliaryLabel;
       alt.setAttribute('aria-hidden','true');
       face.append(alt);
     }
@@ -1135,7 +1136,8 @@
     if(updateKeyFlick(p,dx,dy)) {
       p.element.classList.toggle('flick-selected',p.altSelected);
       p.element.classList.toggle('uppercase-selected',p.upperSelected);
-      p.element.querySelector('.key-main').textContent=p.upperSelected||p.upper?p.key.text.toUpperCase():p.key.text;
+      const mainText=p.key.text??p.key.label;
+      p.element.querySelector('.key-main').textContent=p.upperSelected||p.upper?mainText.toUpperCase():mainText;
       if(p.key.preview==='selection')updateSelectionPopup(p,p.altSelected||p.upperSelected);
       else showPopup(p);
       return;
