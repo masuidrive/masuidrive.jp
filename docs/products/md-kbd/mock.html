@@ -710,7 +710,8 @@
       commitCompositionValue(katakana);
     }
     else if(id==='return') {
-      if(composition.reading) {commitCompositionValue(composition.reading);}
+      if(composition.converted) {replaceComposition(composition.index,true);}
+      else if(composition.reading) {commitCompositionValue(composition.reading);}
       else insert('\n');
     }
     else if(id==='space') {
@@ -776,7 +777,9 @@
     const toggle=layerToggleLabels[id];
     const text=options.text?value:null;
     const converting=id==='return'&&Boolean(composition.reading);
-    return makeKey(id,converting?'無変換':toggle?.main??options.label??(flick?flick[0]:value),{
+    const conversionSpace=id==='space'&&Boolean(composition.reading);
+    const conversionSelected=converting&&composition.converted;
+    return makeKey(id,conversionSpace?'候補':converting?(conversionSelected?'確定':'無変換'):toggle?.main??options.label??(flick?flick[0]:value),{
       flick,
       transformActions:transform?['cycle','dakuten','dakuten','handakuten',null]:null,
       text,
@@ -841,8 +844,8 @@
       escape:'Esc',
       tab:'Tab',
       emoji:'絵文字レイヤーへ切り替える',
-      space:'Space。フリックでカーソル移動',
-      return:composition.reading?'無変換。上または左フリックでカタカナ':'Enter、上フリックでCtrl+J、下フリックでPaste',
+      space:composition.reading?'候補。フリックでカーソル移動':'Space。フリックでカーソル移動',
+      return:composition.reading?(composition.converted?'確定。上または左フリックでカタカナ':'無変換。上または左フリックでカタカナ'):'Enter、上フリックでCtrl+J、下フリックでPaste',
       'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
       'symbol-layer':'記号へ切り替える',
