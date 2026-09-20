@@ -185,22 +185,22 @@
   const candidateBar = $('.candidate-bar'), trackpadStatus = $('.trackpad-status');
   const kanaRows = [
     [['emoji','☺'],['あ',['あ','い','う','え','お']],['か',['か','き','く','け','こ']],['さ',['さ','し','す','せ','そ']],['backspace','⌫']],
-    [['symbols','#'],['た',['た','ち','つ','て','と']],['な',['な','に','ぬ','ね','の']],['は',['は','ひ','ふ','へ','ほ']],['space','Space']],
+    [['symbols','?'],['た',['た','ち','つ','て','と']],['な',['な','に','ぬ','ね','の']],['は',['は','ひ','ふ','へ','ほ']],['space','Space']],
     [['numbers','123'],['ま',['ま','み','む','め','も']],['や',['や','（','ゆ','）','よ']],['ら',['ら','り','る','れ','ろ']],['return','Enter']],
     [['english','ABC',{layerSwitch:true}],['modifier','小'],['わ',['わ','を','ん','ー','〜']],['punct',['、','。','？','！',''],{label:'、。?!'}],[null,'']]
   ];
   const tenkeyRows = [
     [['emoji','☺'],['1','1',{text:true}],['2','2',{text:true}],['3','3',{text:true}],['backspace','⌫']],
-    [['symbols','#'],['4','4',{text:true}],['5','5',{text:true}],['6','6',{text:true}],['space','Space']],
+    [['symbols','?'],['4','4',{text:true}],['5','5',{text:true}],['6','6',{text:true}],['space','Space']],
     [['letters','あいう'],['7','7',{text:true}],['8','8',{text:true}],['9','9',{text:true}],['return','Enter']],
-    [['english','ABC',{layerSwitch:true}],['-',['-','+','/','*',',']],['0','0',{text:true}],['.','.',{text:true}],[null,'']]
+    [['english','ABC',{layerSwitch:true}],['-',['-','+','/','*',',']],['0','0',{text:true}],['.',['.',',',null,'=',null]],[null,'']]
   ];
   const kanaRowsByLayer = {letters:kanaRows,numbers:tenkeyRows};
   const layerToggleLabels = {
     numbers:{main:'1',ghost:'9'},
     letters:{main:'あ',ghost:'ん'},
     english:{main:'A',ghost:'Z'},
-    symbols:{main:'#',ghost:'!'}
+    symbols:{main:'?',ghost:'}'}
   };
   const layerNavigation = {left:{label:'音声',action:'voice'},up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
   const voiceNavigation = {up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
@@ -764,7 +764,7 @@
       content,
       rail:[
         makeKey('kana','あ',{special:true}),
-        makeKey('symbol-layer','#',{special:true,ghost:'!'}),
+        makeKey('symbol-layer','?',{special:true,ghost:'}'}),
         makeKey('kana-numbers','19',{special:true}),
         makeKey('english','A',{special:true,ghost:'Z',navigation:layerNavigation}),
       ]
@@ -803,7 +803,7 @@
     return [
       letterKeys('qwertyuiop'),
       [modifierGesture(),...letterKeys('asdfghjkl'),qwertyPeriod()],
-      [makeKey('symbols','#',{special:true,ghost:'!'}),...letterKeys('zxcvbnm,'),qwertyBackspace()],
+      [makeKey('symbols','?',{special:true,ghost:'}'}),...letterKeys('zxcvbnm,'),qwertyBackspace()],
       englishBottomRow()
     ];
   }
