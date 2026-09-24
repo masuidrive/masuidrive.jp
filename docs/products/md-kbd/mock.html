@@ -105,7 +105,7 @@
   #ios-keyboard-demo .kana.emoji-layer.dual .emoji-scroll-viewport { margin-left:12.5%; }
   #ios-keyboard-demo .kana.emoji-layer.dual .emoji-rail { width:12.5%; }
   #ios-keyboard-demo .kana .key-row { position:relative; }
-  #ios-keyboard-demo .kana .key.return { position:absolute; top:0; right:0; width:20%; height:calc(200% + 10px); z-index:1; }
+  #ios-keyboard-demo .kana .key.return { position:absolute; top:0; right:0; width:20%; height:calc(200% + 10px); z-index:1; --enter-hint-lift:42px; }
   #ios-keyboard-demo .kana .key, #ios-keyboard-demo .kana .key-slot { width:auto; }
   #ios-keyboard-demo .kana .punct .key-face, #ios-keyboard-demo .kana .modifier .key-face { font-size:18px; }
   #ios-keyboard-demo .kana .key-row { height:45px; margin-bottom:10px; }
@@ -128,7 +128,13 @@
   #ios-keyboard-demo .key .key-alt { position:absolute; top:3px; left:0; right:0; text-align:center; color:var(--ik-key-muted); font-size:11px; line-height:12px; transition:transform .09s ease,color .09s ease; }
   #ios-keyboard-demo .key .key-hint { order:3; transform-origin:center; transition:transform .09s ease,color .09s ease,opacity .09s ease; }
   #ios-keyboard-demo .key.space .key-hint { order:-1; margin:0 0 2px; }
-  #ios-keyboard-demo .key.return .key-hint { order:-1; margin:0 0 2px; }
+  #ios-keyboard-demo .key.return.has-paste .key-face { position:relative; }
+  #ios-keyboard-demo .key.return.has-paste .key-main { position:absolute; top:50%; left:50%; line-height:1; transform:translate(-50%,-50%); }
+  #ios-keyboard-demo .key.return.has-paste .key-enter-upper,
+  #ios-keyboard-demo .key.return.has-paste .key-hint { position:absolute; left:0; right:0; margin:0; font-size:10px; line-height:1; }
+  #ios-keyboard-demo .key.return.has-paste .key-enter-upper { top:3px; }
+  #ios-keyboard-demo .key.return.has-paste .key-hint { bottom:3px; left:50%; right:auto; width:max-content; transform:translateX(-50%); }
+  #ios-keyboard-demo .key.return.mode-on .key-enter-upper,
   #ios-keyboard-demo .key.return.mode-on .key-hint { opacity:0; }
   #ios-keyboard-demo .key.pressed .key-alt { color:var(--ik-selected-ink); }
   #ios-keyboard-demo .key.flick-selected .key-alt { transform:translateY(13px) scale(1.7); color:var(--ik-selected-ink); }
@@ -170,9 +176,9 @@
   #ios-keyboard-demo .kana.dual .key.return { width:12.5%; }
   /* The emoji catalog keeps seven content columns even when a wide kana layer is dual. */
   #ios-keyboard-demo .kana.emoji-layer.dual .emoji-scroll-viewport .key-row { grid-template-columns:repeat(7,minmax(0,1fr)); }
-  #ios-keyboard-demo .key.return.has-paste.flick-selected .key-hint { transform:translateY(13px) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
-  #ios-keyboard-demo .key.return.has-paste.flick-selected .key-main { transform:translateY(22px); opacity:0; }
-  #ios-keyboard-demo .key.return.control-j-selected .key-main { transform:scale(1.06); color:var(--ik-selected-ink); }
+  #ios-keyboard-demo .key.return.has-paste.paste-selected .key-hint { transform:translate(-50%,calc(-1 * var(--enter-hint-lift, 14.5px))) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
+  #ios-keyboard-demo .key.return.has-paste.paste-selected .key-main { opacity:0; }
+  #ios-keyboard-demo .key.return.control-j-selected .key-main { transform:translate(-50%,-50%) scale(1.06); color:var(--ik-selected-ink); }
   @media(max-width:560px) { #ios-keyboard-demo .device-picker .device-name { display:none; } #ios-keyboard-demo .device-size { min-width:0; } }
   @media(max-width:360px) { #ios-keyboard-demo .key { padding:0 2px; } #ios-keyboard-demo .topbar { padding-top:16px; } #ios-keyboard-demo .device-size { display:none; } }
 </style>
@@ -204,7 +210,7 @@
   };
   const layerNavigation = {left:{label:'音声',action:'voice'},up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
   const voiceNavigation = {up:{label:'日本語',action:'kana'},right:{label:'QWERTY',action:'english'},down:{label:'テンキー',action:'kana-numbers'}};
-  const pasteNavigation = {up:{label:'C-j',action:'ctrl-j'},down:{label:'paste',action:'paste'}};
+  const pasteNavigation = {up:{label:'paste',action:'paste'},down:{label:'C-j',action:'ctrl-j'}};
   const conversionNavigation = {up:{label:'カタカナ',action:'katakana-conversion'},left:{label:'カタカナ',action:'katakana-conversion'}};
   const repeatKeys = ['backspace','left','right','up','down'];
   const accents = {a:'àáâäæãåā',e:'èéêëēėę',i:'îïíīįì',o:'ôöòóœøōõ',u:'ûüùúū',c:'çćč',n:'ñń',s:'ßśš',y:'ÿ'};
@@ -811,7 +817,7 @@
     return [
       textKeys('1234567890'),
       [modifierGesture(),...textKeys('^_\\|~{}[]'),flickBackspace()],
-      [makeKey('symbols','A',{special:true,ghost:'Z'}),makeKey('escape','Esc'),...textKeys('`!?;'),makeKey('tab','Tab',{preview:'press'}),...textKeys('<>-')],
+      [makeKey('symbols','A',{special:true,ghost:'Z'}),makeKey('escape','Esc'),...textKeys('`!?;<>-'),makeKey('tab','Tab',{preview:'press'})],
       englishBottomRow()
     ];
   }
@@ -845,7 +851,7 @@
       tab:'Tab',
       emoji:'絵文字レイヤーへ切り替える',
       space:composition.reading?'候補。フリックでカーソル移動':'Space。フリックでカーソル移動',
-      return:composition.reading?(composition.converted?'確定。上または左フリックでカタカナ':'無変換。上または左フリックでカタカナ'):'Enter、上フリックでCtrl+J、下フリックでPaste',
+      return:composition.reading?(composition.converted?'確定。上または左フリックでカタカナ':'無変換。上または左フリックでカタカナ'):'Enter、上フリックでPaste、下フリックでCtrl+J',
       'voice-punct':'タップで、。左フリックで。上フリックで？右フリックで！下フリックで、',
       numbers:'テンキーへ切り替える',
       'symbol-layer':'記号へ切り替える',
@@ -936,6 +942,13 @@
       face.append(alt);
     }
     if(key.hint) {
+      if(key.id==='return'&&key.hint==='paste') {
+        const upper=document.createElement('small');
+        upper.className='key-enter-upper';
+        upper.textContent='C-j';
+        upper.setAttribute('aria-hidden','true');
+        face.append(upper);
+      }
       const hint=document.createElement('small');
       hint.className='key-hint';
       hint.textContent=key.hint;
@@ -1051,13 +1064,13 @@
   }
   function cancelAll() {
     cancelEmojiViewportGestures();
-    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');}
+    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','paste-selected','control-j-selected');}
     active.clear();if(voiceDemo.active)leaveVoiceDemo(true);pendingModifier=null;popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
   }
   function cancelGestures() {
     cancelEmojiViewportGestures();
-    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');}
+    for(const p of active.values()){clearTimers(p);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','paste-selected','control-j-selected');}
     active.clear();popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
   }
@@ -1110,9 +1123,9 @@
       const selection=p.navigationChoice&&p.key.navigation[p.navigationChoice];
       p.element.classList.toggle('mode-on',Boolean(selection));
       p.element.classList.toggle('navigation-selected',Boolean(selection));
-      p.element.classList.toggle('flick-selected',p.navigationChoice==='down'&&p.key.id==='return');
-      p.element.classList.toggle('control-j-selected',p.navigationChoice==='up'&&p.key.id==='return'&&selection?.action==='ctrl-j');
-      p.element.querySelector('.key-main').textContent=p.key.id==='return'&&p.key.hint&&p.navigationChoice==='down'?p.key.label:selection?.label||p.key.label;
+      p.element.classList.toggle('paste-selected',p.key.id==='return'&&selection?.action==='paste');
+      p.element.classList.toggle('control-j-selected',p.key.id==='return'&&selection?.action==='ctrl-j');
+      p.element.querySelector('.key-main').textContent=p.key.id==='return'&&p.key.hint&&selection?.action==='paste'?p.key.label:selection?.label||p.key.label;
       if(selection?.action==='voice')beginVoiceDemo(p);
       if(selection)announce(selection.label);
       return;
@@ -1155,7 +1168,7 @@
   function finish(e,canceled=false) {
     const p=active.get(e.pointerId);if(!p)return;
     updateVoiceBackspaceSelection(p,e.clientX,e.clientY);
-    clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','control-j-selected');
+    clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','paste-selected','control-j-selected');
     const remaining=[...active.values()].at(-1);
     if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
     if(!remaining?.trackpad)keyboard.classList.remove('trackpad');
