@@ -119,6 +119,18 @@
   #ios-keyboard-demo .english .key-row:nth-child(2) .flick-backspace { flex-basis:5%; }
   #ios-keyboard-demo .english .flick-backspace .key-face { font-size:13px; }
   #ios-keyboard-demo .key.has-flick .key-face { position:relative; overflow:hidden; padding-top:10px; }
+  #ios-keyboard-demo .key.flick-hints .key-face { position:relative; overflow:hidden; }
+  #ios-keyboard-demo .key .flick-direction { position:absolute; color:var(--ik-key-muted); font-size:10px; line-height:1; opacity:.76; transition:transform .09s ease,color .09s ease,opacity .09s ease; }
+  #ios-keyboard-demo .key .flick-direction.up { top:3px; left:50%; transform:translateX(-50%); }
+  #ios-keyboard-demo .key .flick-direction.left { top:50%; left:5px; transform:translateY(-50%); }
+  #ios-keyboard-demo .key .flick-direction.right { top:50%; right:5px; transform:translateY(-50%); }
+  #ios-keyboard-demo .key .flick-direction.down { bottom:3px; left:50%; transform:translateX(-50%); }
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction] .key-main,
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction] .flick-direction { opacity:0; }
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction=left] .flick-direction.left,
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction=right] .flick-direction.right { transform:translateY(-50%) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction=up] .flick-direction.up,
+  #ios-keyboard-demo .key.flick-hints[data-flick-direction=down] .flick-direction.down { transform:translateX(-50%) scale(1.7); color:var(--ik-selected-ink); opacity:1; }
   #ios-keyboard-demo .key .key-main { transition:transform .09s ease,opacity .09s ease; }
   #ios-keyboard-demo .key.letter-layer-toggle .key-face { position:relative; }
   #ios-keyboard-demo .key.letter-layer-toggle .key-main { position:relative; z-index:1; transform:translateX(-3px); }
@@ -142,7 +154,7 @@
   #ios-keyboard-demo .key.uppercase-selected .key-main { transform:translateY(-3px); color:var(--ik-selected-ink); }
   #ios-keyboard-demo .key.uppercase-selected .key-alt { opacity:0; }
   #ios-keyboard-demo .trackpad .key-face, #ios-keyboard-demo .trackpad .key-face * { color:transparent!important; }
-  @media(prefers-reduced-motion:reduce) { #ios-keyboard-demo .key .key-main, #ios-keyboard-demo .key .key-alt, #ios-keyboard-demo .key .key-hint { transition:none; } }
+  @media(prefers-reduced-motion:reduce) { #ios-keyboard-demo .key .key-main, #ios-keyboard-demo .key .key-alt, #ios-keyboard-demo .key .key-hint, #ios-keyboard-demo .key .flick-direction { transition:none; } }
   #ios-keyboard-demo .english .key.backspace .key-face, #ios-keyboard-demo .english .key.return .key-face { background:var(--ik-key); }
   #ios-keyboard-demo .english .key-row:last-child .key { flex:1.45; }
   #ios-keyboard-demo .english .key-row:last-child .space { flex:4.2; }
@@ -199,7 +211,7 @@
     [['emoji','☺'],['1','1',{text:true}],['2','2',{text:true}],['3','3',{text:true}],['backspace','⌫']],
     [['symbols','?'],['4','4',{text:true}],['5','5',{text:true}],['6','6',{text:true}],['space','Space']],
     [['letters','あいう'],['7','7',{text:true}],['8','8',{text:true}],['9','9',{text:true}],['return','Enter']],
-    [['english','ABC',{layerSwitch:true}],['-',['-','+','/','*',',']],['0','0',{text:true}],['.',['.',',',null,'=',null]],[null,'']]
+    [['english','ABC',{layerSwitch:true}],['-',['-','+','/','*',','],{flickHints:true}],['0','0',{text:true}],['.',['.',',',null,'=',null],{flickHints:true}],[null,'']]
   ];
   const kanaRowsByLayer = {letters:kanaRows,numbers:tenkeyRows};
   const layerToggleLabels = {
@@ -233,26 +245,28 @@
     ...[...'asdfghjkl'].map((key,i)=>[key, '@#$&*()\'"'[i]]),
     ...[...'zxcvbnm,.'].map((key,i)=>[key, '%-+=/;:!?'[i]])
   ]);
+  function updateRawSelection(p,dx,dy,verticalOnly=false) {
+    const distance=Math.hypot(dx,dy);
+    if(verticalOnly) {
+      if(distance<=10) {
+        p.rawAxis=null;
+        p.rawDirection=0;
+      }
+      if(!p.rawAxis&&distance>=12)p.rawAxis=Math.abs(dx)>=Math.abs(dy)?'horizontal':'vertical';
+      if(p.rawAxis==='horizontal'||Math.abs(dy)<18)return p.rawDirection;
+      p.rawDirection=dy<0?2:4;
+      return p.rawDirection;
+    }
+    if(p.rawDirection&&distance<=10)p.rawDirection=0;
+    else if(distance>=18)p.rawDirection=Math.abs(dx)>=Math.abs(dy)?(dx<0?1:3):(dy<0?2:4);
+    return p.rawDirection;
+  }
   function updateKeyFlick(p,dx,dy) {
     if(!p.flickKey)return false;
-    const distance=Math.hypot(dx,dy);
-    if(p.key.strictFlickDirections) {
-      if(distance<=10) {p.strictFlickSelected=false;p.flickAxis=null;p.altSelected=false;p.upperSelected=false;return true;}
-      if(!p.strictFlickSelected&&distance>=18) {
-        p.strictFlickSelected=true;
-        p.flickAxis=Math.abs(dy)>Math.abs(dx)?'vertical':'strict-unassigned';
-      }
-      if(!p.strictFlickSelected)return true;
-      p.altSelected=p.flickAxis==='vertical'&&dy>=(p.altSelected?10:18);
-      return true;
-    }
-    const canUppercase=/^[a-z]$/.test(p.flickKey);
-    if(!p.flickAxis && distance>=12) {
-      p.flickAxis=Math.abs(dy)>Math.abs(dx)&&(dy>0||canUppercase)?'vertical':'slide';
-    }
-    if(p.flickAxis==='slide')return false;
-    p.altSelected=p.flickAxis==='vertical' && dy>=(p.altSelected?10:18);
-    p.upperSelected=canUppercase && p.flickAxis==='vertical' && dy<=-(p.upperSelected?10:18);
+    const rawDirection=updateRawSelection(p,dx,dy,!p.key.strictFlickDirections);
+    p.strictFlickSelected=rawDirection===4;
+    p.altSelected=rawDirection===4;
+    p.upperSelected=/^[a-z]$/.test(p.flickKey)&&rawDirection===2;
     return true;
   }
   function keyOutput(p) {
@@ -262,26 +276,15 @@
   }
   function updateModifierFlick(p,dx,dy) {
     if(!p.modifierFlick)return false;
-    if(!p.modifierAxis&&Math.hypot(dx,dy)>=12)p.modifierAxis=Math.abs(dy)>Math.abs(dx)?'vertical':'slide';
-    if(p.modifierAxis==='slide')return false;
-    const ctrl=dy>=(p.modifierChoice==='Control'?10:18);
-    const alt=dy<=-(p.modifierChoice==='Alt'?10:18);
-    p.modifierChoice=p.modifierAxis==='vertical'?(ctrl?'Control':alt?'Alt':null):null;
+    const rawDirection=updateRawSelection(p,dx,dy,true);
+    p.modifierChoice=rawDirection===4?'Control':rawDirection===2?'Alt':null;
     return true;
   }
   function updateNavigationFlick(p,dx,dy) {
     if(!p.key.navigation)return false;
-    const horizontal=Boolean(p.key.navigation.left||p.key.navigation.right);
-    const vertical=Boolean(p.key.navigation.up||p.key.navigation.down);
-    if(!p.navigationAxis&&Math.hypot(dx,dy)>=12)p.navigationAxis=horizontal&&Math.abs(dx)>Math.abs(dy)?'horizontal':vertical&&Math.abs(dy)>Math.abs(dx)?'vertical':'slide';
-    if(p.navigationAxis==='slide')return false;
-    if(p.navigationAxis==='horizontal') {
-      const left=dx<=-(p.navigationChoice==='left'?10:18),right=dx>=(p.navigationChoice==='right'?10:18);
-      p.navigationChoice=left?'left':right?'right':null;
-    } else if(vertical) {
-      const up=dy<=-(p.navigationChoice==='up'?10:18),down=dy>=(p.navigationChoice==='down'?10:18);
-      p.navigationChoice=up?'up':down?'down':null;
-    } else p.navigationChoice=null;
+    const rawDirection=updateRawSelection(p,dx,dy);
+    const choice=[null,'left','up','right','down'][rawDirection];
+    p.navigationChoice=choice&&p.key.navigation[choice]?choice:null;
     return true;
   }
   function lockSwipeAxis(currentAxis,dx,dy) {
@@ -787,6 +790,7 @@
     const conversionSelected=converting&&composition.converted;
     return makeKey(id,conversionSpace?'候補':converting?(conversionSelected?'確定':'無変換'):toggle?.main??options.label??(flick?flick[0]:value),{
       flick,
+      flickHints:options.flickHints??false,
       transformActions:transform?['cycle','dakuten','dakuten','handakuten',null]:null,
       text,
       hint:converting?null:id==='return'?'paste':options.hint??null,
@@ -896,6 +900,7 @@
       key.ghost?'letter-layer-toggle':null,
       key.id==='return'&&key.hint==='paste'?'has-paste':null,
       key.periodFlick?'period-flick':null,
+      key.flickHints?'flick-hints':null,
       key.id==='modifier-gesture'&&pendingModifier?'mode-on':null,
       key.alt||key.gestureAlt?'has-flick':null
     ].filter(Boolean);
@@ -953,6 +958,17 @@
       hint.className='key-hint';
       hint.textContent=key.hint;
       face.append(hint);
+    }
+    if(key.flickHints) {
+      ['left','up','right','down'].forEach((directionName,index)=>{
+        const label=key.flick[index+1];
+        if(!label)return;
+        const direction=document.createElement('small');
+        direction.className='flick-direction '+directionName;
+        direction.textContent=label;
+        direction.setAttribute('aria-hidden','true');
+        face.append(direction);
+      });
     }
     if(key.corner) {
       const corner=document.createElement('small');
@@ -1028,9 +1044,11 @@
   function postDemoHeight() {
     requestAnimationFrame(()=>parent.postMessage({type:'gesture-ime-demo-height',height:Math.ceil(root.getBoundingClientRect().height)},location.origin));
   }
-  function direction(dx,dy) {
-    if(Math.hypot(dx,dy)<18)return 0;
-    return Math.abs(dx)>Math.abs(dy)?(dx<0?1:3):(dy<0?2:4);
+  function setFlickDirectionSelection(p,dir) {
+    if(!p.key.flickHints)return;
+    const name=[null,'left','up','right','down'][dir];
+    if(name&&p.key.flick[dir])p.element.dataset.flickDirection=name;
+    else delete p.element.dataset.flickDirection;
   }
   function showPopup(p) {
     const rect=p.element.getBoundingClientRect(), base=keyboard.getBoundingClientRect();
@@ -1074,12 +1092,6 @@
     active.clear();popup.hidden=true;keyboard.classList.remove('trackpad','popup-active');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';render();
   }
-  function updateVoiceBackspaceSelection(p,x,y) {
-    if(p.origin!=='voice-backspace')return;
-    const distance=Math.hypot(x-p.x,y-p.y);
-    if(p.voiceBackspaceNonCenter&&distance<=10)p.voiceBackspaceNonCenter=false;
-    else if(!p.voiceBackspaceNonCenter&&distance>=18)p.voiceBackspaceNonCenter=true;
-  }
   keyboard.addEventListener('contextmenu',e=>e.preventDefault());
   keyboard.addEventListener('pointerdown',e=>{
     const element=e.target.closest('.key');if(!element||e.button!==0)return;
@@ -1088,7 +1100,7 @@
     if(emojiViewport) {emojiViewportStarts.set(e.pointerId,{y:e.clientY,scrollTop:emojiViewport.scrollTop,viewport:emojiViewport,key});keyboard.setPointerCapture(e.pointerId);e.preventDefault();editor.focus({preventScroll:true});return;}
     e.preventDefault();editor.focus({preventScroll:true});
     if([...active.values()].some(p=>p.trackpad))return;
-    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false,voiceBackspaceNonCenter:false};
+    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,rawDirection:0,rawAxis:null,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false};
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
       p.modifierFlick=true;p.modifierChoice=null;
@@ -1111,7 +1123,6 @@
     }
     const p=active.get(e.pointerId);if(!p)return;e.preventDefault();
     const dx=e.clientX-p.x,dy=e.clientY-p.y;
-    updateVoiceBackspaceSelection(p,e.clientX,e.clientY);
     if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
     if(updateModifierFlick(p,dx,dy)) {
       p.element.classList.toggle('choice-active',Boolean(p.modifierChoice));
@@ -1126,7 +1137,6 @@
       p.element.classList.toggle('paste-selected',p.key.id==='return'&&selection?.action==='paste');
       p.element.classList.toggle('control-j-selected',p.key.id==='return'&&selection?.action==='ctrl-j');
       p.element.querySelector('.key-main').textContent=p.key.id==='return'&&p.key.hint&&selection?.action==='paste'?p.key.label:selection?.label||p.key.label;
-      if(selection?.action==='voice')beginVoiceDemo(p);
       if(selection)announce(selection.label);
       return;
     }
@@ -1147,7 +1157,7 @@
       p.accentIndex=Math.max(0,Math.min(p.variants.length-1,Math.floor((e.clientX-p.accentLeft-3)/34)));
       [...popup.children].forEach((s,i)=>s.classList.toggle('chosen',i===p.accentIndex));return;
     }
-    if(p.key.flick) {p.dir=direction(dx,dy);showPopup(p);return;}
+    if(p.key.flick) {p.rawDirection=updateRawSelection(p,dx,dy);p.dir=p.key.flick[p.rawDirection]?p.rawDirection:0;setFlickDirectionSelection(p,p.dir);showPopup(p);return;}
     if(Math.hypot(dx,dy)>12)clearTimeout(p.timer);
     if(updateKeyFlick(p,dx,dy)) {
       p.element.classList.toggle('flick-selected',p.altSelected);
@@ -1158,29 +1168,24 @@
       else showPopup(p);
       return;
     }
-    if(p.key.text) {
-      const over=document.elementFromPoint(e.clientX,e.clientY)?.closest('.key');
-      const next=over&&keyMap.get(over.dataset.key);
-      if(next?.text) {p.element.classList.remove('pressed');p.key=next;p.element=over;over.classList.add('pressed');p.outside=false;showPopup(p);}
-      else {p.outside=true;popup.hidden=true;keyboard.classList.remove('popup-active');}
-    }
+    if(p.key.text)return;
   });
   function finish(e,canceled=false) {
     const p=active.get(e.pointerId);if(!p)return;
-    updateVoiceBackspaceSelection(p,e.clientX,e.clientY);
     clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','paste-selected','control-j-selected');
     const remaining=[...active.values()].at(-1);
     if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
     if(!remaining?.trackpad)keyboard.classList.remove('trackpad');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';
-    if(p.voiceTriggered) { /* The dedicated voice layer owns completion. */ }
-    else if(!canceled&&!p.trackpad&&!p.voiceBackspaceNonCenter) {
-      if(p.navigationChoice&&p.key.navigation[p.navigationChoice])action(p.key.navigation[p.navigationChoice].action,p.keyModifier);
+    if(!canceled&&!p.trackpad) {
+      if(p.navigationChoice&&p.key.navigation[p.navigationChoice]) {
+        const navigationAction=p.key.navigation[p.navigationChoice].action;
+        if(navigationAction==='voice')beginVoiceDemo(p);else action(navigationAction,p.keyModifier);
+      }
       else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
       else if(p.key.flick) {insert(p.key.flick[p.dir]||'');lastSpace=-Infinity;}
       else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
-      else if(p.key.strictFlickDirections&&p.strictFlickSelected&&!p.altSelected) { /* selected but unassigned direction */ }
       else if(p.key.text&&!p.outside) {
         if(!applyModified(keyOutput(p),p.keyModifier,Boolean(p.upperSelected))) {
           if(p.key.emoji)insertEmoji(keyOutput(p));else insert(keyOutput(p));
