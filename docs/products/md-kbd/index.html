@@ -16,7 +16,7 @@
   </header>
   <nav class="nav home-nav" aria-label="サイトナビゲーション"><div class="nav-inner">
     <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">md</span><span>masuidrive-kbd</span></a>
-    <div class="nav-links"><a href="#features">機能</a><a href="manual.html">使い方</a><a href="#demo">操作モック</a><a class="download" href="https://github.com/masuidrive/android-kbd/releases/download/v0.15.20/gesture-ime-v0.15.20.apk">APK</a></div>
+    <div class="nav-links"><a href="#features">機能</a><a href="manual.html">使い方</a><a href="#demo">操作モック</a><a class="download" href="https://github.com/masuidrive/android-kbd/releases/download/v0.15.24/gesture-ime-v0.15.24.apk">APK</a></div>
   </div></nav>
   <main id="main">
     <section class="hero">
@@ -25,7 +25,7 @@
         <p class="eyebrow">Android Flick Keyboard by masuidrive</p>
         <h1><span>QWERTYも、</span><span>Flickで。</span></h1>
         <p class="lead">日本語、英字、数字、記号を、同じフリック操作で扱えるAndroidキーボードです。変換には端末内のMozcを使います。</p>
-        <div class="actions"><a class="button primary" href="https://github.com/masuidrive/android-kbd/releases/download/v0.15.20/gesture-ime-v0.15.20.apk">v0.15.20 APKをダウンロード</a><a class="button" href="manual.html">導入手順を見る</a><a class="button" href="#demo">ブラウザで試す</a></div>
+        <div class="actions"><a class="button primary" href="https://github.com/masuidrive/android-kbd/releases/download/v0.15.24/gesture-ime-v0.15.24.apk">v0.15.24 APKをダウンロード</a><a class="button" href="manual.html">導入手順を見る</a><a class="button" href="#demo">ブラウザで試す</a></div>
         <p class="meta">ARM64 · Android 9（API 28）以上 · ネットワーク権限なし</p>
       </div>
     </section>
@@ -36,20 +36,20 @@
         <article class="feature"><span class="number">01</span><h3>かなはフリック入力</h3><p>中央タップと上下左右のフリックでかなを入力します。入力した読みはMozcが端末内で変換し、Spaceの「候補」で選択、Enterの「確定」で入力できます。</p></article>
         <article class="feature"><span class="number">02</span><h3>英字の上下を使う</h3><p>タップで小文字、上でその一文字だけ大文字、下で数字またはASCII記号を入力します。2行目右端の半幅`.`はタップで`.`、下フリックで`?`を入力し、3行目右端のBackspaceはタップで削除、下でEscを送ります。</p></article>
         <article class="feature"><span class="number">03</span><h3>Spaceでカーソル移動</h3><p>Spaceを動かすと最初の方向で縦軸か横軸が決まり、指を離すまで斜め移動を防ぎます。直接選択を扱えない非private入力先だけ矢印キーへ自動で切り替え、private入力欄では矢印キーを送りません。</p></article>
-        <article class="feature"><span class="number">04</span><h3>Ctrl、Alt、Esc、Tabをサポート</h3><p>C/AキーからCtrlとAltを選べます。記号レイヤーにはEscとTabがあり、削除キーの下フリックでもEscを送れます。</p></article>
+        <article class="feature"><span class="number">04</span><h3>Ctrl、Alt、Esc、Tabをサポート</h3><p>C/AキーからCtrlとAltを選べます。変換中でないEnterは上フリックでPaste、下フリックでCtrl+Jを送ります。待機中は上にC-j、中央にEnter、下にpasteを表示し、記号レイヤー3行目のTabは右端です。削除キーの下フリックでもEscを送れます。</p></article>
         <article class="feature"><span class="number">05</span><h3>広い画面では両手フリック</h3><p>設定でDual Flickを有効にすると、横幅が広いとき日本語の12キーを左右2組表示します。Foldなら、閉じたスマホ表示と開いたタブレット表示の両方で使えます。</p></article>
         <article class="feature"><span class="number">06</span><h3>端末内の音声入力</h3><p>左下キーを左へフリックすると音声入力レイヤーで認識を始めます。候補が空でも最下段のキャンセル、句読点、Space、削除、Enterを操作でき、編集後も認識は続きます。無言で時間切れになっても次の発話を待ちます。候補は固定パネルへ1行ずつ表示し、選ぶと次の認識へ進みます。最終結果がないときは途中結果を選べ、似た候補は異なる文字だけを青い太字で示します。</p></article>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head"><h2>文字は端末の中に残る。</h2><p class="section-intro">IMEは入力欄の内容へ触れるソフトウェアです。masuidrive-kbd v0.15.20は通信機能を持たず、Mozc、学習履歴、個人辞書の参照を端末内で完結させます。</p></div>
+      <div class="section-head"><h2>文字は端末の中に残る。</h2><p class="section-intro">IMEは入力欄の内容へ触れるソフトウェアです。masuidrive-kbd v0.15.24は通信機能を持たず、Mozc、学習履歴、個人辞書の参照を端末内で完結させます。</p></div>
       <div class="privacy"><div><strong>完全オフライン変換</strong><p>入力、候補生成、確定、学習まで通信を使いません。入力文字列をログへ記録せず、private入力欄では学習しません。</p></div><div><strong>端末内の音声認識</strong><p>音声入力時だけマイク権限を求めます。録音音声と認識結果を保存せず、ネットワーク権限も要求しません。</p></div></div>
     </section>
 
     <section class="section cta"><p class="eyebrow">Interactive reference</p><h2>まず、指で確かめる。</h2><p class="section-intro" style="margin:1rem auto 0">操作モックでは、絵文字の履歴や各レイヤーのフリックをブラウザ上で試せます。音声レイヤーは「認識中」から固定パネルの候補確定、次の認識までを繰り返せます。モックの入力欄は読み取り専用で、画面上のキーと候補だけで入力します。変換候補は説明用の内蔵辞書で、Android版のMozcとは異なります。</p><div class="actions" style="justify-content:center"><a class="button primary" href="#demo">操作モックへ戻る</a><a class="button" href="manual.html">使い方を読む</a></div></section>
   </main>
-  <footer class="footer"><span>masuidrive-kbd v0.15.20</span><span>Androidエミュレーターで確認</span></footer>
+  <footer class="footer"><span>masuidrive-kbd v0.15.24</span><span>Androidエミュレーターで確認</span></footer>
   <script>
     const masthead=document.querySelector('.profile-header');
     const homeNav=document.querySelector('.home-nav');
