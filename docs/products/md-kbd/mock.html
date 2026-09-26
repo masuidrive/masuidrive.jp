@@ -251,10 +251,11 @@
     ...[...'zxcvbnm,.'].map((key,i)=>[key, '%-+=/;:!?'[i]])
   ]);
   const flickSensitivity={
-    high:{selection:12,return:7,axis:8},
-    standard:{selection:18,return:10,axis:12},
-    low:{selection:26,return:14,axis:16}
+    high:{selection:10,return:6,axis:7},
+    standard:{selection:16,return:9,axis:11},
+    low:{selection:24,return:13,axis:15}
   };
+  const fixedFlickThresholds={selection:18,return:10,axis:12};
   function updateRawSelection(p,dx,dy,verticalOnly=false,thresholds=flickSensitivity.standard) {
     const distance=Math.hypot(dx,dy);
     if(verticalOnly) {
@@ -1117,8 +1118,9 @@
     if(emojiViewport) {emojiViewportStarts.set(e.pointerId,{y:e.clientY,scrollTop:emojiViewport.scrollTop,viewport:emojiViewport,key});keyboard.setPointerCapture(e.pointerId);e.preventDefault();editor.focus({preventScroll:true});return;}
     e.preventDefault();editor.focus({preventScroll:true});
     if([...active.values()].some(p=>p.trackpad))return;
-    const sensitivityName=!voiceDemo.active&&layer!=='emoji'?(language==='kana'?kanaSensitivity:englishSensitivity):'standard';
-    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,rawDirection:0,rawAxis:null,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false,flickThresholds:flickSensitivity[sensitivityName]};
+    const sensitivityName=language==='kana'?kanaSensitivity:englishSensitivity;
+    const flickThresholds=!voiceDemo.active&&layer!=='emoji'?flickSensitivity[sensitivityName]:fixedFlickThresholds;
+    const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,rawDirection:0,rawAxis:null,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false,flickThresholds};
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
       p.modifierFlick=true;p.modifierChoice=null;
