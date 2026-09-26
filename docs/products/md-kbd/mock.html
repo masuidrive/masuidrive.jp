@@ -251,9 +251,9 @@
     ...[...'zxcvbnm,.'].map((key,i)=>[key, '%-+=/;:!?'[i]])
   ]);
   const flickSensitivity={
-    high:{selection:10,return:6,axis:7},
-    standard:{selection:16,return:9,axis:11},
-    low:{selection:24,return:13,axis:15}
+    high:{selection:16,return:9,axis:11},
+    standard:{selection:24,return:13,axis:15},
+    low:{selection:32,return:17,axis:19}
   };
   const fixedFlickThresholds={selection:18,return:10,axis:12};
   function updateRawSelection(p,dx,dy,verticalOnly=false,thresholds=flickSensitivity.standard) {
@@ -1134,7 +1134,7 @@
       if(!p.keyModifier)p.timer=setTimeout(()=>beginTrackpad(p),450);
     } else if(key.text&&accents[key.text]&&language==='english'&&layer==='letters')p.timer=setTimeout(()=>showAccents(p),450);
   });
-  keyboard.addEventListener('pointermove',e=>{
+  function updatePointer(e,updateAccentSelection=true) {
     const emojiStart=emojiViewportStarts.get(e.pointerId);
     if(emojiStart) {
       if(Math.abs(e.clientY-emojiStart.y)>12)emojiViewportDrags.add(e.pointerId);
@@ -1174,7 +1174,7 @@
       return;
     }
     if(p.variants) {
-      p.accentIndex=Math.max(0,Math.min(p.variants.length-1,Math.floor((e.clientX-p.accentLeft-3)/34)));
+      if(updateAccentSelection)p.accentIndex=Math.max(0,Math.min(p.variants.length-1,Math.floor((e.clientX-p.accentLeft-3)/34)));
       [...popup.children].forEach((s,i)=>s.classList.toggle('chosen',i===p.accentIndex));return;
     }
     if(p.key.flick) {p.rawDirection=updateRawSelection(p,dx,dy,false,p.flickThresholds);p.dir=p.key.flick[p.rawDirection]?p.rawDirection:0;setFlickDirectionSelection(p,p.dir);showPopup(p);return;}
@@ -1190,9 +1190,11 @@
     }
     if(Math.hypot(dx,dy)>=p.flickThresholds.selection)clearTimeout(p.timer);
     if(p.key.text)return;
-  });
+  }
+  keyboard.addEventListener('pointermove',updatePointer);
   function finish(e,canceled=false) {
     const p=active.get(e.pointerId);if(!p)return;
+    if(!canceled)updatePointer(e,false);
     clearTimers(p);active.delete(e.pointerId);p.element.classList.remove('pressed','flick-selected','uppercase-selected','mode-on','choice-active','navigation-selected','paste-selected','control-j-selected');
     const remaining=[...active.values()].at(-1);
     if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
@@ -1226,7 +1228,7 @@
     if(commit) {emojiViewportDrags.add(pointerId);setTimeout(()=>emojiViewportDrags.delete(pointerId),0);}else emojiViewportDrags.delete(pointerId);
     if(keyboard.hasPointerCapture(pointerId))keyboard.releasePointerCapture(pointerId);
   }
-  keyboard.addEventListener('pointerup',e=>{finishEmojiViewportGesture(e.pointerId,true);finish(e)});
+  keyboard.addEventListener('pointerup',e=>{if(emojiViewportStarts.has(e.pointerId))updatePointer(e);finishEmojiViewportGesture(e.pointerId,true);finish(e)});
   keyboard.addEventListener('pointercancel',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   keyboard.addEventListener('lostpointercapture',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   root.addEventListener('click',e=>{
