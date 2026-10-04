@@ -391,10 +391,7 @@
     pendingModifier=null;lastSpace=-Infinity;
     for(const held of active.values())if(held.modifierChoice===modifier)held.used=true;
     const event=new CustomEvent('virtualkey',{detail,bubbles:true,cancelable:true});
-    const useDefault=editor.dispatchEvent(event);
-    if(useDefault&&detail.ctrlKey&&detail.key.toLowerCase()==='a') {
-      editor.focus({preventScroll:true});editor.setSelectionRange(0,editor.value.length);
-    }
+    editor.dispatchEvent(event);
     announce(modifierLabel(modifier)+(detail.shiftKey?' + Shift':'')+' + '+(detail.key===' '?'Space':detail.key.length===1?detail.key.toUpperCase():detail.key));
     return true;
   }
