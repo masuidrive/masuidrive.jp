@@ -176,7 +176,7 @@
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; min-height:45px; margin:0 0 10px; padding:10px 14px; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font-family:inherit; font-size:15px; font-weight:400; line-height:1.45; text-align:left; overflow-wrap:anywhere; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
-  #ios-keyboard-demo .voice .voice-candidate-selected { pointer-events:none; animation:voice-candidate-commit 260ms cubic-bezier(.2,.82,.35,1) forwards; }
+  #ios-keyboard-demo .voice .voice-candidate-selected { position:relative; z-index:2; pointer-events:none; animation:voice-candidate-commit 260ms cubic-bezier(.2,.82,.35,1) forwards; }
   #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-panel-status { display:flex; flex-direction:column; justify-content:center; gap:8px; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
@@ -185,7 +185,7 @@
   #ios-keyboard-demo .voice .voice-panel-partial { margin:0; color:var(--ik-ink); line-height:1.45; overflow-wrap:anywhere; }
   #ios-keyboard-demo .voice-waveform { width:14px; height:16px; display:flex; align-items:center; justify-content:space-between; flex:0 0 14px; }
   #ios-keyboard-demo .voice-waveform i { display:block; width:2px; min-height:2px; border-radius:1px; background:currentColor; }
-  @keyframes voice-candidate-commit { from { opacity:1; transform:translateY(var(--voice-candidate-selection-offset,0px)); } to { opacity:0; transform:translateY(calc(var(--voice-candidate-selection-offset,0px) - 34px)); } }
+  @keyframes voice-candidate-commit { from { opacity:1; transform:translateY(var(--voice-candidate-selection-start,0px)); } 78% { opacity:1; transform:translateY(var(--voice-candidate-selection-top,0px)); } to { opacity:0; transform:translateY(var(--voice-candidate-selection-exit,0px)); } }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
   #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
   #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
@@ -554,8 +554,13 @@
       viewport.querySelectorAll('.voice-candidate').forEach(candidate=>{
         if(candidate!==button)candidate.remove();
       });
-      const selectionOffset=originalTop-button.getBoundingClientRect().top;
-      button.style.setProperty('--voice-candidate-selection-offset',selectionOffset+'px');
+      const selectedTop=button.getBoundingClientRect().top;
+      const selectionStart=originalTop-selectedTop;
+      const selectionTop=viewport.getBoundingClientRect().top-selectedTop;
+      const selectionExit=selectionTop-button.getBoundingClientRect().height;
+      button.style.setProperty('--voice-candidate-selection-start',selectionStart+'px');
+      button.style.setProperty('--voice-candidate-selection-top',selectionTop+'px');
+      button.style.setProperty('--voice-candidate-selection-exit',selectionExit+'px');
       button.disabled=true;button.removeAttribute('data-voice-candidate');button.classList.add('voice-candidate-selected');
     }
     voiceDemo.turn++;
