@@ -167,7 +167,10 @@
   #ios-keyboard-demo .english .key-row:last-child .return { flex:2; }
   #ios-keyboard-demo .trackpad-status { position:absolute; z-index:8; inset:8px 3px 0; display:flex; align-items:center; justify-content:center; color:var(--ik-ink); font-size:22px; font-weight:500; letter-spacing:.08em; pointer-events:none; }
   #ios-keyboard-demo .trackpad-status[hidden] { display:none; }
-  #ios-keyboard-demo .voice .key.voice-cancel .key-face { font-size:13px; }
+  #ios-keyboard-demo .voice .voice-bottom .key-face { overflow:hidden; }
+  #ios-keyboard-demo .voice .key.voice-return .key-face { font-size:13px; }
+  #ios-keyboard-demo .voice .key.voice-candidate-cancel .key-face { font-size:10px; white-space:nowrap; }
+  #ios-keyboard-demo .voice .key.voice-punct .key-face, #ios-keyboard-demo .voice .key.space .key-face { font-size:12px; }
   #ios-keyboard-demo .voice .voice-bottom { position:relative; grid-template-columns:repeat(6,minmax(0,1fr)); }
   #ios-keyboard-demo .voice .key.return { position:static; width:auto; height:100%; z-index:auto; }
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
@@ -175,8 +178,10 @@
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; min-height:45px; margin:0 0 10px; padding:10px 14px; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font-family:inherit; font-size:15px; font-weight:400; line-height:1.45; text-align:left; overflow-wrap:anywhere; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
   #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
-  #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
-  #ios-keyboard-demo .voice-status { position:absolute; left:16.666667%; top:0; width:16.666667%; height:45px; display:flex; align-items:center; justify-content:center; gap:4px; color:var(--ik-muted); font-size:13px; pointer-events:none; }
+  #ios-keyboard-demo .voice .voice-panel-status { display:flex; flex-direction:column; justify-content:center; gap:8px; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
+  #ios-keyboard-demo .voice .voice-panel-status.compact { position:sticky; top:0; z-index:1; flex-direction:row; justify-content:flex-start; height:28px; padding:0 14px; background:var(--ik-bg); font-size:13px; }
+  #ios-keyboard-demo .voice .voice-panel-state { display:flex; align-items:center; gap:5px; }
+  #ios-keyboard-demo .voice .voice-panel-partial { margin:0; color:var(--ik-ink); line-height:1.45; overflow-wrap:anywhere; }
   #ios-keyboard-demo .voice-waveform { width:14px; height:16px; display:flex; align-items:center; justify-content:space-between; flex:0 0 14px; }
   #ios-keyboard-demo .voice-waveform i { display:block; width:2px; min-height:2px; border-radius:1px; background:currentColor; }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
@@ -346,6 +351,14 @@
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
   const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,turn:0,level:0};
+  const voiceReturnLabels={
+    'kana/letters':'あん',
+    'kana/numbers':'19',
+    'kana/emoji':'☺',
+    'english/letters':'Az',
+    'english/symbols':'?}'
+  };
+  const voiceReturnLabel=()=>voiceReturnLabels[(voiceDemo.returnState?.language||'english')+'/'+(voiceDemo.returnState?.layer||'letters')];
   let renderedCandidateContentKey=null;
   try {
     const saved=JSON.parse(localStorage.getItem('gesture-ime-demo-state')||'null');
@@ -534,10 +547,27 @@
     startVoiceDemoRecognition();render(true);
   }
   function cancelVoiceCandidate() {
-    if(!voiceDemo.active||voiceDemo.phase!=='ready')return;
+    if(!voiceDemo.active||voiceDemo.phase==='unavailable')return;
     voiceDemo.turn++;
-    announce('候補を破棄して次の認識を開始');
+    announce('現在の認識または候補を破棄して次の認識を開始');
     startVoiceDemoRecognition();render(true);
+  }
+  function appendVoicePanelStatus(viewport) {
+    const status=document.createElement('div');
+    const labels={preparing:'準備中',listening:'認識中',processing:'処理中',ready:'候補を選択'};
+    status.className='voice-panel-status'+(voiceDemo.phase==='ready'?' compact':'');
+    status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+    const state=document.createElement('span');state.className='voice-panel-state';
+    const label=document.createElement('span');label.textContent=labels[voiceDemo.phase]||'音声入力を利用できません';state.append(label);
+    if(voiceDemo.phase==='listening'){
+      const waveform=document.createElement('span');waveform.className='voice-waveform';waveform.setAttribute('aria-hidden','true');
+      for(let index=0;index<4;index++)waveform.append(document.createElement('i'));
+      state.append(waveform);
+    }
+    status.append(state);
+    const detail=voiceDemo.phase==='listening'?voiceDemo.partial:voiceDemo.phase==='error'||voiceDemo.phase==='unavailable'?voiceDemo.partial||'音声入力を利用できません':'';
+    if(detail){const partial=document.createElement('p');partial.className='voice-panel-partial';partial.textContent=detail;status.append(partial);}
+    viewport.append(status);updateVoiceWaveform();
   }
   function leaveVoiceForLayer(actionId) {
     if(!voiceDemo.active)return;
@@ -705,7 +735,8 @@
     language='kana';layer='emoji';emojiCategory='recent';emojiScrollTop=0;clearComposition();
   }
   function action(id,modifier=currentModifier()) {
-    if(voiceDemo.active&&id==='voice-cancel') {leaveVoiceDemo(true);return true;}
+    if(voiceDemo.active&&id==='voice-return') {leaveVoiceDemo(false);return true;}
+    if(voiceDemo.active&&id==='voice-candidate-cancel') {cancelVoiceCandidate();return true;}
     if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
     if(voiceDemo.active&&['space','return','paste','ctrl-j','left','right','up','down','voice-backspace'].includes(id)) {
       const voiceGeneration=voiceDemo.generation;
@@ -858,6 +889,8 @@
     const layerDirections='左フリックで音声入力レイヤー、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー';
     const names={
       backspace:'削除',
+      'voice-return':'タップで'+voiceReturnLabel()+'へ戻る。上フリックで日本語、右フリックでQWERTY、下フリックでテンキー',
+      'voice-candidate-cancel':'現在の認識または候補を破棄して次の認識を開始',
       'voice-backspace':'タップで削除',
       'flick-backspace':'タップで削除、下フリックでEsc',
       'modifier-gesture':pendingModifier
@@ -1002,8 +1035,8 @@
   function renderKeys() {
     if(voiceDemo.active) {
       const bottomRow=[
-        makeKey('voice-cancel','キャンセル',{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
-        makeKey(null,''),
+        makeKey('voice-return',voiceReturnLabel(),{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
+        makeKey('voice-candidate-cancel','キャンセル',{special:true,side:true}),
         makeKey('voice-punct','、。？！',{flick:['、','。','？','！','、'],preview:'press'}),
         makeKey('space','Space',{hint:'←↓↑→'}),
         makeKey('voice-backspace','⌫'),
@@ -1011,28 +1044,14 @@
       ];
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice';
       const viewport=document.createElement('div');viewport.className='voice-candidate-viewport';viewport.setAttribute('aria-label','音声認識候補');
+      appendVoicePanelStatus(viewport);
       if(voiceDemo.phase==='ready') {
         const differences=voiceCandidateDifferenceMasks(voiceDemo.candidates);
-        const cancel=document.createElement('button');cancel.type='button';cancel.className='voice-candidate';cancel.dataset.voiceCandidateCancel='';cancel.textContent='キャンセル';cancel.setAttribute('aria-label','候補を破棄して認識を続ける');viewport.append(cancel);
         voiceDemo.candidates.forEach((candidate,index)=>{
           const button=document.createElement('button');button.type='button';button.className='voice-candidate';button.dataset.voiceCandidate=String(index);renderVoiceCandidateText(button,candidate,differences[index]);viewport.append(button);
         });
-      } else if(voiceDemo.phase==='listening'&&voiceDemo.partial) {
-        const partial=document.createElement('p');partial.className='voice-plain-status';partial.setAttribute('role','status');partial.textContent=voiceDemo.partial;viewport.append(partial);
-      } else if(voiceDemo.phase==='error'||voiceDemo.phase==='unavailable') {
-        const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
       }
       const bottom=document.createElement('div');bottom.className='key-row voice-bottom';bottom.append(...bottomRow.map(createKeyElement));
-      if(['preparing','listening','processing','ready'].includes(voiceDemo.phase)){
-        const status=document.createElement('span');status.className='voice-status';status.setAttribute('role','status');
-        const label=document.createElement('span');label.textContent=({preparing:'準備中',listening:'認識中',processing:'処理中',ready:'候補を選択'})[voiceDemo.phase];status.append(label);
-        if(voiceDemo.phase==='listening'){
-          const waveform=document.createElement('span');waveform.className='voice-waveform';waveform.setAttribute('aria-hidden','true');
-          for(let index=0;index<4;index++)waveform.append(document.createElement('i'));
-          status.append(waveform);
-        }
-        bottom.append(status);updateVoiceWaveform();
-      }
       keys.append(viewport,bottom);
       return;
     }
@@ -1240,10 +1259,6 @@
   keyboard.addEventListener('pointercancel',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   keyboard.addEventListener('lostpointercapture',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   root.addEventListener('click',e=>{
-    const voiceCandidateCancel=e.target.closest('button[data-voice-candidate-cancel]');
-    if(voiceCandidateCancel) {cancelVoiceCandidate();return;}
-    const voiceCancel=e.target.closest('button[data-voice-cancel]');
-    if(voiceCancel) {leaveVoiceDemo(true);return;}
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
     if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate));return;}
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
