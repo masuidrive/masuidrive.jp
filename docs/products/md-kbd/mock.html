@@ -159,7 +159,7 @@
   #ios-keyboard-demo .key.uppercase-selected .key-main { transform:translateY(-3px); color:var(--ik-selected-ink); }
   #ios-keyboard-demo .key.uppercase-selected .key-alt { opacity:0; }
   #ios-keyboard-demo .trackpad .key-face, #ios-keyboard-demo .trackpad .key-face * { color:transparent!important; }
-  @media(prefers-reduced-motion:reduce) { #ios-keyboard-demo .key .key-main, #ios-keyboard-demo .key .key-alt, #ios-keyboard-demo .key .key-hint, #ios-keyboard-demo .key .flick-direction { transition:none; } }
+  @media(prefers-reduced-motion:reduce) { #ios-keyboard-demo .key .key-main, #ios-keyboard-demo .key .key-alt, #ios-keyboard-demo .key .key-hint, #ios-keyboard-demo .key .flick-direction { transition:none; } #ios-keyboard-demo .voice .voice-candidate-selected { animation:none; } }
   #ios-keyboard-demo .english .key.backspace .key-face, #ios-keyboard-demo .english .key.return .key-face { background:var(--ik-key); }
   #ios-keyboard-demo .english .key-row:last-child .key { flex:1.45; }
   #ios-keyboard-demo .english .key-row:last-child .space { flex:4.2; }
@@ -176,6 +176,7 @@
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; min-height:45px; margin:0 0 10px; padding:10px 14px; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font-family:inherit; font-size:15px; font-weight:400; line-height:1.45; text-align:left; overflow-wrap:anywhere; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .voice .voice-candidate-selected { pointer-events:none; animation:voice-candidate-commit 260ms cubic-bezier(.2,.82,.35,1) forwards; }
   #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-panel-status { display:flex; flex-direction:column; justify-content:center; gap:8px; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
@@ -184,6 +185,7 @@
   #ios-keyboard-demo .voice .voice-panel-partial { margin:0; color:var(--ik-ink); line-height:1.45; overflow-wrap:anywhere; }
   #ios-keyboard-demo .voice-waveform { width:14px; height:16px; display:flex; align-items:center; justify-content:space-between; flex:0 0 14px; }
   #ios-keyboard-demo .voice-waveform i { display:block; width:2px; min-height:2px; border-radius:1px; background:currentColor; }
+  @keyframes voice-candidate-commit { from { opacity:1; transform:translateY(var(--voice-candidate-selection-offset,0px)); } to { opacity:0; transform:translateY(calc(var(--voice-candidate-selection-offset,0px) - 34px)); } }
   #ios-keyboard-demo .popup { position:absolute; z-index:10; pointer-events:none; filter:drop-shadow(0 3px 7px #0008); }
   #ios-keyboard-demo .popup[hidden], #ios-keyboard-demo [hidden] { display:none; }
   #ios-keyboard-demo .popup.flick { width:150px; height:150px; }
@@ -350,7 +352,7 @@
     ['flags','🏳️',['🏳️','🏴','🏁','🚩','🏳️‍🌈','🏳️‍⚧️','🇯🇵','🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇮🇹','🇨🇦','🇦🇺','🇨🇳','🇰🇷','🇮🇳','🇧🇷','🇲🇽','🇪🇸','🇹🇼','🇭🇰','🇸🇬','🇹🇭','🇻🇳','🇵🇭','🇮🇩','🇲🇾','🇳🇿','🇿🇦','🇪🇺','🏴‍☠️']],
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
-  const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,turn:0,level:0};
+  const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,selectionGeneration:0,turn:0,level:0};
   const voiceReturnLabels={
     'kana/letters':'あん',
     'kana/numbers':'19',
@@ -534,7 +536,10 @@
     language=previous.language;layer=previous.layer;
     announce(canceled?'音声入力を取り消し':'音声入力を終了');render(true);
   }
-  function commitVoiceCandidate(index) {
+  function voiceSelectionAnimationDuration() {
+    return matchMedia('(prefers-reduced-motion: reduce)').matches?0:260;
+  }
+  function commitVoiceCandidate(index,button) {
     if(!voiceDemo.active||voiceDemo.phase!=='ready'||voiceDemo.committed)return;
     const text=voiceDemo.candidates[index];if(!text)return;
     voiceDemo.committed=true;clearVoiceTimers();
@@ -542,9 +547,25 @@
     clearInitialDemoTextForInput();
     editor.focus({preventScroll:true});editor.setRangeText(text,editor.selectionStart,editor.selectionEnd,'end');
     editor.dispatchEvent(new Event('input',{bubbles:true}));preserveComposition=false;clearComposition();
+    const selectionGeneration=++voiceDemo.selectionGeneration;
+    const viewport=button?.closest('.voice-candidate-viewport');
+    if(viewport&&button?.isConnected) {
+      const originalTop=button.getBoundingClientRect().top;
+      viewport.querySelectorAll('.voice-candidate').forEach(candidate=>{
+        if(candidate!==button)candidate.remove();
+      });
+      const selectionOffset=originalTop-button.getBoundingClientRect().top;
+      button.style.setProperty('--voice-candidate-selection-offset',selectionOffset+'px');
+      button.disabled=true;button.removeAttribute('data-voice-candidate');button.classList.add('voice-candidate-selected');
+    }
     voiceDemo.turn++;
     announce('音声入力：'+text+'。次の認識を開始');
-    startVoiceDemoRecognition();render(true);
+    const startNextRecognition=()=>{
+      if(!voiceDemo.active||voiceDemo.selectionGeneration!==selectionGeneration||!voiceDemo.committed)return;
+      startVoiceDemoRecognition();render(true);
+    };
+    const delay=voiceSelectionAnimationDuration();
+    if(delay===0)startNextRecognition();else voiceDemo.timers.push(setTimeout(startNextRecognition,delay));
   }
   function cancelVoiceCandidate() {
     if(!voiceDemo.active||voiceDemo.phase==='unavailable')return;
@@ -1260,7 +1281,7 @@
   keyboard.addEventListener('lostpointercapture',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   root.addEventListener('click',e=>{
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
-    if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate));return;}
+    if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate),voiceCandidate);return;}
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
     if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
     const englishCandidate=e.target.closest('button[data-english-candidate]');
@@ -1276,7 +1297,7 @@
       const k=keyMap.get(b.dataset.key);if(k.flick)insert(k.flick[0]);else if(k.text){if(!applyModified(k.text,currentModifier())){if(k.emoji)insertEmoji(k.text);else insert(k.text);}render();}else action(k.id);
     }else {cancelAll();action(b.dataset.key);}
   });
-  editor.addEventListener('input',()=>{preferredCursorX=null;updateCount();if(!preserveComposition)syncComposition();if(!active.size)render();});
+  editor.addEventListener('input',()=>{preferredCursorX=null;updateCount();if(!preserveComposition)syncComposition();if(!active.size&&!voiceDemo.committed)render();});
   editor.addEventListener('pointerup',()=>{preferredCursorX=null;lastSpace=-Infinity;syncComposition();render();});
   editor.addEventListener('keydown',e=>{
     if(pendingModifier&&!e.isComposing&&!['Shift','Control','Alt','Meta'].includes(e.key)) {
