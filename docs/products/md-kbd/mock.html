@@ -172,7 +172,7 @@
   #ios-keyboard-demo .voice .key.return { position:static; width:auto; height:100%; z-index:auto; }
   #ios-keyboard-demo .voice .voice-candidate-viewport { height:165px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; touch-action:pan-y; }
   #ios-keyboard-demo .voice .voice-candidate-viewport::-webkit-scrollbar { display:none; }
-  #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; height:45px; margin:0 0 10px; padding:0 14px; overflow:hidden; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font:400 15px/45px inherit; text-align:left; text-overflow:ellipsis; white-space:nowrap; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .voice .voice-candidate { display:block; width:100%; min-height:45px; margin:0 0 10px; padding:10px 14px; border:0; border-radius:5px; background:var(--ik-key); color:var(--ik-ink); font-family:inherit; font-size:15px; font-weight:400; line-height:1.45; text-align:left; overflow-wrap:anywhere; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
   #ios-keyboard-demo .voice .voice-candidate-diff { color:light-dark(#0057b8,#8edcff); font-weight:700; }
   #ios-keyboard-demo .voice .voice-candidate:focus-visible { outline:2px solid var(--ik-blue); outline-offset:-2px; }
   #ios-keyboard-demo .voice .voice-plain-status { display:flex; align-items:center; height:165px; margin:0; padding:0 14px; color:var(--ik-muted); font-size:14px; }
@@ -319,7 +319,7 @@
   // END KEY FLICK LOGIC
   const params=new URLSearchParams(location.search);
   const heroEmbed=params.get('embed')==='hero';
-  const requestedVoiceDelayMs=Number(params.get('voiceDelayMs'));
+  const requestedVoiceDelayMs=params.has('voiceDelayMs')?Number(params.get('voiceDelayMs')):NaN;
   const voiceDemoDurationMs=Number.isFinite(requestedVoiceDelayMs)
     ?Math.min(10000,Math.max(1,requestedVoiceDelayMs)):10000;
   if(heroEmbed) {
@@ -489,16 +489,18 @@
     const results=turn%2===0
       ?['タブレットとかでも横幅を大きめにしてほしい','タブレットとかでも横幅を大きめにして欲しい','タブレットとかでも横幅が大きめにして欲しい']
       :['続けて入力しています'];
-    Object.assign(voiceDemo,{phase:'listening',partial:'聞き取っています…',candidates:[],index:0,committed:false,level:0});
+    Object.assign(voiceDemo,{phase:'preparing',partial:'',candidates:[],index:0,committed:false,level:0});
     clearVoiceTimers();
     const isCurrent=()=>voiceDemo.active&&voiceDemo.generation===generation;
     let waveStep=0;
     voiceDemo.timers=[
-      setInterval(()=>{if(!isCurrent())return;waveStep++;voiceDemo.level=Math.max(0,Math.min(1,.12+.52*Math.abs(Math.sin(waveStep*.73))+.2*Math.abs(Math.sin(waveStep*1.91))));updateVoiceWaveform();},140),
-      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは';render(true);announce('認識途中：こんにちは');},voiceDemoDurationMs*.045),
-      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは、音声入力を';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.095),
-      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial=turn%2===0?'こんにちは、音声入力を試しています':'続けて入力しています';render(true);announce('認識途中：'+voiceDemo.partial);},voiceDemoDurationMs*.85),
-      setTimeout(()=>{if(!isCurrent())return;clearVoiceTimers();voiceDemo.phase='ready';voiceDemo.level=0;voiceDemo.candidates=results;voiceDemo.index=0;render(true);announce(turn%2===0?'認識結果を選べます':'最終結果がないため、最後の途中結果を選べます');},voiceDemoDurationMs)
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.phase='listening';render(true);announce('発話できます');},250),
+      setInterval(()=>{if(!isCurrent()||voiceDemo.phase!=='listening')return;waveStep++;voiceDemo.level=Math.max(0,Math.min(1,.12+.52*Math.abs(Math.sin(waveStep*.73))+.2*Math.abs(Math.sin(waveStep*1.91))));updateVoiceWaveform();},140),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは';render(true);announce('認識途中：こんにちは');},250+voiceDemoDurationMs*.045),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial='こんにちは、音声入力を';render(true);announce('認識途中：'+voiceDemo.partial);},250+voiceDemoDurationMs*.095),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.partial=turn%2===0?'こんにちは、音声入力を試しています':'続けて入力しています';render(true);announce('認識途中：'+voiceDemo.partial);},250+voiceDemoDurationMs*.85),
+      setTimeout(()=>{if(!isCurrent())return;voiceDemo.phase='processing';voiceDemo.level=0;render(true);announce('音声を処理中');},250+voiceDemoDurationMs*.9),
+      setTimeout(()=>{if(!isCurrent())return;clearVoiceTimers();voiceDemo.phase='ready';voiceDemo.level=0;voiceDemo.candidates=results;voiceDemo.index=0;render(true);announce(turn%2===0?'認識結果を選べます':'最終結果がないため、最後の途中結果を選べます');},250+voiceDemoDurationMs)
     ];
   }
   function beginVoiceDemo(p) {
@@ -529,6 +531,12 @@
     editor.dispatchEvent(new Event('input',{bubbles:true}));preserveComposition=false;clearComposition();
     voiceDemo.turn++;
     announce('音声入力：'+text+'。次の認識を開始');
+    startVoiceDemoRecognition();render(true);
+  }
+  function cancelVoiceCandidate() {
+    if(!voiceDemo.active||voiceDemo.phase!=='ready')return;
+    voiceDemo.turn++;
+    announce('候補を破棄して次の認識を開始');
     startVoiceDemoRecognition();render(true);
   }
   function leaveVoiceForLayer(actionId) {
@@ -1005,16 +1013,19 @@
       const viewport=document.createElement('div');viewport.className='voice-candidate-viewport';viewport.setAttribute('aria-label','音声認識候補');
       if(voiceDemo.phase==='ready') {
         const differences=voiceCandidateDifferenceMasks(voiceDemo.candidates);
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='voice-candidate';cancel.dataset.voiceCandidateCancel='';cancel.textContent='キャンセル';cancel.setAttribute('aria-label','候補を破棄して認識を続ける');viewport.append(cancel);
         voiceDemo.candidates.forEach((candidate,index)=>{
           const button=document.createElement('button');button.type='button';button.className='voice-candidate';button.dataset.voiceCandidate=String(index);renderVoiceCandidateText(button,candidate,differences[index]);viewport.append(button);
         });
+      } else if(voiceDemo.phase==='listening'&&voiceDemo.partial) {
+        const partial=document.createElement('p');partial.className='voice-plain-status';partial.setAttribute('role','status');partial.textContent=voiceDemo.partial;viewport.append(partial);
       } else if(voiceDemo.phase==='error'||voiceDemo.phase==='unavailable') {
         const status=document.createElement('p');status.className='voice-plain-status';status.setAttribute('role','status');status.textContent=voiceDemo.partial||'音声入力を利用できません';viewport.append(status);
       }
       const bottom=document.createElement('div');bottom.className='key-row voice-bottom';bottom.append(...bottomRow.map(createKeyElement));
-      if(['listening','ready'].includes(voiceDemo.phase)){
+      if(['preparing','listening','processing','ready'].includes(voiceDemo.phase)){
         const status=document.createElement('span');status.className='voice-status';status.setAttribute('role','status');
-        const label=document.createElement('span');label.textContent='認識中';status.append(label);
+        const label=document.createElement('span');label.textContent=({preparing:'準備中',listening:'認識中',processing:'処理中',ready:'候補を選択'})[voiceDemo.phase];status.append(label);
         if(voiceDemo.phase==='listening'){
           const waveform=document.createElement('span');waveform.className='voice-waveform';waveform.setAttribute('aria-hidden','true');
           for(let index=0;index<4;index++)waveform.append(document.createElement('i'));
@@ -1229,6 +1240,8 @@
   keyboard.addEventListener('pointercancel',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   keyboard.addEventListener('lostpointercapture',e=>{finishEmojiViewportGesture(e.pointerId,false);finish(e,true)});
   root.addEventListener('click',e=>{
+    const voiceCandidateCancel=e.target.closest('button[data-voice-candidate-cancel]');
+    if(voiceCandidateCancel) {cancelVoiceCandidate();return;}
     const voiceCancel=e.target.closest('button[data-voice-cancel]');
     if(voiceCancel) {leaveVoiceDemo(true);return;}
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
