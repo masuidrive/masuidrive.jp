@@ -60,8 +60,46 @@
   <meta name="twitter:image" content="https://masuidrive.jp/images/top.ogp.jpg" />
 
   <link href="/styles/index.css" rel="stylesheet">
+  <link href="/styles/social-qr.css" rel="stylesheet">
+  <script src="/scripts/social-qr.js" defer></script>
 </head>
 <body>
+<section class="mobile-social-qr" aria-labelledby="social-qr-heading">
+  <div class="social-qr-header"><h2 id="social-qr-heading">SNSリンク</h2><p>タブを選んでQRを表示</p></div>
+  <div class="social-qr-tabs" role="tablist" aria-label="SNSのQRコード" aria-orientation="horizontal" hidden>
+    <button type="button" role="tab" id="social-tab-x" aria-controls="social-panel-x" aria-selected="true" tabindex="0">X</button>
+    <button type="button" role="tab" id="social-tab-facebook" aria-controls="social-panel-facebook" aria-selected="false" tabindex="-1">Facebook</button>
+    <button type="button" role="tab" id="social-tab-instagram" aria-controls="social-panel-instagram" aria-selected="false" tabindex="-1">Instagram</button>
+    <button type="button" role="tab" id="social-tab-linkedin" aria-controls="social-panel-linkedin" aria-selected="false" tabindex="-1">LinkedIn</button>
+    <button type="button" role="tab" id="social-tab-github" aria-controls="social-panel-github" aria-selected="false" tabindex="-1">GitHub</button>
+  </div>
+  <div class="social-qr-panel" role="tabpanel" id="social-panel-x" aria-labelledby="social-tab-x" tabindex="0">
+    <img class="social-qr-image" src="/images/social-qr/x.png" alt="Xのmasuidriveプロフィールを開くQRコード" width="370" height="370">
+    <a class="social-qr-open" href="https://twitter.com/masuidrive">Xでプロフィールを開く <span aria-hidden="true">↗</span></a>
+    <p class="social-qr-handle">masuidrive</p>
+  </div>
+  <div class="social-qr-panel" role="tabpanel" id="social-panel-facebook" aria-labelledby="social-tab-facebook" tabindex="0" hidden>
+    <img class="social-qr-image" src="/images/social-qr/facebook.png" alt="Facebookのmasuidriveプロフィールを開くQRコード" width="370" height="370">
+    <a class="social-qr-open" href="https://facebook.com/masuidrive">Facebookでプロフィールを開く <span aria-hidden="true">↗</span></a>
+    <p class="social-qr-handle">masuidrive</p>
+  </div>
+  <div class="social-qr-panel" role="tabpanel" id="social-panel-instagram" aria-labelledby="social-tab-instagram" tabindex="0" hidden>
+    <img class="social-qr-image" src="/images/social-qr/instagram.png" alt="Instagramのmasuidriveプロフィールを開くQRコード" width="410" height="410">
+    <a class="social-qr-open" href="https://www.instagram.com/masuidrive/">Instagramでプロフィールを開く <span aria-hidden="true">↗</span></a>
+    <p class="social-qr-handle">masuidrive</p>
+  </div>
+  <div class="social-qr-panel" role="tabpanel" id="social-panel-linkedin" aria-labelledby="social-tab-linkedin" tabindex="0" hidden>
+    <img class="social-qr-image" src="/images/social-qr/linkedin.png" alt="LinkedInのmasuidriveプロフィールを開くQRコード" width="410" height="410">
+    <a class="social-qr-open" href="https://www.linkedin.com/in/masuidrive">LinkedInでプロフィールを開く <span aria-hidden="true">↗</span></a>
+    <p class="social-qr-handle">masuidrive</p>
+  </div>
+  <div class="social-qr-panel" role="tabpanel" id="social-panel-github" aria-labelledby="social-tab-github" tabindex="0" hidden>
+    <img class="social-qr-image" src="/images/social-qr/github.png" alt="GitHubのmasuidriveプロフィールを開くQRコード" width="370" height="370">
+    <a class="social-qr-open" href="https://github.com/masuidrive">GitHubでプロフィールを開く <span aria-hidden="true">↗</span></a>
+    <p class="social-qr-handle">masuidrive</p>
+  </div>
+  <noscript><p class="social-qr-fallback"><a href="https://twitter.com/masuidrive">X</a> · <a href="https://facebook.com/masuidrive">Facebook</a> · <a href="https://www.instagram.com/masuidrive/">Instagram</a> · <a href="https://www.linkedin.com/in/masuidrive">LinkedIn</a> · <a href="https://github.com/masuidrive">GitHub</a></p></noscript>
+</section>
 <div class="container">
   <div class="jumbotron">
    <h1>masuidrive projects</h1>
@@ -79,7 +117,7 @@
    </a>
   </div>
 
-        <p>最近AIで作ったモノたち</p>
+        <p>最近AIで作ったモノたち<br><a href="/products/">制作物一覧</a></p>
           </div></div>
 
 

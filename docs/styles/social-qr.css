@@ -1,0 +1,21 @@
+/* QR chooser is shown only on phone-sized screens. Existing desktop layout is unchanged. */
+.mobile-social-qr{display:none}
+@media(max-width:767.98px){
+  .mobile-social-qr{display:block;width:calc(100% - 24px);max-width:420px;margin:12px auto 24px;padding:16px;background:#fff;border:1px solid #e2e5e8;border-radius:16px;color:#212529;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  .mobile-social-qr *{box-sizing:border-box}
+  .social-qr-header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-bottom:14px}
+  .social-qr-header h2{margin:0;font-size:18px;line-height:1.5;font-weight:700}
+  .social-qr-header p{margin:0;color:#666;font-size:11px;line-height:1.5}
+  .social-qr-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:4px;background:#f0f2f4;border-radius:10px}
+  .social-qr-tabs[hidden],.social-qr-panel[hidden]{display:none}
+  .social-qr-tabs button{appearance:none;min-width:0;min-height:48px;padding:8px 0;border:1px solid transparent;border-radius:7px;background:transparent;color:#47515b;font-family:inherit;font-size:10px;font-weight:600;line-height:1.25;cursor:pointer;text-align:center}
+  .social-qr-tabs button[aria-selected="true"]{border-color:#263d56;background:#263d56;color:#fff}
+  .social-qr-tabs button:focus-visible,.social-qr-open:focus-visible,.social-qr-panel:focus-visible{outline:3px solid #a66011;outline-offset:3px}
+  .social-qr-panel{padding-top:18px;text-align:center}
+  .social-qr-image{display:block;width:224px;height:224px;max-width:100%;object-fit:contain;margin:0 auto 14px;background:#fff;image-rendering:pixelated}
+  .social-qr-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;max-width:100%;padding:9px 10px;border:1px solid #d2d9e0;border-radius:8px;color:#24567e;background:#fff;text-decoration:underline;text-underline-offset:3px;font-size:13px;font-weight:600;line-height:1.5}
+  .social-qr-open:hover{background:#f4f7fa;color:#173d5c}
+  .social-qr-handle{margin:8px 0 0;font-size:11px;color:#6a737c;line-height:1.5}
+  .social-qr-fallback{margin:10px 0 0;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+}
+@media print{.mobile-social-qr{display:none}}
