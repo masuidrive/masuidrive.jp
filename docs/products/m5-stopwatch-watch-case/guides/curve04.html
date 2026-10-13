@@ -1,0 +1,94 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#133331"><title>CURVE04 仕様と検証</title><meta name="description" content="M5Stopwatch用SMALLバンド試作ケース。短縮版・比較画像・STEP/STL・試験片・印刷ガイド。"><link rel="stylesheet" href="../style.css"><link rel="canonical" href="https://masuidrive.jp/products/m5-stopwatch-watch-case/guides/curve04.html"></head><body><main class="wrap doc"><a class="back" href="../index.html">← ダウンロードページへ</a><h1
+id="curve-04m5stopwatch--small-apple-watch-band-試作ケース">CURVE-04：M5Stopwatch
+/ SMALL Apple Watch band 試作ケース</h1>
+<p>元の BANDBASE2 の腕側カーブを残し、端の24 mmストラップ用ラグをApple
+Watch小型系バンドの受けに変更した、形状・寸法検証用CADです。</p>
+<p><strong>実物のバンド適合、ロック・解除、保持力、耐久性は未検証です。まず一体型差込口試験ブロックで条件を絞り、時計を付けずに確認してください。</strong></p>
+<h2 id="最初に使うファイル">最初に使うファイル</h2>
+<ol type="1">
+<li><code>stacked_test/export/receiver_stack_6_PRINT_axisZ.stl</code>：6条件を縦積みにした一体型試験ブロック。初回は1個。</li>
+<li>条件が絞れたら
+<code>export/coupon_*_print_axisZ.stl</code>：本体と同じ局所造形角度の個別確認片。</li>
+<li>最後に本体。<code>export/m5_small_band_curve_v4.step</code> と
+<code>.stl</code>、造形候補向きの <code>_print_axisZ.stl</code>。</li>
+</ol>
+<p><code>export/assembly_reference_DO_NOT_PRINT.step</code>
+は時計本体を含む組立参照です。印刷しないでください。標準STLと姿勢違いSTLも同じ部品なので、両方を発注しません。</p>
+<p>素材、JLC3DP発注条件、Adventurer 3 + PETG設定、合否の記録方法は
+<code>PRINT_GUIDE_JA.md</code>。</p>
+<h2 id="v4で直した箇所">V4で直した箇所</h2>
+<ul>
+<li>ケースの肩から受けに続く広い上面を、元の肩の平面・丸みにつながる形へ再構成。以前の横断段差と角張った切り欠きを解消しました。</li>
+<li>元のBANDBASE2の外縁に合わせ、新設部の外側上縁・前縁・端角を
+<strong>実際のR1.00 mm曲面</strong>
+で丸めています。画像だけの丸め処理ではありません。下面の元曲線を守るための切り取り部など、すべての外縁が一律R1という意味ではありません。</li>
+<li>肩の幅の移行は、元の側面勾配につながる5次ベジェ曲線で構成。指定した移行曲線の両端で勾配と曲率が連続するG2条件を使っています。ケース全体の全接合がG2という意味ではなく、下側面に元の曲面との微かな勾配切替線が残ります。CAD法線の抜き取り検査では上側の接続差は約0.027°、残した中・下側面の接続差は最大約18.8°です。全体の接線連続は主張しません。</li>
+<li>左右のスライド入口4か所には <strong>C0.15 mm</strong>
+の導入面取り。幅方向の外端、|X|17.10〜17.25 mmだけが対象です。</li>
+<li>中央ラッチ穴、保持に使う溝断面、受け位置と30°の傾斜は変更していません。</li>
+<li>元の時計座面・床・磁石ポケット・スピーカー穴・係止爪・腕側接触曲線を保護。新しい肩の下面にだけ微小な逃げを設け、元の接触曲面を残しています。</li>
+<li>隠れる中央床に識別名とH/Pを0.25 mm彫刻。残る床厚は3.25 mmです。</li>
+</ul>
+<p>新設受けの中央前縁は上約1.594 / 下約1.500
+mm、中央の溝の屋根・底は約2.094 / 2.000
+mmです。R1と入口C0.15が交わる最外端の開口縁は、上約0.944 / 下約0.850
+mmまで薄くなります。短い入口のテーパー部で、中央の係止壁ではありませんが、欠け・毛羽立ち・変形を実物で確認してください。</p>
+<p>新設受けの肉厚は位置によって異なります。元から薄い磁石ポケット底、入口の角処理などを含む「ケース全体が1.5
+mm以上」という意味ではありません。</p>
+<p>本体外形は約56.13 × 74.67 × 19.51 mm。元のBANDBASE2は約56.13 × 71.61
+× 19.09 mmで、幅は同じ、全長+3.06 mm、ケース単体の高さ+0.42
+mmです。時計を含む組立寸法ではありません。</p>
+<h2 id="試験条件と本体の違い">試験条件と本体の違い</h2>
+<p>H＝溝の全高、P＝中央ラッチ穴の左右幅。溝奥行3.50、出口高2.50、穴奥行2.25
+mmは固定。</p>
+<ul>
+<li>H340 / H350 / H360 / H370：H3.40 / 3.50 / 3.60 / 3.70、P5.50 mm</li>
+<li>P535 / P565：H3.50、P5.35 / 5.65 mm</li>
+</ul>
+<p>H補正は基準3.50
+mmからの全高補正です。片側の隙間や許容ガタではありません。基準以外はわずかな楕円断面です。Hが大きい条件は穴縮みの診断用で、緩いものをそのまま採用しないでください。</p>
+<p>一体ブロックと個別試験片は、先に渡したものと同じ形状です。<strong>既存試験片にはV4本体の有効なC0.15入口面取りがありません。</strong>
+中央の断面嵌合・ガタ・係止を絞る試験に使えますが、最終本体の挿入開始時の感触まで完全には再現しません。</p>
+<p>一体ブロックは本体側面造形と同じ30°の局所回転を入れていません。選んだ条件を個別
+<code>_print_axisZ</code>
+片で確認し、同じ材質・姿勢・後処理で本体を確認します。<code>parts_manifest.csv</code>
+の8個案は、H350を3個にする任意の個体差試験で、初回必須数量ではありません。</p>
+<h2 id="検証と画像">検証と画像</h2>
+<p>実CADからの画像：<code>renders/</code>。元のBANDBASE2との同じカメラ・縮尺での比較：<code>comparison/renders/</code>。</p>
+<p>CAD検査では、単一ソリッド、時計との干渉なし、両端のバンド経路と解除用プローブ経路の障害なし、取り付け機能面と腕側曲線の保持を確認。STLは数値的退化面だけを整理し、境界・非多様体・向き不整合エッジなしを確認しています。詳細は
+<code>CAD_CHECKS.json</code>、<code>mesh_validation.json</code>、各試験治具の検証ファイル。</p>
+<p>これは実物検証や装着安全性の保証ではありません。Pk11参考STLには単位情報がなくmmと仮定しており、小型系バンドの実適合も未確認です。裏の穴からバンド自身のラッチを直接押す構想で、独立した解除ボタンやばねはありません。</p>
+<h2 id="再生成">再生成</h2>
+<p>検証環境：Python 3.12、CadQuery 2.7.0、NumPy 2.3.5。画像はBlender
+4.3.2。彫刻にはDejaVu Sans、比較画像の日本語にはNoto Sans CJK
+JPフォントが必要です。</p>
+<pre><code>pip install -r requirements.txt
+python build_case.py
+python build_case.py --height-offset -0.10 --pocket-width 5.50
+python build_receivers.py
+python stacked_test/build_stack.py
+blender --background --python render_cad.py</code></pre>
+<p>本体は <code>build_case.py</code>、個別試験片は
+<code>build_receivers.py</code>
+が編集可能な設計元です。<code>parameters.json</code>
+は生成記録で、直接編集しても反映されません。一体ブロックは同梱した固定STEP試験片から再生成します。個別片の設計値を変えた場合、一体ブロックの入力STEPも意図して差し替える必要があります。</p>
+<p>生成時は <code>export/</code>
+を上書きします。測定済みの版は別保存してください。スライサーでのサポート・接地・実造形は未確認です。</p>
+<h2 id="出典ライセンス">出典・ライセンス</h2>
+<ul>
+<li>Kawacci：<a
+href="https://github.com/kawacci/m5-stopwatch-watch-case">https://github.com/kawacci/m5-stopwatch-watch-case</a>
+（commit
+3998c0f4330d46ee4a1818db3cbedae9cf819483）。元BANDBASE2・StopWatch
+STEPはMIT、<code>inputs/LICENSE_KAWACCI.txt</code>。</li>
+<li>Pk11 / Epicpkmn11：<a
+href="https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206">https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206</a>
+（v3、commit
+518ef4bcd5961debaf301cbc1e28e8435f0ec648）。参考はCC0、<code>inputs/LICENSE_PK11_CC0.txt</code>
+と <code>PK11_REFERENCE.json</code>。</li>
+<li>参考STLの約Ø3.50溝、2.50出口、中央5.50×2.25
+mm穴を参照して再構成。元参考モデルの38 mm全幅は、Apple Watch 38
+mm系対応の証明ではありません。</li>
+<li>Apple公式CAD曲線の取り込み・再配布はしていません。DWG・DXF・図面PDFは同梱していません。</li>
+</ul>
+</main><footer class="wrap footer"><span>M5Stopwatch / SMALL BAND · Prototype files</span><span>実物未検証 · 寸法単位 mm</span></footer></body></html>

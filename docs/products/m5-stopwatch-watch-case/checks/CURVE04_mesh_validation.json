@@ -1,0 +1,22 @@
+[
+  {
+    "file": "m5_small_band_curve_v4.stl",
+    "original_facets": 101366,
+    "clean_facets": 101366,
+    "removed_facets": 0,
+    "weld_tolerance_mm": 1e-05,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "orientation_conflicts": 0
+  },
+  {
+    "file": "m5_small_band_curve_v4_print_axisZ.stl",
+    "original_facets": 101414,
+    "clean_facets": 101368,
+    "removed_facets": 46,
+    "weld_tolerance_mm": 1e-05,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "orientation_conflicts": 0
+  }
+]

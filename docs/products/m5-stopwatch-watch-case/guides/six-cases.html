@@ -1,0 +1,136 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>6条件ケースの選び方・印刷ガイド | M5Stopwatch</title><meta name="description" content="試験ブロックのH/P数値から対応ケースを1種類選ぶ手順と造形の注意点。"><link rel="canonical" href="https://masuidrive.jp/products/m5-stopwatch-watch-case/guides/six-cases.html"><link rel="stylesheet" href="../style.css"></head><body><main class="wrap doc"><a class="back" href="../index.html#choose-case">← ケースの対応表へ</a><h1
+id="試験ブロックに対応する6種類のcurve05ケース">試験ブロックに対応する6種類のCURVE05ケース</h1>
+<p><strong>先に6段試験ブロックでサイズを合わせ、合った段と同じH/Pのケースを1種類だけ印刷してください。6個のケースを全部印刷するためのセットではありません。</strong></p>
+<p>2026年10月13日現在、実物の印刷・バンド適合・係止/解除・保持力・耐久性は未テストです。</p>
+<h2 id="選び方">選び方</h2>
+<ol type="1">
+<li>既存の6段試験ブロックに、使うバンドを挿入して確認します。「入る」だけでなく、ガタが過大でないこと、中央ラッチが係止すること、裏穴から解除できることを確認します。</li>
+<li>合った段の<strong>実際のH/P数値刻印</strong>を読み、下の表でIDを選びます。試験ブロックには「H3.40
+P5.50」などの数値が彫刻されています。H340などの短いIDは、比較画像・ファイル名のラベルです。</li>
+<li>対応する <code>export/CURVE05_&lt;ID&gt;_print_axisZ.stl</code>
+を1個印刷します。ケースの時計に隠れる面にも、IDと同じH/P数値を2行で彫刻しています。</li>
+<li>時計を付けずにケース単体で再確認し、その後に時計を取り付けます。ラッチが曖昧、簡単に横へ抜ける、白化・ひび・欠けがある場合は装着しません。</li>
+</ol>
+<p>HとPを別々の段から組み合わせないでください。このセットは下記の6組です。どの組も適合しない場合、近いIDを推測して選ばず、実測値に基づいて条件を追加してください。</p>
+<table>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>試験ブロックの数値刻印</th>
+<th style="text-align: right;">溝全高H</th>
+<th style="text-align: right;">中央ラッチ穴幅P</th>
+<th>印刷用STL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>H340</td>
+<td>H3.40 P5.50</td>
+<td style="text-align: right;">3.40</td>
+<td style="text-align: right;">5.50</td>
+<td>CURVE05_H340_print_axisZ.stl</td>
+</tr>
+<tr class="even">
+<td>H350</td>
+<td>H3.50 P5.50</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">5.50</td>
+<td>CURVE05_H350_print_axisZ.stl</td>
+</tr>
+<tr class="odd">
+<td>H360</td>
+<td>H3.60 P5.50</td>
+<td style="text-align: right;">3.60</td>
+<td style="text-align: right;">5.50</td>
+<td>CURVE05_H360_print_axisZ.stl</td>
+</tr>
+<tr class="even">
+<td>H370</td>
+<td>H3.70 P5.50</td>
+<td style="text-align: right;">3.70</td>
+<td style="text-align: right;">5.50</td>
+<td>CURVE05_H370_print_axisZ.stl</td>
+</tr>
+<tr class="odd">
+<td>P535</td>
+<td>H3.50 P5.35</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">5.35</td>
+<td>CURVE05_P535_print_axisZ.stl</td>
+</tr>
+<tr class="even">
+<td>P565</td>
+<td>H3.50 P5.65</td>
+<td style="text-align: right;">3.50</td>
+<td style="text-align: right;">5.65</td>
+<td>CURVE05_P565_print_axisZ.stl</td>
+</tr>
+</tbody>
+</table>
+<p>単位はmm。CSVは
+<code>case_parameters.csv</code>。Hは溝の<strong>全高</strong>で、片側クリアランスや許容ガタではありません。Pは中央穴の左右幅です。溝奥行3.50、出口高2.50、中央穴奥行2.25
+mmは全条件で固定。H3.50以外の溝断面は高さだけを変えた楕円です。大きいHを「緩くても安全」と解釈しないでください。</p>
+<h2 id="共通のケース形状">共通のケース形状</h2>
+<p>すべて最終短縮版CURVE05を基準としています。全長約69.675
+mm、左右のレール幅34.50
+mm、受けの傾斜30°、外側R1、入口C0.15、元の取り付け部と腕側カーブは共通です。外観・取り付け部を拡大縮小していません。</p>
+<p>H350の嵌合形状は前回の標準CURVE05と同じです。ただし、このセットでは識別用の刻印を「CURVE05
+/ H350」「H3.50
+P5.50」に変更したため、旧STEPとファイル全体が同一ではありません。元のCURVE05は上書きしていません。</p>
+<p>本体接面の中央床だけを深さ0.25 mmで彫刻し、床厚3.25
+mmを残しています。磁石ポケットや係止爪の薄い部分には彫刻していません。</p>
+<h2 id="印刷と適合確認の注意">印刷と適合確認の注意</h2>
+<ul>
+<li>本体全体の倍率は100%。倍率でレールを合わせると時計の座面まで変わります。</li>
+<li>できるだけ試験ブロックと同じプリンタ・材質・層高・設定・後処理を使います。造形のばらつきがあるため、同じ公称値でも現物は完全一致しません。</li>
+<li><code>_print_axisZ.stl</code>
+はスライド軸を造形Zへ向けた候補姿勢です。支持、接地、反り、サポート配置はスライサーで確認してください。溝やラッチ穴に傷・サポート残りを作らないでください。</li>
+<li>試験ブロックは本体と同じ30°の局所回転を入れていません。造形XY方向の影響があるため、必要なら既存の姿勢一致個別片で確認できます。いずれも最終本体で再確認します。</li>
+<li><strong>既存試験片には、本体の有効なC0.15入口面取りがありません。</strong>
+中央の嵌合断面とラッチ穴の条件は対応しますが、挿入開始の感触、外側R1、厚い下面、時計に近い解除アクセスまでは同一ではありません。</li>
+<li>Hが大きいほど溝の上下壁は薄くなります。最外端の上入口縁の概算は、H340約0.994
+/ H350約0.944 / H360約0.894 / H370約0.844
+mm。P535/P565はH350と同じ約0.944
+mmです。これは丸みとC0.15が交わる短い導入縁で、中央の屋根とは別です。全域最小肉厚1.5
+mmを保証しません。条件別の確認値は <code>SIX_CASES_FINAL_QA.json</code>
+を参照してください。</li>
+<li>JLC3DPやAdventurer 3 +
+PETGの基本条件は既存の印刷ガイドを使用できますが、CAD公称値だけで保持力を保証できません。</li>
+</ul>
+<h2 id="ファイル内容">ファイル内容</h2>
+<ul>
+<li>各IDの <code>.step</code>：編集・寸法確認用。</li>
+<li>各IDの <code>.stl</code>：組立座標の本体。</li>
+<li>各IDの
+<code>_print_axisZ.stl</code>：同じ本体の造形候補向き。標準STLと両方を印刷する必要はありません。</li>
+<li><code>parameters/&lt;ID&gt;.json</code>：生成寸法と刻印、対応する試験片入力のハッシュ。</li>
+<li><code>case_parameters.csv</code>：数値刻印、ID、ファイル名の対応表。</li>
+<li><code>SIX_CASES_FINAL_QA.json</code>、<code>build_validation.json</code>：CADとメッシュの検査結果。</li>
+<li><code>renders/six_cases_actual_CAD_top.png</code>：実CADから作成した6ケースと刻印の一覧。</li>
+</ul>
+<p>このパックはケース6条件です。既存の試験ブロックは変更・再生成していません。寸法ゲージも追加していません。</p>
+<h2 id="再生成">再生成</h2>
+<p>Python3.12、CadQuery2.7.0、NumPy2.3.5、DejaVu
+Sansフォントで検証。表示画像はBlender4.3.2。</p>
+<pre><code>pip install -r requirements.txt
+python build_variants.py</code></pre>
+<p>特定のIDだけ再生成する場合：</p>
+<pre><code>python build_variants.py --only H340</code></pre>
+<p>生成時は対応する <code>export/</code>
+ファイルを上書きします。測定済みの版は保存してください。<code>parameters/*.json</code>
+は生成記録で、直接編集しても形状には反映されません。実際の6条件は
+<code>inputs/fixture_conditions.json</code>
+と生成スクリプト内の照合表で確認しています。</p>
+<h2 id="出典ライセンス">出典・ライセンス</h2>
+<ul>
+<li>Kawacci：<a
+href="https://github.com/kawacci/m5-stopwatch-watch-case">https://github.com/kawacci/m5-stopwatch-watch-case</a>、commit
+<code>3998c0f4330d46ee4a1818db3cbedae9cf819483</code>。元のBANDBASE2・StopWatch
+STEPはMIT。<code>inputs/LICENSE_KAWACCI.txt</code>。</li>
+<li>Pk11 / Epicpkmn11：<a
+href="https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206">https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206</a>、v3、commit
+<code>518ef4bcd5961debaf301cbc1e28e8435f0ec648</code>。受け形状参考はCC0。<code>inputs/LICENSE_PK11_CC0.txt</code>、<code>PK11_REFERENCE.json</code>。</li>
+<li>Pk11参考STLの単位はmmと仮定。小型系バンドへの実適合は未確認です。</li>
+<li>Apple公式CAD曲線の取り込み・再配布はしていません。DWG・DXF・図面PDFは同梱していません。</li>
+</ul>
+</main></body></html>

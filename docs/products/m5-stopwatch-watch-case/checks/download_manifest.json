@@ -1,0 +1,62 @@
+{
+  "CURVE04_case_reference.zip": {
+    "bytes": 5030734,
+    "sha256": "0b8da26b3a61906b6e9887a679ecf4a2eadc5e8f4e6143b8d024b04c90dc374b",
+    "hosting": "github_releases",
+    "release_status": "published",
+    "download_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/download/v0.1.0-prototype/CURVE04_case_reference.zip",
+    "release_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/tag/v0.1.0-prototype"
+  },
+  "CURVE05_images_and_render_source.zip": {
+    "bytes": 17687550,
+    "sha256": "d2ccdf0ff203d7585baa6d264aedf3a16e26c111bde956478b18f71e7d303d24",
+    "hosting": "github_releases",
+    "release_status": "published",
+    "download_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/download/v0.1.0-prototype/CURVE05_images_and_render_source.zip",
+    "release_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/tag/v0.1.0-prototype"
+  },
+  "CURVE05_short_case.zip": {
+    "bytes": 6861904,
+    "sha256": "5d1a1434dd0cffe1f9c3236ea263ac1f1e5279eaa4715c8ca1708e95309dcd69",
+    "hosting": "github_releases",
+    "release_status": "published",
+    "download_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/download/v0.1.0-prototype/CURVE05_short_case.zip",
+    "release_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/tag/v0.1.0-prototype"
+  },
+  "m5_small_band_curve_v5.step": {
+    "bytes": 3929457,
+    "sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  },
+  "m5_small_band_curve_v5.stl": {
+    "bytes": 4785184,
+    "sha256": "f272800b5e280c43242263285587d485717199060194af7fdaae9712aac55242"
+  },
+  "m5_small_band_curve_v5_print_axisZ.stl": {
+    "bytes": 4785284,
+    "sha256": "54c4dea6c82bbdb81f9363551f2c9fd99a0d2bc6d94da24b8e50bb3ebbbc7c37"
+  },
+  "receiver_6_conditions_test.zip": {
+    "bytes": 13209129,
+    "sha256": "37d484812006d3d847263b9451a4a3e29d8d046b227de9a9dc1ff805a9e8285c",
+    "hosting": "github_releases",
+    "release_status": "published",
+    "download_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/download/v0.1.0-prototype/receiver_6_conditions_test.zip",
+    "release_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/tag/v0.1.0-prototype"
+  },
+  "receiver_stack_6_PRINT_axisZ.stl": {
+    "bytes": 6714584,
+    "sha256": "7cb8867bea5081de0e194c3898794c81d9ffd851091465b2d42ceebe7dff8908"
+  },
+  "case_parameters.csv": {
+    "bytes": 1417,
+    "sha256": "e50b83f74840600b207dd8f0c438fe79733f14fc2e806e2879f05051fc5cca2e"
+  },
+  "CURVE05_cases_6_conditions.zip": {
+    "bytes": 40038907,
+    "sha256": "11ce98eed38764e8a53c32c54fdc2cadbac9ff729e4371f906eb7240793092b3",
+    "hosting": "github_releases",
+    "release_status": "published",
+    "download_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/download/v0.1.0-prototype/CURVE05_cases_6_conditions.zip",
+    "release_url": "https://github.com/masuidrive/m5-stopwatch-watch-case/releases/tag/v0.1.0-prototype"
+  }
+}

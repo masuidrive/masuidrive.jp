@@ -1,0 +1,15 @@
+{
+  "units": "mm",
+  "tessellation_tolerance_mm": 0.02,
+  "angular_tolerance_rad": 0.12,
+  "sources": {
+    "previous_curve04": {
+      "file": "inputs/curve04_reference.step",
+      "sha256": "ad07716f8d4533307318d80f0e6d2952889b037412dea2fbfd4995dcab22b77a"
+    },
+    "final_revision": {
+      "file": "inputs/curve05_short.step",
+      "sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+    }
+  }
+}

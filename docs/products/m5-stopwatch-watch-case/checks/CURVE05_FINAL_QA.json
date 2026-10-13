@@ -1,0 +1,215 @@
+{
+  "status": "PASS: CAD geometry and mesh screening for an untested fit prototype",
+  "revision": "CURVE05",
+  "units": "mm",
+  "step_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da",
+  "step_valid": true,
+  "step_solids": 1,
+  "shortening_per_end_y": 2.5,
+  "overall_length_previous": 74.6748711307,
+  "overall_length_final": 69.674871130706,
+  "bounds": [
+    -28.064856575375,
+    28.064856575375,
+    -34.83743556535,
+    34.837435565356,
+    -14.02100361727,
+    4.700000000000001
+  ],
+  "unchanged_fitting_dimensions": {
+    "receiver_width": 34.5,
+    "channel_height": 3.5,
+    "channel_depth": 3.5,
+    "neck_height": 2.5,
+    "central_catch_width": 5.5,
+    "central_catch_depth": 2.25
+  },
+  "mounting_core": {
+    "source_removed_mm3": 0.0,
+    "added_mm3": 0.0,
+    "comparison_tolerance_mm": 1e-05
+  },
+  "lanyard_tabs": {
+    "source_removed_mm3": 0.0,
+    "added_mm3": 0.0,
+    "comparison_tolerance_mm": 1e-05
+  },
+  "wrist_contact_preservation": {
+    "method": "Original R10 and R30 analytic radii, centers and tangent-plane supports checked; original contact material corroborated by BRep point classification. The exact original source is retained to |Y|30.4, beyond R30 contact endpoint30.015556; only new stock receives wrist relief. Fitting/release cutters do not intersect the protected contact zone.",
+    "point_check": {
+      "source_interior_points_tested": 1550,
+      "missing_final_material": [],
+      "new_material_0p01mm_below_original_contact": [],
+      "grid_spacing_x_mm": 1.0,
+      "grid_spacing_y_mm": 1.0,
+      "sample_height_above_contact_mm": 0.03
+    },
+    "added_below_original_wrist_surface_mm3": 0,
+    "boolean_limit": "Coincident whole-region skin subtraction was numerically unstable and is not treated as valid evidence; direct analytic and point checks were used instead."
+  },
+  "functional": {
+    "sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da",
+    "valid": true,
+    "solids": 1,
+    "bounds_mm": [
+      -28.064856575375,
+      28.064856575375,
+      -34.83743556535,
+      34.837435565356,
+      -14.02100361727,
+      4.700000000000001
+    ],
+    "watch_component_intersections_mm3": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "positive_complete_fitting_release_void_obstruction_mm3": 0.0,
+    "positive_lateral_band_sweep_obstruction_mm3": 0.0,
+    "positive_native_latch_access_obstruction_mm3": 0.0,
+    "positive_proxy_strap_35wide_4thick_obstruction_mm3": 0.0,
+    "positive_proxy_strap_to_retained_source_distance_mm": 1.9248711305964292,
+    "negative_complete_fitting_release_void_obstruction_mm3": 0.0,
+    "negative_lateral_band_sweep_obstruction_mm3": 0.0,
+    "negative_native_latch_access_obstruction_mm3": 0.0,
+    "negative_proxy_strap_35wide_4thick_obstruction_mm3": 0.0,
+    "negative_proxy_strap_to_retained_source_distance_mm": 1.9248711305964221,
+    "strap_proxy_limit": "Hypothetical width35mm/thickness4mm body starts0.05mm outward of nominal receiver face. Source-case clearance screening only, not a real-band clearance certification.",
+    "fitting_surround_difference_vs_aligned_V4_mm3": {
+      "removed": 0.0,
+      "added": 0.0
+    },
+    "central_catch_walls_difference_vs_aligned_V4_mm3": {
+      "removed": 0.0,
+      "added": 0.0
+    }
+  },
+  "engraving": {
+    "removed_mm3": 3.2723145857680094,
+    "intended_mm3": 3.2723145857680094,
+    "outside_tool_removal_mm3": 0.0,
+    "below_0p25_depth_removal_mm3": 0.0,
+    "solid_floor_thickness_below_engraving_mm": 3.25
+  },
+  "positive_joint": {
+    "actual_overlap_mm3": 935.7399574878432,
+    "overlap_solids": 1,
+    "valid": true
+  },
+  "wall_checks": {
+    "local_probe_intervals": {
+      "x10_y0": [
+        [
+          -4.045622358843691,
+          -1.749999950453644,
+          2.2956224083900465
+        ],
+        [
+          1.749999946728345,
+          3.8437822733074403,
+          2.0937823265790954
+        ]
+      ],
+      "x10_y2.5": [
+        [
+          -4.161437880620365,
+          -1.2499999519437597,
+          2.9114379286766057
+        ],
+        [
+          1.2499999489635183,
+          3.505220190808175,
+          2.2552202418446567
+        ]
+      ],
+      "x16.9_y0": [
+        [
+          -4.045622356608515,
+          -1.7499999519437601,
+          2.295622404664755
+        ],
+        [
+          1.749999948218461,
+          3.6037165071815225,
+          1.8537165589630615
+        ]
+      ],
+      "x17.2_y0": [
+        [
+          -3.8122499611228773,
+          -1.8499992158263976,
+          1.9622507452964797
+        ],
+        [
+          1.8499954808503354,
+          3.1560322720557417,
+          1.3060367912054063
+        ]
+      ],
+      "x17.249_y0": [
+        [
+          -3.544710916653282,
+          -1.898999681696301,
+          1.645711234956981
+        ],
+        [
+          1.898992376402017,
+          2.8884931962937084,
+          0.9895008198916915
+        ]
+      ],
+      "x0_y0": [
+        [
+          1.749999952688809,
+          3.843782267346976,
+          2.093782314658167
+        ]
+      ]
+    },
+    "nominal_front_center_lower_lip": 2.25,
+    "nominal_front_center_upper_lip": 1.593782217467426,
+    "limiting_lateral_entry_lower_rim_approx": 1.6,
+    "limiting_lateral_entry_upper_rim_approx": 0.943782217467426,
+    "warning": "The thin extreme lateral entry rim is a rounded/chamfered lead-in. Minimum 1.5mm is not guaranteed everywhere. Retention and load capacity are not physically validated."
+  },
+  "meshes": {
+    "m5_small_band_curve_v5.stl": {
+      "sha256": "f272800b5e280c43242263285587d485717199060194af7fdaae9712aac55242",
+      "triangles": 95702,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05
+    },
+    "m5_small_band_curve_v5_print_axisZ.stl": {
+      "sha256": "54c4dea6c82bbdb81f9363551f2c9fd99a0d2bc6d94da24b8e50bb3ebbbc7c37",
+      "triangles": 95704,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05
+    }
+  },
+  "visual_check": {
+    "same_camera_scale": true,
+    "source_manifest_sha_matches": true,
+    "views_inspected": [
+      "01_original_vs_revision_top.png",
+      "03_original_vs_revision_side.png"
+    ],
+    "result": "Shortening is visible in the true top view. The underside terminal remnant is removed in the side view. The original-like roundovers and smooth upper transition remain; a faint lower-side transition line is still visible."
+  },
+  "inward_limit_screen": {
+    "note": "Tool-only screen against original contact plus1.5mm skin first intrudes near4.375mm/end. Chosen2.5mm/end leaves about1.875mm displacement margin to that screening boundary; this is not a physical-band fit maximum."
+  },
+  "prototype_limits": [
+    "Actual Apple Watch band and strap body have not been measured or physically tested.",
+    "The 35mm-wide/4mm-thick strap proxy only screens gross obstruction; it does not certify manufacturing fit, flexing clearance or compatibility.",
+    "Print a fit coupon first, then test insertion, release and retention on the complete case before wearing.",
+    "Test stack and coupons are unchanged; main case retains its0.15mm entry lead-in."
+  ]
+}

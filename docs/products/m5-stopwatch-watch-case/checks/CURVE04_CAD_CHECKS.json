@@ -1,0 +1,281 @@
+{
+  "status": "CAD_AND_STL_CHECKS_PASS_PHYSICAL_UNTESTED",
+  "revision": "CURVE04",
+  "units": "mm",
+  "main_step_sha256": "ad07716f8d4533307318d80f0e6d2952889b037412dea2fbfd4995dcab22b77a",
+  "main_case_valid_single_solid": true,
+  "dimensions_xyz_mm": [
+    56.12971315075,
+    74.674871130706,
+    19.5148602374
+  ],
+  "original_BANDBASE2_dimensions_xyz_mm": [
+    56.1297131507504,
+    71.6120312952678,
+    19.0936595075378
+  ],
+  "watch_component_intersection_mm3": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "full_band_path_and_release_clearance": {
+    "positive_full_lateral_band_sweep_obstruction_mm3": 0.0,
+    "positive_underside_native_latch_release_access_obstruction_mm3": 0.0,
+    "negative_full_lateral_band_sweep_obstruction_mm3": 0.0,
+    "negative_underside_native_latch_release_access_obstruction_mm3": 0.0
+  },
+  "protected_geometry": {
+    "inner_seat_floor_magnets_speaker": {
+      "source_removed_mm3": 0.0,
+      "material_added_mm3": 0.0,
+      "addition_policy": "No functional-region additions allowed"
+    },
+    "lanyard_tabs": {
+      "source_removed_mm3": 0.0,
+      "material_added_mm3": 0.0,
+      "addition_policy": "No functional-region additions allowed"
+    },
+    "original_wrist_envelope_plus_1mm": {
+      "source_removed_mm3": 0.0,
+      "material_added_mm3": 134.00155469308672,
+      "addition_policy": "Wider shoulders above unchanged underside profile are allowed"
+    },
+    "new_material_below_original_wrist_profile_mm3": 0.0
+  },
+  "joint_overlap_mm3_per_end": 1106.7335488574402,
+  "joint_measurement_boolean_tolerance_mm": 1e-05,
+  "joint_cross_section_area_range_mm2": [
+    42.724739839869684,
+    118.99903990720686
+  ],
+  "engraving": {
+    "actual_removed_mm3": 3.2731523237480387,
+    "expected_removed_mm3": 3.2731523237480378,
+    "unexpected_removal_in_region_mm3": 0.0,
+    "unexpected_addition_in_region_mm3": 0.0,
+    "full_3_25mm_floor_missing_material_mm3": 0.0
+  },
+  "outer_roundover_radius_mm": 1.0,
+  "slide_entry_chamfer_mm": 0.15,
+  "sampled_nominal_front_lips_upper_lower_mm": [
+    1.59378,
+    1.5
+  ],
+  "sampled_central_bore_roof_floor_mm": [
+    2.09378,
+    2.0
+  ],
+  "extreme_open_entry_edge_limiting_upper_lower_mm": [
+    0.94378,
+    0.85
+  ],
+  "thin_edge_warning": "Only the short outer slide-entry taper is this thin; inspect printed rim for chips, whitening, cracks and roughness. These are sampled nominal CAD values, not a universal minimum-wall guarantee.",
+  "surface_continuity": "G2 width easing and source-matched R1 upper crown. Upper join sampled normal mismatch about0.027degree; residual mid/lower side junction sampled up to18.8degree. Not globally tangent-continuous.",
+  "printable_step_and_stl_checks": {
+    "coupon_H340.stl": {
+      "sha256": "6f3190a4bf5935447558adf35e8e5cb1550a1fa19e24802c7ff2f269d0abc426",
+      "triangles": 17312,
+      "vertices_at_1e-5_mm": 8656,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1159.685750964477,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_H340_print_axisZ.stl": {
+      "sha256": "332783a7ad2e1d46ae21ee6e840a6668ee62f74aa2db4b46631c33b7b2dc5f1b",
+      "triangles": 17322,
+      "vertices_at_1e-5_mm": 8661,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1159.6770114181872,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "coupon_H350.stl": {
+      "sha256": "3e7acb5579db7ea93bc823030f24372a0de424dbd5d3f7f346f2e94c8b0b6255",
+      "triangles": 18822,
+      "vertices_at_1e-5_mm": 9411,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1151.6460616751701,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_H350_print_axisZ.stl": {
+      "sha256": "92a6a25cbf555aadd23971881ca901edf46bb9e34587db6908dca243a275b9e4",
+      "triangles": 18822,
+      "vertices_at_1e-5_mm": 9411,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1151.6460250868784,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "coupon_H360.stl": {
+      "sha256": "b294c73de5d9e7e9d924d088bab305076bd1a26a979a3ac31b81c5397e729bac",
+      "triangles": 18700,
+      "vertices_at_1e-5_mm": 9350,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1143.5465296842028,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_H360_print_axisZ.stl": {
+      "sha256": "2742013ef5b7a13b4763ac17dca7097da4dcce583415880433f5146d8c590792",
+      "triangles": 18696,
+      "vertices_at_1e-5_mm": 9348,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1143.5453277345048,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "coupon_H370.stl": {
+      "sha256": "b0cf6b3577380bb87df225414476f5e9466d81988d633f8492eee4d5ab760048",
+      "triangles": 17430,
+      "vertices_at_1e-5_mm": 8715,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1135.5382900015848,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_H370_print_axisZ.stl": {
+      "sha256": "2c392195f3e664d0a67a97b47c99e961eb08357c3f2477185b152d15123c18a5",
+      "triangles": 17486,
+      "vertices_at_1e-5_mm": 8743,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1135.53092283183,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "coupon_P535.stl": {
+      "sha256": "42c861ee9200ba79a67e0c7c5f1a518dc94fd30acd0c5869d1382a616ca34e53",
+      "triangles": 18900,
+      "vertices_at_1e-5_mm": 9450,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1152.4303228957633,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_P535_print_axisZ.stl": {
+      "sha256": "3abb7c0382938032e8027d4e92559316aec779f11ff4549a894f2ac60791068a",
+      "triangles": 18900,
+      "vertices_at_1e-5_mm": 9450,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1152.4302885005554,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "coupon_P565.stl": {
+      "sha256": "02fdabf7af2504d8b90e476184411136eea706986422299a569cf18f8e3ef8e8",
+      "triangles": 18928,
+      "vertices_at_1e-5_mm": 9464,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1150.9400016663049,
+      "minimum_triangle_area_mm2": 2.278389672483172e-06
+    },
+    "coupon_P565_print_axisZ.stl": {
+      "sha256": "be41d45dca8c1ecd90bc5ce98f8a2cb8e20d90525176b187e96f4b20888cd920",
+      "triangles": 18928,
+      "vertices_at_1e-5_mm": 9464,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 1150.9399617171687,
+      "minimum_triangle_area_mm2": 2.280583565257541e-06
+    },
+    "m5_small_band_curve_v4.stl": {
+      "sha256": "1fe6e7c6957a658ddd94e5a0e1c305925e8aded827e41234e0b19ef7ba44740f",
+      "triangles": 101366,
+      "vertices_at_1e-5_mm": 50639,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 16474.4733738451,
+      "minimum_triangle_area_mm2": 4.0022434671461174e-07
+    },
+    "m5_small_band_curve_v4_print_axisZ.stl": {
+      "sha256": "57725d27ff1134761afbc26859198987a6e667fcc4849e16618ddc4c1c68271d",
+      "triangles": 101368,
+      "vertices_at_1e-5_mm": 50640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "orientation_conflicts": 0,
+      "degenerate_triangles_lt_1e-10_mm2": 0,
+      "signed_volume_mm3": 16474.47381818585,
+      "minimum_triangle_area_mm2": 3.9994277814767727e-07
+    },
+    "coupon_H340.step": {
+      "sha256": "1192c703030918b079a5dd4c13dff98177c56fd965599361498adc4b1b1e5763",
+      "valid": true,
+      "solids": 1
+    },
+    "coupon_H350.step": {
+      "sha256": "f8014eec768e57f6cce91ce1d77453f95cbdbcaeeeebf9f49a3486cb4da7dbe2",
+      "valid": true,
+      "solids": 1
+    },
+    "coupon_H360.step": {
+      "sha256": "5226768ee7819f48b36adeea7f001f311b2d6b16abc43769c25bc63c89de50b3",
+      "valid": true,
+      "solids": 1
+    },
+    "coupon_H370.step": {
+      "sha256": "e97056876611826be47285c4313fbff5dc2a11b007668997ea9c47ddb2243b8e",
+      "valid": true,
+      "solids": 1
+    },
+    "coupon_P535.step": {
+      "sha256": "2d8634182feafb9e5fd2cb4b7509aa144ff2e75f33ee4b4357ade2c0f023fd96",
+      "valid": true,
+      "solids": 1
+    },
+    "coupon_P565.step": {
+      "sha256": "cda483d058d28561daa9b082b1069ca1149ea858263515e53b9c8e46e207382f",
+      "valid": true,
+      "solids": 1
+    },
+    "m5_small_band_curve_v4.step": {
+      "sha256": "ad07716f8d4533307318d80f0e6d2952889b037412dea2fbfd4995dcab22b77a",
+      "valid": true,
+      "solids": 1
+    }
+  },
+  "test_fixture": "Unchanged six-condition stacked receiver block; individual selected-condition orientation confirmation remains necessary. Existing coupons/stack have no effective main-case C0.15 entrance lead-in.",
+  "limits": [
+    "No physical printing, band fit, native latch engagement/release, load, fatigue or wear tests.",
+    "No slicer/support verification or supplier acceptance/order.",
+    "Small-family compatibility of the Pk11 reference was not established; STL reference units assumed mm.",
+    "CAD clearance is not proof of reliable retention or safe wearing."
+  ],
+  "outer_corner_mask_exception": {
+    "removed_volume_mm3_per_end": 0.01575611516,
+    "explanation": "Intended R1 exterior front-corner shortening, four tiny cuts per end at |X|16.77678–16.90, localY2.50993–2.60, localZ ±1.25..±2.00. Outside circular fitting bore Y≤1.75; central catch walls unchanged.",
+    "central_catch_symmetric_difference_mm3": 0.0
+  },
+  "joint_point_cross_check": "Five independent points are simultaneously inside retained original, new envelope and final case."
+}

@@ -1,0 +1,32 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#133331"><title>CURVE05 短縮版の造形ガイド</title><meta name="description" content="M5Stopwatch用SMALLバンド試作ケース。短縮版・比較画像・STEP/STL・試験片・印刷ガイド。"><link rel="stylesheet" href="../style.css"><link rel="canonical" href="https://masuidrive.jp/products/m5-stopwatch-watch-case/guides/print-curve05.html"></head><body><main class="wrap doc"><a class="back" href="../index.html">← ダウンロードページへ</a><h1 id="curve05-短縮版の印刷確認補足">CURVE05
+短縮版の印刷・確認補足</h1>
+<p>今回は本体の張り出しだけを片側2.50
+mm短縮した改訂です。前回の6条件一体試験ブロック、個別試験片、H/P試験条件は変更していません。材質選択・JLC3DP発注・Adventurer
+3 + PETGの詳しい基準条件は、前回配布の印刷ガイドを使えます。</p>
+<h2 id="v5で優先する値">V5で優先する値</h2>
+<ul>
+<li>本体外形：約56.13×69.67×18.72 mm。</li>
+<li>中央前縁：上約1.594 / 下2.250 mm。</li>
+<li>溝の上下面の確認例（局所X10,Y0）：上約2.094 / 下約2.296
+mm。下面は腕側の逃げで変わるため、単純に2.75 mmとは扱いません。</li>
+<li>最外端の入口縁：上約0.944 / 下約1.600 mmへ近づく形状。全域1.5
+mm以上という保証はありません。</li>
+<li>下側を0.75
+mm補強していますが、溝H3.50、奥行3.50、出口2.50、中央穴P5.50×2.25
+mmは変更していません。</li>
+</ul>
+<p>前回ガイドのCURVE04本体寸法・下側肉厚は、今回の値に読み替えてください。</p>
+<h2 id="試験の順序">試験の順序</h2>
+<ol type="1">
+<li>既存の一体試験ブロックでH/Pの合う条件を絞る。</li>
+<li>選んだ条件を、本体と同じ局所造形角度の個別試験片で確認する。</li>
+<li>本体を印刷し、時計を付けない状態で挿入・ガタ・係止・裏穴からの解除を確認する。</li>
+<li>縁の欠け、白化、ひび、バリ、解除の引っ掛かりを確認する。異常があれば装着しない。</li>
+</ol>
+<p>既存試験片には本体の有効なC0.15入口導入部がなく、今回の厚い下面や本体周囲のアクセスも再現しません。試験片の合格は本体の保持力・耐久性の保証ではありません。</p>
+<h2 id="造形方向">造形方向</h2>
+<p><code>m5_small_band_curve_v5_print_axisZ.stl</code>は、バンドのスライド軸を造形Zへ向けた候補です。標準STLと同じ部品なので、どちらか一方を使用します。ケース外側のサポートとブリム、接地、反りはスライサーで確認してください。溝・ラッチ穴にサポートやシームの傷を残すと、試験結果が変わります。</p>
+<p>Adventurer 3 + PETGは、前回の0.4 mmノズル想定・0.10
+mm層高・低速外周の条件を出発点とし、実際のノズル仕様とフィラメント推奨温度を優先します。JLC3DPでも、材料・姿勢・表面処理を試験片と本体で揃えてください。公称の一般造形公差だけで、この小さなラッチの作動精度を保証することはできません。</p>
+<p>今回も印刷、スライス、実バンド、強度・繰返し耐久の試験は行っていません。CAD検査結果は<code>CAD_CHECKS.json</code>。</p>
+</main><footer class="wrap footer"><span>M5Stopwatch / SMALL BAND · Prototype files</span><span>実物未検証 · 寸法単位 mm</span></footer></body></html>

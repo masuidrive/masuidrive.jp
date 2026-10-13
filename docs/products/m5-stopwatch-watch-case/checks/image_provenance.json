@@ -1,0 +1,73 @@
+{
+  "curve04_assembly": {
+    "source": "renders/01_assembly.png",
+    "source_sha256": "81102d6f4984c492769f1202fc4e4f6d77552804bd6e80f656009e73c5e88908",
+    "delivery_sha256": "0307b55e6dede37f265aa0733000260f3d40cc96ad1c29c2354456a9f7215603",
+    "pixel_identical": true
+  },
+  "curve04_comparison_top": {
+    "source": "comparison/renders/01_original_vs_revision_top.png",
+    "source_sha256": "8126bb79bf4f9adcd92719114bfe647449ab3d409966962c37ed3ec5b82cb4cf",
+    "delivery_sha256": "9df344b1fa3c473a454f4237011463396b8e880bad63165244062d16381b3a9f",
+    "pixel_identical": true
+  },
+  "curve04_comparison_side": {
+    "source": "comparison/renders/03_original_vs_revision_side.png",
+    "source_sha256": "2f8e1011d53daad95ba7cce02c033078d81f597ddf271b6a7be998c4332af487",
+    "delivery_sha256": "3ca5af0dab24c19cbe051431fdbb5f04993dd162cb43ebd0f00c47801859a39e",
+    "pixel_identical": true
+  },
+  "curve04_bridge": {
+    "source": "comparison/renders/04_original_vs_revision_upper_bridge.png",
+    "source_sha256": "c8a37fbbbd388d13ea9841d062ff7c235cef659e28a997ed74fb115ab7aa1b2c",
+    "delivery_sha256": "a8869e69cbba91c84f47584b91137ce5ac058f03f349c8166e2189846251c652",
+    "pixel_identical": true
+  },
+  "stack": {
+    "source": "stacked_test/renders/04_labeled_front_view.png",
+    "source_sha256": "fbfc5ad3a1351a126ee8b62a14c2e810c40b55222d25f6b291e903fe039cf6d7",
+    "delivery_sha256": "a76c45623db08a0086148f962c0256ddf6b3cd23eb5bc3e2a03a367167f7c66c",
+    "pixel_identical": true
+  },
+  "stack_print": {
+    "source": "stacked_test/renders/03_recommended_print_orientation.png",
+    "source_sha256": "d718ccb0717feb23949cd50953ccf2b60db2445e49c00689b9a837d4ea178eb2",
+    "delivery_sha256": "a3df2f2ef401fee11f5f55f09e1f83d73c4016ab600efea6bd1bbfd00b9aa956",
+    "pixel_identical": true
+  },
+  "curve05_compare_top": {
+    "source": "design_v5/comparison/renders/01_original_vs_revision_top.png",
+    "source_sha256": "baa10275bde63357742bf14b66271490a11750b3e81bd753b3fd29de8571b171",
+    "delivery_sha256": "ec54d8d9582e29cf31f6c403a8e306d83e41baab8fae4f27a9ba6064d1b95926",
+    "pixel_identical": true,
+    "source_STEP_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  },
+  "curve05_compare_side": {
+    "source": "design_v5/comparison/renders/03_original_vs_revision_side.png",
+    "source_sha256": "61f57e2965c5e86d76d78b59cecdf0fb7560631428b502b69a9f165de83f855a",
+    "delivery_sha256": "00f4b85dbd875d3cac00914a4c39e90a3aec3f24ab51e668c9394c24eb221975",
+    "pixel_identical": true,
+    "source_STEP_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  },
+  "curve05_compare_assembly": {
+    "source": "design_v5/comparison/renders/02_original_vs_revision_assembly.png",
+    "source_sha256": "68b1882ad62419974bd131a338baa38acc25da79de1d4497f161d5c914e6b4bb",
+    "delivery_sha256": "10bf6fd16d4dfd03e5748da94ff080bae94a57e6653f49f170de822bf7d68cce",
+    "pixel_identical": true,
+    "source_STEP_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  },
+  "curve05_compare_bridge": {
+    "source": "design_v5/comparison/renders/04_original_vs_revision_upper_bridge.png",
+    "source_sha256": "99755a3850da1485cedae0d9c5f6852fd5fbac49eb3c9e4c8e0709369cd9569c",
+    "delivery_sha256": "be1a4d699adf411908de3e3aa1c440a7cf2ed60b0d4383a42252c6eb67a3caf7",
+    "pixel_identical": true,
+    "source_STEP_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  },
+  "curve05_assembly": {
+    "source": "design_v5/renders/01_assembly.png",
+    "source_sha256": "7e2494a12f85fd2e35342d0af1a47578f44e5109493a3dfa3016f99bf2e8761f",
+    "delivery_sha256": "1a2400e63f00e754d6691bd606e74e2d576423298e743f07c5d658513013cd66",
+    "pixel_identical": true,
+    "source_STEP_sha256": "efa19d9e82207a4bf01c46dc33becb69ece7029105d00da85612cc6661df47da"
+  }
+}

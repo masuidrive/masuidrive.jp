@@ -1,0 +1,230 @@
+[
+  {
+    "spec": {
+      "view": "top",
+      "name": "01_original_vs_revision_top",
+      "title": "真上・正投影・ケース単体",
+      "pos": [
+        0,
+        0,
+        120
+      ],
+      "target": [
+        0,
+        0,
+        0
+      ],
+      "panel_width": 82,
+      "watch": false,
+      "edges": false,
+      "size": [
+        2400,
+        1600
+      ],
+      "key": [
+        -75,
+        -95,
+        120
+      ],
+      "fill": [
+        85,
+        -45,
+        55
+      ],
+      "rim": [
+        40,
+        80,
+        95
+      ]
+    },
+    "total_orthographic_width_mm": 176,
+    "panel_offsets_camera_x_mm": [
+      -47.0,
+      47.0
+    ],
+    "same_camera_rotation": true,
+    "same_source_geometry_coordinates": true,
+    "same_material": true,
+    "camera_space_panel_crop_halfwidth_mm": 41.0,
+    "camera_space_header_crop_y_mm": null,
+    "crop_changes_mesh_geometry": false,
+    "case_bevel_modifier": false,
+    "case_geometry_smoothing_modifier": false,
+    "overlay_display_radius_mm": null,
+    "overlay_is_topological_edges_only": false,
+    "caption_font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "original_mesh_sha256": "1d9834093788fdd4da77257bb654e3f7a5021c1957bdb36fb1bd8e8d1974fa6c",
+    "final_mesh_sha256": "20ca8d3e9b851a75c26b0ad6eeaa68fd812a5045c040a1794a17f84f745414f2"
+  },
+  {
+    "spec": {
+      "view": "side",
+      "name": "03_original_vs_revision_side",
+      "title": "側面・ケース単体",
+      "pos": [
+        110,
+        0,
+        -4
+      ],
+      "target": [
+        0,
+        0,
+        -4
+      ],
+      "panel_width": 91,
+      "watch": false,
+      "edges": false,
+      "size": [
+        2200,
+        850
+      ],
+      "key": [
+        90,
+        -55,
+        70
+      ],
+      "fill": [
+        75,
+        70,
+        10
+      ],
+      "rim": [
+        -30,
+        10,
+        70
+      ]
+    },
+    "total_orthographic_width_mm": 194,
+    "panel_offsets_camera_x_mm": [
+      -51.5,
+      51.5
+    ],
+    "same_camera_rotation": true,
+    "same_source_geometry_coordinates": true,
+    "same_material": true,
+    "camera_space_panel_crop_halfwidth_mm": 45.5,
+    "camera_space_header_crop_y_mm": null,
+    "crop_changes_mesh_geometry": false,
+    "case_bevel_modifier": false,
+    "case_geometry_smoothing_modifier": false,
+    "overlay_display_radius_mm": null,
+    "overlay_is_topological_edges_only": false,
+    "caption_font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "original_mesh_sha256": "1d9834093788fdd4da77257bb654e3f7a5021c1957bdb36fb1bd8e8d1974fa6c",
+    "final_mesh_sha256": "20ca8d3e9b851a75c26b0ad6eeaa68fd812a5045c040a1794a17f84f745414f2"
+  },
+  {
+    "spec": {
+      "view": "assembly",
+      "name": "02_original_vs_revision_assembly",
+      "title": "組み立て状態",
+      "pos": [
+        80,
+        -110,
+        95
+      ],
+      "target": [
+        0,
+        0,
+        2
+      ],
+      "panel_width": 94,
+      "watch": true,
+      "edges": false,
+      "size": [
+        2200,
+        1200
+      ],
+      "key": [
+        -75,
+        -95,
+        120
+      ],
+      "fill": [
+        85,
+        -45,
+        55
+      ],
+      "rim": [
+        40,
+        80,
+        95
+      ]
+    },
+    "total_orthographic_width_mm": 200,
+    "panel_offsets_camera_x_mm": [
+      -53.0,
+      53.0
+    ],
+    "same_camera_rotation": true,
+    "same_source_geometry_coordinates": true,
+    "same_material": true,
+    "camera_space_panel_crop_halfwidth_mm": 47.0,
+    "camera_space_header_crop_y_mm": null,
+    "crop_changes_mesh_geometry": false,
+    "case_bevel_modifier": false,
+    "case_geometry_smoothing_modifier": false,
+    "overlay_display_radius_mm": null,
+    "overlay_is_topological_edges_only": false,
+    "caption_font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "original_mesh_sha256": "1d9834093788fdd4da77257bb654e3f7a5021c1957bdb36fb1bd8e8d1974fa6c",
+    "final_mesh_sha256": "20ca8d3e9b851a75c26b0ad6eeaa68fd812a5045c040a1794a17f84f745414f2"
+  },
+  {
+    "spec": {
+      "view": "bridge",
+      "name": "04_original_vs_revision_upper_bridge",
+      "title": "キャッチから本体への面・上面側",
+      "pos": [
+        -45,
+        -70,
+        47
+      ],
+      "target": [
+        0,
+        -27,
+        -4
+      ],
+      "panel_width": 50,
+      "watch": false,
+      "edges": false,
+      "size": [
+        2400,
+        1500
+      ],
+      "key": [
+        -60,
+        -70,
+        100
+      ],
+      "fill": [
+        65,
+        -40,
+        35
+      ],
+      "rim": [
+        20,
+        55,
+        55
+      ]
+    },
+    "total_orthographic_width_mm": 112,
+    "panel_offsets_camera_x_mm": [
+      -31.0,
+      31.0
+    ],
+    "same_camera_rotation": true,
+    "same_source_geometry_coordinates": true,
+    "same_material": true,
+    "camera_space_panel_crop_halfwidth_mm": 25.0,
+    "camera_space_header_crop_y_mm": 23.0,
+    "crop_changes_mesh_geometry": false,
+    "case_bevel_modifier": false,
+    "case_geometry_smoothing_modifier": false,
+    "overlay_display_radius_mm": null,
+    "overlay_is_topological_edges_only": false,
+    "caption_font": "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "original_mesh_sha256": "1d9834093788fdd4da77257bb654e3f7a5021c1957bdb36fb1bd8e8d1974fa6c",
+    "final_mesh_sha256": "20ca8d3e9b851a75c26b0ad6eeaa68fd812a5045c040a1794a17f84f745414f2"
+  }
+]

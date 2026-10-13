@@ -1,0 +1,70 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#133331"><title>CURVE05 短縮版の仕様と注意点</title><meta name="description" content="M5Stopwatch用SMALLバンド試作ケース。短縮版・比較画像・STEP/STL・試験片・印刷ガイド。"><link rel="stylesheet" href="../style.css"><link rel="canonical" href="https://masuidrive.jp/products/m5-stopwatch-watch-case/guides/short-case.html"></head><body><main class="wrap doc"><a class="back" href="../index.html">← ダウンロードページへ</a><h1
+id="curve-05キャッチの張り出しを短くした試作ケース">CURVE-05：キャッチの張り出しを短くした試作ケース</h1>
+<p>M5Stopwatch用CURVE04から、Apple
+Watch小型系バンド受けを本体側へ寄せた改訂です。バンドの左右幅ではなく、丸いケースから外側へ出る長さを短縮しています。</p>
+<p><strong>実物のバンド適合、ロック・解除、保持力、耐久性は未検証です。装着前に、時計を付けずに確認してください。</strong></p>
+<h2 id="変更寸法">変更寸法</h2>
+<ul>
+<li>本体外形は約 <strong>56.13 × 69.67 × 18.72
+mm</strong>（時計本体を含まないケース単体）。</li>
+<li>受けを片側 <strong>2.50 mm内側</strong>へ移動。全長 <strong>74.675 →
+69.675 mm</strong>、合計 <strong>5.00 mm短縮</strong>。</li>
+<li>元の30°傾斜に沿って移動するため、受け中心は同時に <strong>1.443
+mm上方</strong>へ移動します。</li>
+<li>公称R27.5の丸い本体を基準にした片側の張り出しは <strong>9.837 →
+7.337 mm</strong>、約25%減。これは受け全体の横幅ではありません。</li>
+<li>受けの左右幅34.50、溝全高H3.50、溝奥行3.50、出口高2.50、中央穴P5.50
+× 2.25 mmは変更していません。</li>
+<li>元の腕側接触曲線を残し、不要になった旧ストラップ耳の先端を除去。短縮で下に残る小さな突起を解消するため、新設部の下側を0.75
+mm厚くしました。局所下面は−3.75 → −4.50 mmです。</li>
+<li>外側R1.00丸みと入口C0.15を維持。上面の幅移行曲線は局所G2条件を維持しています。下側面に残る面の境界まで、全面接線連続という意味ではありません。</li>
+<li>隠れる床面の識別はCURVE-05、彫刻深さ0.25 mm、残る床厚3.25
+mmです。</li>
+</ul>
+<h2 id="ファイル">ファイル</h2>
+<ul>
+<li><code>export/m5_small_band_curve_v5.step</code>：編集・寸法確認用の本体。</li>
+<li><code>export/m5_small_band_curve_v5.stl</code>：組立座標の同じ本体。</li>
+<li><code>export/m5_small_band_curve_v5_print_axisZ.stl</code>：レールのスライド軸を造形Zへ向けた候補姿勢。同じ部品なので標準STLと両方を発注しません。</li>
+<li><code>export/assembly_reference_DO_NOT_PRINT.step</code>：時計本体を含む参照組立。印刷しません。</li>
+<li><code>build_case.py</code>、<code>parameters.json</code>：編集可能な生成スクリプトと生成時の寸法記録。</li>
+<li><code>CAD_CHECKS.json</code>、<code>mesh_validation.json</code>：今回のCAD・STL検査結果。</li>
+</ul>
+<p>比較画像は別の画像パックに収録しています。CURVE04とCURVE05を同じ正投影カメラ・同じ縮尺で比較しています。</p>
+<p>今回の印刷補足は<code>PRINT_GUIDE_V5_JA.md</code>。</p>
+<h2 id="既存の試験部品について">既存の試験部品について</h2>
+<p>今回のCADパックは変更した本体の改訂分です。前回の6条件一体試験ブロック、個別試験片は変更しておらず、そのまま使います。</p>
+<ul>
+<li>一体試験ブロックでH/P条件を選ぶ。</li>
+<li>選んだ条件を、本体と同じ局所造形角度の個別片で確認する。</li>
+<li>最後に短縮本体で、バンドの挿入、ガタ、確実な係止、裏穴からの解除を確認する。</li>
+</ul>
+<p>既存の試験部品には本体の有効なC0.15入口面取りがなく、今回厚くした下面や実際の本体への取り付けも再現しません。断面嵌合・ラッチ寸法を絞るためのものです。実バンドの形状や保持力は、最終本体でも必ず確認してください。</p>
+<p>JLC3DP材質・発注設定とAdventurer 3 +
+PETGの基本設定は、前回配布した印刷ガイドを継続使用できます。ただし前回ガイドの本体外形・受け位置・下側肉厚はCURVE04の値です。今回の寸法はこのREADMEと<code>CAD_CHECKS.json</code>を優先します。造形姿勢、サポート、スライサー、発注先の受入れは未検証です。</p>
+<h2 id="肉厚と制約">肉厚と制約</h2>
+<p>上側の中央前縁は約1.594
+mmのままです。今回の下側補強は外側形状のみで、溝・中央ラッチの位置や寸法を広げるものではありません。R1と入口C0.15が交わる最外端の縁、元から薄い磁石ポケット底などを含め、全域の最小肉厚を保証しません。位置別の確認値は<code>CAD_CHECKS.json</code>を参照してください。</p>
+<p>短縮量は幾何検査で余裕を確認した試作値で、物理的な最短寸法や強度限界ではありません。欠け、白化、ひび、バリ、異常なガタ、解除不良があれば使用を中止し、寸法や造形条件を調整してください。</p>
+<h2 id="再生成">再生成</h2>
+<p>Python 3.12、CadQuery 2.7.0、NumPy 2.3.5で検証。彫刻にはDejaVu
+Sansフォントが必要です。</p>
+<pre><code>pip install -r requirements.txt
+python build_case.py</code></pre>
+<p>標準値は片側2.50
+mm短縮です。実測した試験片結果に応じて、たとえば次のように溝の全高補正と中央穴幅を変更できます。</p>
+<pre><code>python build_case.py --inward 2.50 --height-offset -0.10 --pocket-width 5.50</code></pre>
+<p>変更後は、干渉・肉厚・印刷適合を再検査してください。任意の<code>--inward</code>値に対して安全性を保証するスクリプトではありません。<code>parameters.json</code>を直接編集しても生成形状へは反映されません。生成時に<code>export/</code>を上書きするので、測定済みの版は別保存してください。</p>
+<h2 id="出典ライセンス">出典・ライセンス</h2>
+<ul>
+<li>Kawacci：<a
+href="https://github.com/kawacci/m5-stopwatch-watch-case">https://github.com/kawacci/m5-stopwatch-watch-case</a>、commit
+<code>3998c0f4330d46ee4a1818db3cbedae9cf819483</code>。元BANDBASE2・StopWatch
+STEPはMIT。<code>inputs/LICENSE_KAWACCI.txt</code>。</li>
+<li>Pk11 / Epicpkmn11：<a
+href="https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206">https://github.com/Epicpkmn11/art/tree/main/personal/3D/Apple%20Watch%20band%20adapter%20for%20iPod%20nano%206</a>、v3、commit
+<code>518ef4bcd5961debaf301cbc1e28e8435f0ec648</code>。受け形状の参考はCC0。<code>inputs/LICENSE_PK11_CC0.txt</code>、<code>PK11_REFERENCE.json</code>。</li>
+<li>Pk11参考STLの単位はmmと仮定。小型系バンドへの実適合は確認されていません。</li>
+<li>Apple公式CAD曲線の取り込み・再配布はしていません。DWG・DXF・図面PDFは同梱していません。</li>
+</ul>
+</main><footer class="wrap footer"><span>M5Stopwatch / SMALL BAND · Prototype files</span><span>実物未検証 · 寸法単位 mm</span></footer></body></html>
