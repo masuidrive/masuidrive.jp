@@ -8,7 +8,9 @@
   .social-qr-header p{margin:0;color:#666;font-size:11px;line-height:1.5}
   .social-qr-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:4px;background:#f0f2f4;border-radius:10px}
   .social-qr-tabs[hidden],.social-qr-panel[hidden]{display:none}
-  .social-qr-tabs button{appearance:none;min-width:0;min-height:48px;padding:8px 0;border:1px solid transparent;border-radius:7px;background:transparent;color:#47515b;font-family:inherit;font-size:10px;font-weight:600;line-height:1.25;cursor:pointer;text-align:center}
+  .social-qr-tabs button{appearance:none;min-width:0;min-height:58px;padding:7px 0;border:1px solid transparent;border-radius:7px;background:transparent;color:#47515b;font-family:inherit;font-size:10px;font-weight:600;line-height:1.25;cursor:pointer;text-align:center}
+  .social-qr-tab-icon{display:block;width:20px;height:20px;margin:0 auto 4px}
+  .social-qr-tabs button[aria-selected="true"] .social-qr-tab-icon{filter:invert(1)}
   .social-qr-tabs button[aria-selected="true"]{border-color:#263d56;background:#263d56;color:#fff}
   .social-qr-tabs button:focus-visible,.social-qr-open:focus-visible,.social-qr-panel:focus-visible{outline:3px solid #a66011;outline-offset:3px}
   .social-qr-panel{padding-top:18px;text-align:center}
