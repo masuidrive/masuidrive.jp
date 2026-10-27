@@ -810,7 +810,10 @@
     }else if(id==='paste') {
       clearComposition();
       pasteText();
-    }else if(id==='modifier-gesture') {if(pendingModifier){pendingModifier=null;announce('修飾キーを解除');}}
+    }else if(id==='modifier-gesture') {
+      if(pendingModifier){pendingModifier=null;announce('修飾キーを解除');}
+      else {insert('\t');announce('Tab');}
+    }
     else if(id==='symbols') {if(language==='kana'){language='english';layer='symbols';}else layer=layer==='letters'?'symbols':'letters';clearComposition();}
     else if(id==='symbol-layer') {language='english';layer='symbols';pendingModifier=null;clearComposition();}
     else if(id==='kana-numbers') {language='kana';layer='numbers';pendingModifier=null;clearComposition();}
@@ -834,7 +837,7 @@
   const makeKey=(id,label,options={})=>({id,label,...options});
   const textKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,preview:'press'}));
   const letterKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,alt:flickSymbols[c],preview:'press'}));
-  const modifierGesture=()=>makeKey('modifier-gesture','',{modifierFlick:true,preview:'selection'});
+  const modifierGesture=()=>makeKey('modifier-gesture','T',{modifierFlick:true,preview:'selection'});
   const qwertyPeriod=()=>makeKey('.','.',{text:'.',alt:flickSymbols['.'],periodFlick:true,strictFlickDirections:true,preview:'press'});
   const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
   const qwertyBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
@@ -922,7 +925,7 @@
       'flick-backspace':'タップで削除、下フリックでEsc',
       'modifier-gesture':pendingModifier
         ?modifierLabel(pendingModifier)+' 選択中。タップで解除、下スワイプでCtrl、上スワイプでAlt'
-        :'下スワイプでCtrl、上スワイプでAlt、タップは無効',
+        :'タップでTab、下スワイプでCtrl、上スワイプでAlt',
       modifier:'小文字・濁点・半濁点',
       left:'カーソルを左へ',
       right:'カーソルを右へ',
@@ -996,7 +999,7 @@
     face.className='key-face';
     const main=document.createElement('span');
     main.className='key-main';
-    main.textContent=key.id==='modifier-gesture'?modifierGlyph(pendingModifier):key.visual==='cursor-cross'?'':key.label;
+    main.textContent=key.id==='modifier-gesture'?(modifierGlyph(pendingModifier)||key.label):key.visual==='cursor-cross'?'':key.label;
     face.append(main);
     if(key.visual==='cursor-cross')face.append(createCursorCross());
     if(key.ghost) {
@@ -1178,7 +1181,7 @@
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
       p.modifierFlick=true;p.modifierChoice=null;
-      element.querySelector('.key-main').textContent=modifierGlyph(pendingModifier);
+      element.querySelector('.key-main').textContent=modifierGlyph(pendingModifier)||key.label;
     }
     if(key.text)for(const held of active.values())if(held!==p&&held.key.id==='modifier-gesture')held.used=true;
     if(key.preview==='press')showPopup(p);
@@ -1200,7 +1203,7 @@
     if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
     if(updateModifierFlick(p,dx,dy)) {
       p.element.classList.toggle('choice-active',Boolean(p.modifierChoice));
-      p.element.querySelector('.key-main').textContent=modifierGlyph(p.modifierChoice||pendingModifier);
+      p.element.querySelector('.key-main').textContent=modifierGlyph(p.modifierChoice||pendingModifier)||p.key.label;
       updateSelectionPopup(p,Boolean(p.modifierChoice));
       return;
     }
@@ -1260,6 +1263,7 @@
         if(navigationAction==='voice')beginVoiceDemo(p);else action(navigationAction,p.keyModifier);
       }
       else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
+      else if(p.modifierFlick&&p.used) { /* modifier was held for another key */ }
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
       else if(p.key.flick) {insert(p.key.flick[p.dir]||'');lastSpace=-Infinity;}
       else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
