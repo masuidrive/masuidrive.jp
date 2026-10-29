@@ -29,7 +29,7 @@
     </div>
     <div class="sr-status" role="status" aria-live="polite"><span class="mode-label">QWERTY</span><span class="last-input">準備完了</span></div>
     <div class="keyboard" role="group" aria-label="画面キーボード">
-      <div class="candidate-bar" role="listbox" aria-label="入力候補" hidden></div>
+      <div class="candidate-area"><button class="personal-info-action" type="button" data-personal-info-action aria-label="登録した個人情報を選ぶ" title="登録した個人情報を選ぶ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 7.5c1.38 0 2.5 1.12 2.5 2.5S10.38 12.5 9 12.5 6.5 11.38 6.5 10 7.62 7.5 9 7.5zM14 17H5.5v-.75c0-1.42 2.84-2.2 4.25-2.2s4.25.78 4.25 2.2V17zm4-2h-3v-1h3v1zm0-3h-3v-1h3v1zm0-3h-3V8h3v1z"/></svg></button><div class="candidate-bar" role="listbox" aria-label="入力候補" hidden></div></div>
       <div class="keys"></div>
       <div class="trackpad-status" role="status" aria-live="polite" hidden>←↓↑→</div>
       <div class="popup" aria-hidden="true" hidden></div>
@@ -67,15 +67,21 @@
   #ios-keyboard-demo .mode-label { color:var(--ik-muted); }
   #ios-keyboard-demo .last-input { color:var(--ik-blue); }
   #ios-keyboard-demo .keyboard { background:var(--ik-bg); position:relative; padding:8px 3px 0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
-  #ios-keyboard-demo .candidate-bar { box-sizing:border-box; display:flex; align-items:center; gap:5px; height:50px; padding:10px 3px 2px; overflow-x:auto; scrollbar-width:none; }
+  #ios-keyboard-demo .candidate-area { display:flex; align-items:center; height:50px; padding:0 3px; }
+  #ios-keyboard-demo .candidate-bar { box-sizing:border-box; display:flex; flex:1 1 auto; min-width:0; align-items:center; gap:5px; height:50px; padding:10px 0 2px; overflow-x:auto; scrollbar-width:none; }
   #ios-keyboard-demo .candidate-bar::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .candidate-bar[hidden] { display:flex; visibility:hidden; }
   #ios-keyboard-demo .candidate-bar button { flex:0 0 auto; min-width:82px; height:38px; padding:0 14px; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:15px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .candidate-area > .personal-info-action { flex:0 0 38px; width:38px; height:38px; margin-right:5px; padding:0; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:20px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .candidate-area > .personal-info-action[hidden] { display:none; }
+  #ios-keyboard-demo .candidate-area > .personal-info-action svg { width:24px; height:24px; fill:currentColor; vertical-align:middle; }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar { padding:0 5px; gap:1px; overflow-x:auto; }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar button { flex:0 0 48px; min-width:48px; width:48px; height:48px; padding:0; border-radius:0; background:transparent; box-shadow:none; font-size:20px; color:var(--ik-key-muted); }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar button[aria-selected=true] { color:var(--ik-blue); border-bottom:2px solid var(--ik-blue); }
   #ios-keyboard-demo .candidate-bar button[aria-selected=true] { background:var(--ik-selected); color:var(--ik-selected-ink); }
   #ios-keyboard-demo .keys { position:relative; }
+  #ios-keyboard-demo .keys.personal-info-picker { display:flex; flex-wrap:wrap; align-content:flex-start; align-items:flex-start; gap:6px; height:210px; overflow-y:auto; padding:8px 3px 5px; }
+  #ios-keyboard-demo .keys.personal-info-picker button { flex:0 0 auto; max-width:100%; height:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); box-shadow:0 1px 0 light-dark(#898c94,#141416); font:400 16px inherit; text-align:center; padding:0 12px; }
   #ios-keyboard-demo .key-row { display:flex; justify-content:center; height:45px; margin-bottom:10px; gap:0; }
   #ios-keyboard-demo .key { display:flex; position:relative; justify-content:center; align-items:center; flex:1; min-width:0; height:100%; background:none; border:0; padding:0 3px; font-size:25px; font-weight:400; touch-action:none; }
   #ios-keyboard-demo .key-face { display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--ik-key); border-radius:5px; box-shadow:0 1px 0 light-dark(#898c94,#141416); width:100%; height:100%; pointer-events:none; }
@@ -213,7 +219,8 @@
   const root = document.getElementById('ios-keyboard-demo');
   const $ = selector => root.querySelector(selector);
   const editor = $('textarea'), keyboard = $('.keyboard'), keys = $('.keys'), popup = $('.popup');
-  const candidateBar = $('.candidate-bar'), trackpadStatus = $('.trackpad-status');
+  const candidateBar = $('.candidate-bar'), personalInfoAction = $('.personal-info-action'), trackpadStatus = $('.trackpad-status');
+  const personalInfoCardPath = personalInfoAction.querySelector('path').getAttribute('d');
   const kanaRows = [
     [['emoji','☺'],['あ',['あ','い','う','え','お']],['か',['か','き','く','け','こ']],['さ',['さ','し','す','せ','そ']],['backspace','⌫']],
     [['symbols','?'],['た',['た','ち','つ','て','と']],['な',['な','に','ぬ','ね','の']],['は',['は','ひ','ふ','へ','ほ']],['space','Space']],
@@ -354,6 +361,8 @@
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
   const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,selectionGeneration:0,turn:0,level:0};
+  const personalInfoValues=[['氏名','山田 太郎'],['メールアドレス','name@example.com'],['住所','東京都千代田区'],['定型文','いつもありがとうございます。']];
+  let personalInfoPickerVisible=false;
   const voiceReturnLabels={
     'kana/letters':'あん',
     'kana/numbers':'19',
@@ -607,6 +616,10 @@
   }
   function renderCandidates() {
     candidateBar.replaceChildren();
+    personalInfoAction.hidden=true;
+    personalInfoAction.querySelector('path').setAttribute('d',personalInfoPickerVisible?'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z':personalInfoCardPath);
+    personalInfoAction.setAttribute('aria-label',personalInfoPickerVisible?'個人情報の選択を戻る':'登録した個人情報を選ぶ');
+    personalInfoAction.title=personalInfoPickerVisible?'個人情報の選択を戻る':'登録した個人情報を選ぶ';
     candidateBar.classList.toggle('emoji-category-bar',!voiceDemo.active&&language==='kana'&&layer==='emoji');
     if(voiceDemo.active) {
       candidateBar.hidden=true;
@@ -624,6 +637,7 @@
       resetCandidateScrollIfChanged('emoji-category');return;
     }
     candidateBar.setAttribute('role','listbox');candidateBar.setAttribute('aria-label','入力候補');
+    if(personalInfoPickerVisible) { personalInfoAction.hidden=false;candidateBar.hidden=true;resetCandidateScrollIfChanged('personal-info-picker');return; }
     if(language==='kana'&&layer==='letters'&&composition.reading) {
       candidateBar.hidden=false;
       composition.candidates.forEach((candidate,index)=>{
@@ -631,28 +645,34 @@
         button.setAttribute('role','option');button.setAttribute('aria-selected',String(composition.converted&&index===composition.index));
         button.textContent=candidate;candidateBar.append(button);
       });
-      resetCandidateScrollIfChanged('kana\0'+composition.candidates.join('\0'));return;
+      appendPersonalInfoAction();
+      resetCandidateScrollIfChanged('kana\0'+composition.candidates.join('\0')+'\0personal-info');return;
     }
     const command=slashPrefix();
     if(command) {
       const candidates=slashCommands.filter(value=>value.startsWith(command.raw));
-      candidateBar.hidden=!candidates.length;
+      candidateBar.hidden=false;
       candidates.forEach(candidate=>{
         const button=document.createElement('button');button.type='button';button.dataset.slashCandidate=candidate;
         button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
       });
-      resetCandidateScrollIfChanged('slash\0'+candidates.join('\0'));return;
+      appendPersonalInfoAction();
+      resetCandidateScrollIfChanged('slash\0'+candidates.join('\0')+'\0personal-info');return;
     }
     const prefix=englishCandidatesEnabled?englishPrefix():null;
     const candidates=prefix?englishSuggestionWords
       .filter(word=>word.startsWith(prefix.raw.toLowerCase())&&word!==prefix.raw.toLowerCase()).slice(0,5)
       .map(word=>prefix.raw===prefix.raw.toUpperCase()?word.toUpperCase():prefix.raw+word.slice(prefix.raw.length)):[];
-    candidateBar.hidden=!candidates.length;
+    candidateBar.hidden=false;
     candidates.forEach(candidate=>{
       const button=document.createElement('button');button.type='button';button.dataset.englishCandidate=candidate;
       button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
     });
-    resetCandidateScrollIfChanged(candidates.length?'english\0'+candidates.join('\0'):'none');
+    appendPersonalInfoAction();
+    resetCandidateScrollIfChanged('english\0'+candidates.join('\0')+'\0personal-info');
+  }
+  function appendPersonalInfoAction() {
+    if(!composition.reading&&!slashPrefix()&&!englishPrefix()) personalInfoAction.hidden=false;
   }
   function resetCandidateScrollIfChanged(contentKey) {
     if(contentKey===renderedCandidateContentKey)return;
@@ -661,6 +681,7 @@
   }
   function insert(text,{bypassComposition=false}={}) {
     if (!text) return;
+    personalInfoPickerVisible=false;
     const directVoiceEdit=bypassComposition||voiceDemo.active;
     if(directVoiceEdit||composition.converted)clearComposition();
     preferredCursorX=null;
@@ -1063,6 +1084,14 @@
     return button;
   }
   function renderKeys() {
+    if(personalInfoPickerVisible) {
+      keyMap=new Map();keys.replaceChildren();keys.className='keys personal-info-picker';
+      personalInfoValues.forEach(([label,value])=>{
+        const button=document.createElement('button');button.type='button';button.dataset.personalInfo=value;
+        button.setAttribute('aria-label',label+': '+value);button.textContent=value;keys.append(button);
+      });
+      return;
+    }
     if(voiceDemo.active) {
       const bottomRow=[
         makeKey('voice-return',voiceReturnLabel(),{special:true,side:true,navigation:voiceNavigation,preview:'selection'}),
@@ -1292,6 +1321,10 @@
   root.addEventListener('click',e=>{
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
     if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate),voiceCandidate);return;}
+    const personalInfo=e.target.closest('button[data-personal-info]');
+    if(personalInfo) {insert(personalInfo.dataset.personalInfo,{bypassComposition:true});announce('個人情報を入力：'+personalInfo.dataset.personalInfo);render();return;}
+    const personalInfoAction=e.target.closest('button[data-personal-info-action]');
+    if(personalInfoAction) {personalInfoPickerVisible=!personalInfoPickerVisible;announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;}
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
     if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
     const englishCandidate=e.target.closest('button[data-english-candidate]');
