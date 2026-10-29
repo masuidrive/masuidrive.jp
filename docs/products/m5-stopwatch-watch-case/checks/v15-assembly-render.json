@@ -1,0 +1,126 @@
+{
+  "case_step_sha256": "738ee1dd5434974932fe1ddcb7b4e2a6a956365aecd83b7d76dac699af616b2a",
+  "watch_step_sha256": "e11989fd748c6984b5e1495dd0cadb36cb5691955ecb0163c72d6b27f9f0a08c",
+  "watch_placement": {
+    "rotation_Y_degrees": -90,
+    "translation_mm": [
+      0,
+      0,
+      3.99
+    ],
+    "source": "Supplied V15 ZIP/build.py"
+  },
+  "render_method": "Orthographic CPU depth-buffer rendering of supplied CAD tessellation; no generated geometry",
+  "tessellation_tolerance_mm": 0.06,
+  "parts": [
+    {
+      "name": "V15 holder",
+      "triangles": 90392,
+      "display_rgb": [
+        0.18,
+        0.48,
+        0.45
+      ],
+      "bbox_xyz_min_max_mm": [
+        -27.849954754104,
+        -27.849954754104,
+        -3.919510202394958,
+        27.849954754104,
+        27.778214050012,
+        8.69
+      ],
+      "case_overlap_mm3": 0.0
+    },
+    {
+      "name": "BTN",
+      "triangles": 8355,
+      "display_rgb": [
+        1,
+        0,
+        0
+      ],
+      "bbox_xyz_min_max_mm": [
+        -21.10527572516278,
+        -21.105275390996983,
+        10.689999900000002,
+        -13.577613556556999,
+        -13.577613556557,
+        14.490000100000003
+      ],
+      "case_overlap_mm3": 0.0
+    },
+    {
+      "name": "lens",
+      "triangles": 6086,
+      "display_rgb": [
+        0.025,
+        0.028,
+        0.031
+      ],
+      "bbox_xyz_min_max_mm": [
+        -24.5000001,
+        -24.5000001,
+        18.289999899999994,
+        24.5000001,
+        24.5000001,
+        19.490000100000007
+      ],
+      "case_overlap_mm3": 0.0
+    },
+    {
+      "name": "body",
+      "triangles": 46684,
+      "display_rgb": [
+        0.3019607843,
+        0.3019607843,
+        0.3019607843
+      ],
+      "bbox_xyz_min_max_mm": [
+        -25.9573927070279,
+        -25.9573927070279,
+        3.9899998999999973,
+        25.9573927070279,
+        25.9573927070279,
+        18.990000100000007
+      ],
+      "case_overlap_mm3": 0.0
+    },
+    {
+      "name": "KEYA",
+      "triangles": 6960,
+      "display_rgb": [
+        0.9725490196,
+        0.5294117647,
+        0.0039215686
+      ],
+      "bbox_xyz_min_max_mm": [
+        12.35923630665847,
+        12.460126658130482,
+        7.889999999999997,
+        21.601861833556,
+        21.6895684175863,
+        15.04
+      ],
+      "case_overlap_mm3": 0.0
+    },
+    {
+      "name": "KEYB",
+      "triangles": 6960,
+      "display_rgb": [
+        0.231372549,
+        0.3803921569,
+        0.7058823529
+      ],
+      "bbox_xyz_min_max_mm": [
+        -21.601861833556,
+        12.460126658130482,
+        7.890000000000001,
+        -12.359236306658467,
+        21.6895684175863,
+        15.040000000000003
+      ],
+      "case_overlap_mm3": 0.0
+    }
+  ],
+  "notes": "CAD illustration, not a photograph or proof of physical fit. Holder color is illustrative; body colors come from supplied STEP where present. No straps or screws are added."
+}
