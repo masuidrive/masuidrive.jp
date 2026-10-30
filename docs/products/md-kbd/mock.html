@@ -72,7 +72,7 @@
   #ios-keyboard-demo .candidate-bar::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .candidate-bar[hidden] { display:flex; visibility:hidden; }
   #ios-keyboard-demo .candidate-bar button { flex:0 0 auto; min-width:82px; height:38px; padding:0 14px; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:15px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
-  #ios-keyboard-demo .candidate-area > .personal-info-action { flex:0 0 38px; width:38px; height:38px; margin-right:5px; padding:0; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:20px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .candidate-area > .personal-info-action { flex:0 0 38px; width:38px; height:38px; margin-right:10px; padding:0; border:0; border-radius:0; background:transparent; color:var(--ik-key-muted); font-size:20px; box-shadow:none; }
   #ios-keyboard-demo .candidate-area > .personal-info-action[hidden] { display:none; }
   #ios-keyboard-demo .candidate-area > .personal-info-action svg { width:24px; height:24px; fill:currentColor; vertical-align:middle; }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar { padding:0 5px; gap:1px; overflow-x:auto; }
@@ -80,8 +80,12 @@
   #ios-keyboard-demo .candidate-bar.emoji-category-bar button[aria-selected=true] { color:var(--ik-blue); border-bottom:2px solid var(--ik-blue); }
   #ios-keyboard-demo .candidate-bar button[aria-selected=true] { background:var(--ik-selected); color:var(--ik-selected-ink); }
   #ios-keyboard-demo .keys { position:relative; }
-  #ios-keyboard-demo .keys.personal-info-picker { display:flex; flex-wrap:wrap; align-content:flex-start; align-items:flex-start; gap:6px; height:210px; margin-bottom:10px; overflow-y:auto; padding:8px 3px 5px; }
-  #ios-keyboard-demo .keys.personal-info-picker button { flex:0 0 auto; max-width:100%; height:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); box-shadow:0 1px 0 light-dark(#898c94,#141416); font:400 16px inherit; text-align:center; padding:0 12px; }
+  #ios-keyboard-demo .keys.personal-info-picker { height:210px; margin-bottom:0; overflow:hidden; }
+  #ios-keyboard-demo .keys.personal-info-picker .voice-bottom { grid-template-columns:repeat(8,minmax(0,1fr)); }
+  #ios-keyboard-demo .keys.personal-info-picker .voice-bottom .key.space { grid-column:span 2; }
+  #ios-keyboard-demo .keys.personal-info-picker .key.personal-info-more .key-face { font-size:12px; }
+  #ios-keyboard-demo .keys.personal-info-picker .personal-info-values { display:flex; flex-wrap:wrap; align-content:flex-start; align-items:flex-start; gap:6px; height:155px; overflow-y:auto; padding:8px 3px 5px 3px; box-sizing:border-box; }
+  #ios-keyboard-demo .keys.personal-info-picker .personal-info-values button { flex:0 0 auto; max-width:100%; height:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); box-shadow:0 1px 0 light-dark(#898c94,#141416); font:400 16px inherit; text-align:center; padding:0 12px; }
   #ios-keyboard-demo .key-row { display:flex; justify-content:center; height:45px; margin-bottom:10px; gap:0; }
   #ios-keyboard-demo .key { display:flex; position:relative; justify-content:center; align-items:center; flex:1; min-width:0; height:100%; background:none; border:0; padding:0 3px; font-size:25px; font-weight:400; touch-action:none; }
   #ios-keyboard-demo .key-face { display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--ik-key); border-radius:5px; box-shadow:0 1px 0 light-dark(#898c94,#141416); width:100%; height:100%; pointer-events:none; }
@@ -361,8 +365,11 @@
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
   const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,selectionGeneration:0,turn:0,level:0};
-  const personalInfoValues=[['氏名','山田 太郎'],['メールアドレス','name@example.com'],['住所','東京都千代田区'],['定型文','いつもありがとうございます。']];
+  const personalInfoValues=[['氏名','山田 太郎'],['氏名（ひらがな）','やまだ たろう'],['氏名（カタカナ）','ヤマダ タロウ'],['氏名（英字）','Taro Yamada']]
+    .flatMap(([label,value])=>{const parts=value.trim().split(/\s+/,2);return parts.length===2?[[label+'（姓）',parts[0]],[label+'（名）',parts[1]]]:[[label,value]];})
+    .concat([['メールアドレス','name@example.com'],['メールアドレス','work@example.com'],['メールアドレス','other@example.com'],['メールアドレス','contact@example.com'],['郵便番号','1000001'],['都道府県','東京都'],['市区町村','千代田区'],['住所1','千代田1-1'],['住所2','建物名'],['定型文','いつもありがとうございます。']]);
   let personalInfoPickerVisible=false;
+  let personalInfoPickerExpanded=false;
   const voiceReturnLabels={
     'kana/letters':'あん',
     'kana/numbers':'19',
@@ -679,9 +686,9 @@
     renderedCandidateContentKey=contentKey;
     candidateBar.scrollLeft=0;
   }
-  function insert(text,{bypassComposition=false}={}) {
+  function insert(text,{bypassComposition=false,preservePersonalPicker=false}={}) {
     if (!text) return;
-    personalInfoPickerVisible=false;
+    if(!preservePersonalPicker)personalInfoPickerVisible=false;
     const directVoiceEdit=bypassComposition||voiceDemo.active;
     if(directVoiceEdit||composition.converted)clearComposition();
     preferredCursorX=null;
@@ -783,6 +790,18 @@
     language='kana';layer='emoji';emojiCategory='recent';emojiScrollTop=0;clearComposition();
   }
   function action(id,modifier=currentModifier()) {
+    if(personalInfoPickerVisible&&id==='personal-info-more') {personalInfoPickerExpanded=true;render();return true;}
+    if(personalInfoPickerVisible&&['personal-info-layer','kana','english','kana-numbers','voice'].includes(id)) {
+      personalInfoPickerVisible=false;
+      if(id==='personal-info-layer')id=language==='english'?'kana':'english';
+    }
+    if(personalInfoPickerVisible&&['space','return','backspace','paste','ctrl-j'].includes(id)) {
+      if(id==='backspace')erase();
+      else if(id==='paste')pasteText();
+      else if(id==='ctrl-j')applyModified('j','Control');
+      else insert(id==='space'?' ':'\n',{bypassComposition:true,preservePersonalPicker:true});
+      render();return true;
+    }
     if(voiceDemo.active&&id==='voice-return') {leaveVoiceDemo(false);return true;}
     if(voiceDemo.active&&id==='voice-candidate-cancel') {cancelVoiceCandidate();return true;}
     if(voiceDemo.active&&['kana','english','kana-numbers'].includes(id)) {leaveVoiceForLayer(id);return true;}
@@ -847,9 +866,10 @@
   }
   function pasteText(voiceGeneration=null) {
     const isCurrentVoiceSession=()=>voiceGeneration===null||(voiceDemo.active&&voiceDemo.generation===voiceGeneration);
+    const preservePersonalPicker=personalInfoPickerVisible;
     if(navigator.clipboard?.readText)navigator.clipboard.readText().then(text=>{
       if(!isCurrentVoiceSession())return;
-      if(text)insert(text,{bypassComposition:voiceGeneration!==null});else announce('クリップボードは空です');render();
+      if(text)insert(text,{bypassComposition:voiceGeneration!==null||preservePersonalPicker,preservePersonalPicker});else announce('クリップボードは空です');render();
     }).catch(()=>{if(!isCurrentVoiceSession())return;announce('Pasteを利用できません');render();});
     else if(isCurrentVoiceSession())announce('Pasteを利用できません');
   }
@@ -1085,11 +1105,29 @@
   }
   function renderKeys() {
     if(personalInfoPickerVisible) {
-      keyMap=new Map();keys.replaceChildren();keys.className='keys personal-info-picker';
-      personalInfoValues.forEach(([label,value])=>{
+      keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice personal-info-picker';
+      const values=document.createElement('div');values.className='personal-info-values';
+      personalInfoValues.filter(([label])=>personalInfoPickerExpanded||label==='メールアドレス').forEach(([label,value])=>{
         const button=document.createElement('button');button.type='button';button.dataset.personalInfo=value;
-        button.setAttribute('aria-label',label+': '+value);button.textContent=value;keys.append(button);
+        button.setAttribute('aria-label',label+': '+value);button.textContent=value;values.append(button);
       });
+      const bottom=document.createElement('div');bottom.className='key-row voice-bottom';
+      const layerButton=createKeyElement(makeKey('personal-info-layer',language==='english'?'あん':'Az',
+        {special:true,side:true,navigation:voiceNavigation,preview:'selection'}));
+      layerButton.setAttribute('aria-label','レイヤー切り替え。左フリックで音声、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー');
+      bottom.append(layerButton);
+      if(!personalInfoPickerExpanded&&personalInfoValues.some(([label])=>label!=='メールアドレス')) {
+        const more=createKeyElement(makeKey('personal-info-more','more..',{special:true,side:true}));
+        more.dataset.personalInfoMore='';more.setAttribute('aria-label','その他の個人情報を表示');bottom.append(more);
+      } else bottom.append(document.createElement('span'));
+      bottom.append(document.createElement('span'));
+      bottom.append(...[
+        makeKey('voice-punct','、。？！',{flick:['、','。','？','！','、'],preview:'press'}),
+        makeKey('space','Space',{hint:'←↓↑→'}),
+        makeKey('backspace','⌫'),
+        makeKey('return','Enter',{hint:'paste',navigation:pasteNavigation})
+      ].map(createKeyElement));
+      keys.append(values,bottom);
       return;
     }
     if(voiceDemo.active) {
@@ -1289,12 +1327,12 @@
     if(!canceled&&!p.trackpad) {
       if(p.navigationChoice&&p.key.navigation[p.navigationChoice]) {
         const navigationAction=p.key.navigation[p.navigationChoice].action;
-        if(navigationAction==='voice')beginVoiceDemo(p);else action(navigationAction,p.keyModifier);
+        if(navigationAction==='voice') {personalInfoPickerVisible=false;beginVoiceDemo(p);}else action(navigationAction,p.keyModifier);
       }
       else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
       else if(p.modifierFlick&&p.used) { /* modifier was held for another key */ }
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
-      else if(p.key.flick) {insert(p.key.flick[p.dir]||'');lastSpace=-Infinity;}
+      else if(p.key.flick) {insert(p.key.flick[p.dir]||'',{bypassComposition:personalInfoPickerVisible,preservePersonalPicker:personalInfoPickerVisible});lastSpace=-Infinity;}
       else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
       else if(p.key.text&&!p.outside) {
         if(!applyModified(keyOutput(p),p.keyModifier,Boolean(p.upperSelected))) {
@@ -1322,9 +1360,10 @@
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
     if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate),voiceCandidate);return;}
     const personalInfo=e.target.closest('button[data-personal-info]');
-    if(personalInfo) {insert(personalInfo.dataset.personalInfo,{bypassComposition:true});announce('個人情報を入力：'+personalInfo.dataset.personalInfo);render();return;}
+    if(personalInfo) {const scrollTop=keys.querySelector('.personal-info-values')?.scrollTop||0;insert(personalInfo.dataset.personalInfo,{bypassComposition:true,preservePersonalPicker:true});announce('個人情報を入力：'+personalInfo.dataset.personalInfo);render();const values=keys.querySelector('.personal-info-values');if(values)values.scrollTop=scrollTop;return;}
+    if(e.target.closest('button[data-personal-info-more]')) {personalInfoPickerExpanded=true;render();return;}
     const personalInfoAction=e.target.closest('button[data-personal-info-action]');
-    if(personalInfoAction) {personalInfoPickerVisible=!personalInfoPickerVisible;announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;}
+    if(personalInfoAction) {personalInfoPickerVisible=!personalInfoPickerVisible;personalInfoPickerExpanded=false;announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;}
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
     if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
     const englishCandidate=e.target.closest('button[data-english-candidate]');
@@ -1337,7 +1376,7 @@
     if(b.classList.contains('key')) {
       if(e.detail!==0)return;
       if(emojiViewportDrags.size)return;
-      const k=keyMap.get(b.dataset.key);if(k.flick)insert(k.flick[0]);else if(k.text){if(!applyModified(k.text,currentModifier())){if(k.emoji)insertEmoji(k.text);else insert(k.text);}render();}else action(k.id);
+      const k=keyMap.get(b.dataset.key);if(k.flick)insert(k.flick[0],{bypassComposition:personalInfoPickerVisible,preservePersonalPicker:personalInfoPickerVisible});else if(k.text){if(!applyModified(k.text,currentModifier())){if(k.emoji)insertEmoji(k.text);else insert(k.text);}render();}else action(k.id);
     }else {cancelAll();action(b.dataset.key);}
   });
   editor.addEventListener('input',()=>{preferredCursorX=null;updateCount();if(!preserveComposition)syncComposition();if(!active.size&&!voiceDemo.committed)render();});
