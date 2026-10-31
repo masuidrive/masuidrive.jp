@@ -365,11 +365,12 @@
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
   const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,selectionGeneration:0,turn:0,level:0};
-  const personalInfoValues=[['氏名','山田 太郎'],['氏名（ひらがな）','やまだ たろう'],['氏名（カタカナ）','ヤマダ タロウ'],['氏名（英字）','Taro Yamada']]
+  const personalInfoValues=[['定型文','いつもありがとうございます。'],['氏名','山田 太郎'],['氏名（ひらがな）','やまだ たろう'],['氏名（カタカナ）','ヤマダ タロウ'],['氏名（英字）','Taro Yamada']]
     .flatMap(([label,value])=>{const parts=value.trim().split(/\s+/,2);return parts.length===2?[[label+'（姓）',parts[0]],[label+'（名）',parts[1]]]:[[label,value]];})
-    .concat([['メールアドレス','name@example.com'],['メールアドレス','work@example.com'],['メールアドレス','other@example.com'],['メールアドレス','contact@example.com'],['郵便番号','1000001'],['都道府県','東京都'],['市区町村','千代田区'],['住所1','千代田1-1'],['住所2','建物名'],['定型文','いつもありがとうございます。']]);
+    .concat([['メールアドレス','name@example.com'],['メールアドレス','work@example.com'],['メールアドレス','other@example.com'],['メールアドレス','contact@example.com'],['郵便番号','1000001'],['都道府県','東京都'],['市区町村','千代田区'],['住所1','千代田1-1'],['住所2','建物名']]);
   let personalInfoPickerVisible=false;
   let personalInfoPickerExpanded=false;
+  let personalInfoReturnState=null;
   const voiceReturnLabels={
     'kana/letters':'あん',
     'kana/numbers':'19',
@@ -763,7 +764,7 @@
     preferredCursorX=target.x;setCursor(target.pos,stops,cursorDirectionLabel(0,amount));
   }
   function beginTrackpad(p,dx=0,dy=0) {
-    clearTimeout(p.timer);p.trackpad=true;p.trackpadAxis=lockSwipeAxis(null,dx,dy);p.cursorX=p.x;p.cursorY=p.y;lastSpace=-Infinity;
+    clearTimeout(p.timer);p.trackpad=true;p.trackpadMoved=false;p.trackpadAxis=lockSwipeAxis(null,dx,dy);p.cursorX=p.x;p.cursorY=p.y;lastSpace=-Infinity;
     keyboard.classList.add('trackpad');keyboard.classList.remove('popup-active');popup.hidden=true;
     trackpadStatus.hidden=false;trackpadStatus.textContent='←↓↑→';announce('カーソル移動');
   }
@@ -791,9 +792,13 @@
   }
   function action(id,modifier=currentModifier()) {
     if(personalInfoPickerVisible&&id==='personal-info-more') {personalInfoPickerExpanded=true;render();return true;}
-    if(personalInfoPickerVisible&&['personal-info-layer','kana','english','kana-numbers','voice'].includes(id)) {
-      personalInfoPickerVisible=false;
-      if(id==='personal-info-layer')id=language==='english'?'kana':'english';
+    if(personalInfoPickerVisible&&id==='personal-info-layer') {
+      const previous=personalInfoReturnState||{language,layer};
+      personalInfoPickerVisible=false;personalInfoReturnState=null;
+      language=previous.language;layer=previous.layer;render();return true;
+    }
+    if(personalInfoPickerVisible&&['kana','english','kana-numbers','voice'].includes(id)) {
+      personalInfoPickerVisible=false;personalInfoReturnState=null;
     }
     if(personalInfoPickerVisible&&['space','return','backspace','paste','ctrl-j'].includes(id)) {
       if(id==='backspace')erase();
@@ -1107,16 +1112,17 @@
     if(personalInfoPickerVisible) {
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice personal-info-picker';
       const values=document.createElement('div');values.className='personal-info-values';
-      personalInfoValues.filter(([label])=>personalInfoPickerExpanded||label==='メールアドレス').forEach(([label,value])=>{
+      personalInfoValues.filter(([label])=>personalInfoPickerExpanded||label==='定型文'||label==='メールアドレス').forEach(([label,value])=>{
         const button=document.createElement('button');button.type='button';button.dataset.personalInfo=value;
         button.setAttribute('aria-label',label+': '+value);button.textContent=value;values.append(button);
       });
       const bottom=document.createElement('div');bottom.className='key-row voice-bottom';
-      const layerButton=createKeyElement(makeKey('personal-info-layer',language==='english'?'あん':'Az',
-        {special:true,side:true,navigation:voiceNavigation,preview:'selection'}));
-      layerButton.setAttribute('aria-label','レイヤー切り替え。左フリックで音声、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー');
+      const original=personalInfoReturnState||{language,layer};
+      const layerButton=createKeyElement(makeKey('personal-info-layer',voiceReturnLabels[original.language+'/'+original.layer]||'Az',
+        {special:true,side:true,navigation:layerNavigation,preview:'selection'}));
+      layerButton.setAttribute('aria-label','タップで'+(voiceReturnLabels[original.language+'/'+original.layer]||'Az')+'へ戻る。左フリックで音声、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー');
       bottom.append(layerButton);
-      if(!personalInfoPickerExpanded&&personalInfoValues.some(([label])=>label!=='メールアドレス')) {
+      if(!personalInfoPickerExpanded&&personalInfoValues.some(([label])=>label!=='定型文'&&label!=='メールアドレス')) {
         const more=createKeyElement(makeKey('personal-info-more','more..',{special:true,side:true}));
         more.dataset.personalInfoMore='';more.setAttribute('aria-label','その他の個人情報を表示');bottom.append(more);
       } else bottom.append(document.createElement('span'));
@@ -1292,6 +1298,7 @@
       if(steps){moveCursor(steps);p.cursorX+=steps*8;}
       if(lines){for(let i=0;i<Math.abs(lines);i++)moveVertical(Math.sign(lines));p.cursorY+=lines*24;}
       if(steps||lines) {
+        p.trackpadMoved=true;
         const label=cursorDirectionLabel(steps,lines);
         trackpadStatus.textContent=label;announce(label);
       }
@@ -1324,6 +1331,14 @@
     if(remaining&&!remaining.trackpad)showPopup(remaining);else {popup.hidden=true;keyboard.classList.remove('popup-active');}
     if(!remaining?.trackpad)keyboard.classList.remove('trackpad');
     trackpadStatus.hidden=true;trackpadStatus.textContent='←↓↑→';
+    if(!canceled&&p.origin==='space'&&p.trackpad&&
+       !p.trackpadMoved&&p.trackpadAxis==='vertical') {
+      const dy=e.clientY-p.y,dx=e.clientX-p.x;
+      if(Math.abs(dy)>=10&&Math.abs(dy)>Math.abs(dx)) {
+        if(personalInfoPickerVisible)moveVertical(Math.sign(dy));
+        else action('space',p.keyModifier);
+      }
+    }
     if(!canceled&&!p.trackpad) {
       if(p.navigationChoice&&p.key.navigation[p.navigationChoice]) {
         const navigationAction=p.key.navigation[p.navigationChoice].action;
@@ -1363,7 +1378,11 @@
     if(personalInfo) {const scrollTop=keys.querySelector('.personal-info-values')?.scrollTop||0;insert(personalInfo.dataset.personalInfo,{bypassComposition:true,preservePersonalPicker:true});announce('個人情報を入力：'+personalInfo.dataset.personalInfo);render();const values=keys.querySelector('.personal-info-values');if(values)values.scrollTop=scrollTop;return;}
     if(e.target.closest('button[data-personal-info-more]')) {personalInfoPickerExpanded=true;render();return;}
     const personalInfoAction=e.target.closest('button[data-personal-info-action]');
-    if(personalInfoAction) {personalInfoPickerVisible=!personalInfoPickerVisible;personalInfoPickerExpanded=false;announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;}
+    if(personalInfoAction) {
+      personalInfoPickerVisible=!personalInfoPickerVisible;personalInfoPickerExpanded=false;
+      personalInfoReturnState=personalInfoPickerVisible?{language,layer}:null;
+      announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;
+    }
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
     if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
     const englishCandidate=e.target.closest('button[data-english-candidate]');
