@@ -306,8 +306,13 @@
   }
   function updateModifierFlick(p,dx,dy) {
     if(!p.modifierFlick)return false;
-    const rawDirection=updateRawSelection(p,dx,dy,true,p.flickThresholds);
+    const leftward=(dx<0&&Math.abs(dx)>=Math.abs(dy))||p.rawDirection===1;
+    const thresholds=leftward
+      ?{...p.flickThresholds,selection:p.modifierLeftThreshold,return:Math.min(p.flickThresholds.return,p.modifierLeftThreshold/2)}
+      :p.flickThresholds;
+    const rawDirection=updateRawSelection(p,dx,dy,false,thresholds);
     p.modifierChoice=rawDirection===4?'Control':rawDirection===2?'Alt':null;
+    p.modifierTab=rawDirection===1||rawDirection===3;
     return true;
   }
   function updateNavigationFlick(p,dx,dy) {
@@ -857,7 +862,6 @@
       pasteText();
     }else if(id==='modifier-gesture') {
       if(pendingModifier){pendingModifier=null;announce('修飾キーを解除');}
-      else {insert('\t');announce('Tab');}
     }
     else if(id==='symbols') {if(language==='kana'){language='english';layer='symbols';}else layer=layer==='letters'?'symbols':'letters';clearComposition();}
     else if(id==='symbol-layer') {language='english';layer='symbols';pendingModifier=null;clearComposition();}
@@ -883,7 +887,7 @@
   const makeKey=(id,label,options={})=>({id,label,...options});
   const textKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,preview:'press'}));
   const letterKeys=s=>[...s].map(c=>makeKey(c,c,{text:c,alt:flickSymbols[c],preview:'press'}));
-  const modifierGesture=()=>makeKey('modifier-gesture','T',{modifierFlick:true,preview:'selection'});
+  const modifierGesture=()=>makeKey('modifier-gesture','↔',{modifierFlick:true,preview:'selection'});
   const qwertyPeriod=()=>makeKey('.','.',{text:'.',alt:flickSymbols['.'],periodFlick:true,strictFlickDirections:true,preview:'press'});
   const flickBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
   const qwertyBackspace=()=>makeKey('flick-backspace','⌫',{gestureAlt:'Esc',altAction:'escape',strictFlickDirections:true,preview:'selection'});
@@ -970,8 +974,8 @@
       'voice-backspace':'タップで削除',
       'flick-backspace':'タップで削除、下フリックでEsc',
       'modifier-gesture':pendingModifier
-        ?modifierLabel(pendingModifier)+' 選択中。タップで解除、下スワイプでCtrl、上スワイプでAlt'
-        :'タップでTab、下スワイプでCtrl、上スワイプでAlt',
+        ?modifierLabel(pendingModifier)+' 選択中。タップで解除、左右スワイプでTab、下スワイプでCtrl、上スワイプでAlt'
+        :'タップは無反応。左右スワイプでTab、下スワイプでCtrl、上スワイプでAlt',
       modifier:'小文字・濁点・半濁点',
       left:'カーソルを左へ',
       right:'カーソルを右へ',
@@ -1208,7 +1212,7 @@
       popup.style.left=Math.max(0,Math.min(base.width-150,rect.x+rect.width/2-base.x-75))+'px';popup.style.top=rect.y-base.y-50+'px';
     } else {
     const isModifier=p.modifierFlick&&p.key.id==='modifier-gesture',width=isModifier?90:58;
-      popup.className='popup letter'+(isModifier?' modifier-popup':'');popup.textContent=isModifier?(modifierLabel(p.modifierChoice)||'Ctrl / Alt'):keyOutput(p);
+      popup.className='popup letter'+(isModifier?' modifier-popup':'');popup.textContent=isModifier?(p.modifierTab?'Tab':modifierLabel(p.modifierChoice)||'Tab / Ctrl / Alt'):keyOutput(p);
       popup.style.left=Math.max(0,Math.min(base.width-width,rect.x+rect.width/2-base.x-width/2))+'px';popup.style.top=rect.y-base.y-62+'px';
     }
   }
@@ -1253,7 +1257,9 @@
     const p={id:e.pointerId,key,origin:key.id,element,x:e.clientX,y:e.clientY,dir:0,rawDirection:0,rawAxis:null,upper:false,keyModifier:currentModifier(),trackpad:false,used:false,flickKey:key.alt||key.gestureAlt?key.id:null,altSelected:false,upperSelected:false,strictFlickSelected:false,flickThresholds};
     active.set(e.pointerId,p);keyboard.setPointerCapture(e.pointerId);element.classList.add('pressed');
     if(key.id==='modifier-gesture') {
-      p.modifierFlick=true;p.modifierChoice=null;
+      p.modifierFlick=true;p.modifierChoice=null;p.modifierTab=false;
+      p.modifierLeftThreshold=Math.min(p.flickThresholds.selection,
+        Math.max(8,(p.x-keyboard.getBoundingClientRect().left)*.7));
       element.querySelector('.key-main').textContent=modifierGlyph(pendingModifier)||key.label;
     }
     if(key.text)for(const held of active.values())if(held!==p&&held.key.id==='modifier-gesture')held.used=true;
@@ -1275,9 +1281,9 @@
     const dx=e.clientX-p.x,dy=e.clientY-p.y;
     if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
     if(updateModifierFlick(p,dx,dy)) {
-      p.element.classList.toggle('choice-active',Boolean(p.modifierChoice));
-      p.element.querySelector('.key-main').textContent=modifierGlyph(p.modifierChoice||pendingModifier)||p.key.label;
-      updateSelectionPopup(p,Boolean(p.modifierChoice));
+      p.element.classList.toggle('choice-active',Boolean(p.modifierChoice||p.modifierTab));
+      p.element.querySelector('.key-main').textContent=p.modifierTab?'T':modifierGlyph(p.modifierChoice||pendingModifier)||p.key.label;
+      updateSelectionPopup(p,Boolean(p.modifierChoice||p.modifierTab));
       return;
     }
     if(updateNavigationFlick(p,dx,dy)) {
@@ -1344,6 +1350,7 @@
         const navigationAction=p.key.navigation[p.navigationChoice].action;
         if(navigationAction==='voice') {personalInfoPickerVisible=false;beginVoiceDemo(p);}else action(navigationAction,p.keyModifier);
       }
+      else if(p.modifierTab&&!p.used) {if(!applyModified('Tab',pendingModifier)){insert('\t');announce('Tab');}}
       else if(p.modifierChoice&&!p.used) {pendingModifier=pendingModifier===p.modifierChoice?null:p.modifierChoice;announce(pendingModifier?modifierLabel(pendingModifier)+'：次のキーに適用':'修飾キーを解除');}
       else if(p.modifierFlick&&p.used) { /* modifier was held for another key */ }
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
@@ -1411,8 +1418,13 @@
     lastSpace=-Infinity;
   });
   root.addEventListener('keydown',e=>{
-    if(!e.target.closest('.key.modifier-gesture')||!['ArrowUp','ArrowDown'].includes(e.key))return;
-    e.preventDefault();pendingModifier=e.key==='ArrowDown'?'Control':'Alt';
+    if(!e.target.closest('.key.modifier-gesture')||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;
+    e.preventDefault();
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+      if(!applyModified('Tab',pendingModifier)){insert('\t');announce('Tab');}
+      render();$('.key.modifier-gesture').focus();return;
+    }
+    pendingModifier=e.key==='ArrowDown'?'Control':'Alt';
     announce(modifierLabel(pendingModifier)+'：次のキーに適用');render();$('.key.modifier-gesture').focus();
   });
   window.addEventListener('blur',cancelAll);
