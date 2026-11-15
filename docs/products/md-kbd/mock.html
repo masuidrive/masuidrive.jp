@@ -29,7 +29,7 @@
     </div>
     <div class="sr-status" role="status" aria-live="polite"><span class="mode-label">QWERTY</span><span class="last-input">準備完了</span></div>
     <div class="keyboard" role="group" aria-label="画面キーボード">
-      <div class="candidate-area"><button class="personal-info-action" type="button" data-personal-info-action aria-label="登録した個人情報を選ぶ" title="登録した個人情報を選ぶ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 7.5c1.38 0 2.5 1.12 2.5 2.5S10.38 12.5 9 12.5 6.5 11.38 6.5 10 7.62 7.5 9 7.5zM14 17H5.5v-.75c0-1.42 2.84-2.2 4.25-2.2s4.25.78 4.25 2.2V17zm4-2h-3v-1h3v1zm0-3h-3v-1h3v1zm0-3h-3V8h3v1z"/></svg></button><div class="candidate-bar" role="listbox" aria-label="入力候補" hidden></div></div>
+      <div class="candidate-area"><button class="snippet-action" type="button" data-quick-picker="snippets" aria-label="登録した定型文を選ぶ" title="登録した定型文を選ぶ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v4h4M8 11h8M8 15h8M8 19h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="personal-info-action" type="button" data-quick-picker="personal" aria-label="登録した個人情報を選ぶ" title="登録した個人情報を選ぶ" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 7.5c1.38 0 2.5 1.12 2.5 2.5S10.38 12.5 9 12.5 6.5 11.38 6.5 10 7.62 7.5 9 7.5zM14 17H5.5v-.75c0-1.42 2.84-2.2 4.25-2.2s4.25.78 4.25 2.2V17zm4-2h-3v-1h3v1zm0-3h-3v-1h3v1zm0-3h-3V8h3v1z"/></svg></button><div class="candidate-bar" role="listbox" aria-label="入力候補" hidden></div></div>
       <div class="keys"></div>
       <div class="trackpad-status" role="status" aria-live="polite" hidden>←↓↑→</div>
       <div class="popup" aria-hidden="true" hidden></div>
@@ -72,19 +72,21 @@
   #ios-keyboard-demo .candidate-bar::-webkit-scrollbar { display:none; }
   #ios-keyboard-demo .candidate-bar[hidden] { display:flex; visibility:hidden; }
   #ios-keyboard-demo .candidate-bar button { flex:0 0 auto; min-width:82px; height:38px; padding:0 14px; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); font-size:15px; box-shadow:0 1px 0 light-dark(#898c94,#141416); }
+  #ios-keyboard-demo .candidate-area > .snippet-action,
   #ios-keyboard-demo .candidate-area > .personal-info-action { flex:0 0 38px; width:38px; height:38px; margin-right:10px; padding:0; border:0; border-radius:0; background:transparent; color:var(--ik-key-muted); font-size:20px; box-shadow:none; }
+  #ios-keyboard-demo .candidate-area > .snippet-action[hidden],
   #ios-keyboard-demo .candidate-area > .personal-info-action[hidden] { display:none; }
+  #ios-keyboard-demo .candidate-area > .snippet-action svg,
   #ios-keyboard-demo .candidate-area > .personal-info-action svg { width:24px; height:24px; fill:currentColor; vertical-align:middle; }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar { padding:0 5px; gap:1px; overflow-x:auto; }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar button { flex:0 0 48px; min-width:48px; width:48px; height:48px; padding:0; border-radius:0; background:transparent; box-shadow:none; font-size:20px; color:var(--ik-key-muted); }
   #ios-keyboard-demo .candidate-bar.emoji-category-bar button[aria-selected=true] { color:var(--ik-blue); border-bottom:2px solid var(--ik-blue); }
   #ios-keyboard-demo .candidate-bar button[aria-selected=true] { background:var(--ik-selected); color:var(--ik-selected-ink); }
   #ios-keyboard-demo .keys { position:relative; }
-  #ios-keyboard-demo .keys.personal-info-picker { height:210px; margin-bottom:0; overflow:hidden; }
+  #ios-keyboard-demo .keys.personal-info-picker { height:220px; margin-bottom:0; overflow:hidden; }
   #ios-keyboard-demo .keys.personal-info-picker .voice-bottom { grid-template-columns:repeat(8,minmax(0,1fr)); }
   #ios-keyboard-demo .keys.personal-info-picker .voice-bottom .key.space { grid-column:span 2; }
-  #ios-keyboard-demo .keys.personal-info-picker .key.personal-info-more .key-face { font-size:12px; }
-  #ios-keyboard-demo .keys.personal-info-picker .personal-info-values { display:flex; flex-wrap:wrap; align-content:flex-start; align-items:flex-start; gap:6px; height:155px; overflow-y:auto; padding:8px 3px 5px 3px; box-sizing:border-box; }
+  #ios-keyboard-demo .keys.personal-info-picker .personal-info-values { display:flex; flex-wrap:wrap; align-content:flex-start; align-items:flex-start; gap:6px; height:165px; overflow-y:auto; padding:8px 3px 5px 3px; box-sizing:border-box; }
   #ios-keyboard-demo .keys.personal-info-picker .personal-info-values button { flex:0 0 auto; max-width:100%; height:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border:0; border-radius:7px; background:var(--ik-key); color:var(--ik-ink); box-shadow:0 1px 0 light-dark(#898c94,#141416); font:400 16px inherit; text-align:center; padding:0 12px; }
   #ios-keyboard-demo .key-row { display:flex; justify-content:center; height:45px; margin-bottom:10px; gap:0; }
   #ios-keyboard-demo .key { display:flex; position:relative; justify-content:center; align-items:center; flex:1; min-width:0; height:100%; background:none; border:0; padding:0 3px; font-size:25px; font-weight:400; touch-action:none; }
@@ -223,7 +225,8 @@
   const root = document.getElementById('ios-keyboard-demo');
   const $ = selector => root.querySelector(selector);
   const editor = $('textarea'), keyboard = $('.keyboard'), keys = $('.keys'), popup = $('.popup');
-  const candidateBar = $('.candidate-bar'), personalInfoAction = $('.personal-info-action'), trackpadStatus = $('.trackpad-status');
+  const candidateBar = $('.candidate-bar'), snippetAction = $('.snippet-action'), personalInfoAction = $('.personal-info-action'), trackpadStatus = $('.trackpad-status');
+  const snippetCardPath = snippetAction.querySelector('path').getAttribute('d');
   const personalInfoCardPath = personalInfoAction.querySelector('path').getAttribute('d');
   const kanaRows = [
     [['emoji','☺'],['あ',['あ','い','う','え','お']],['か',['か','き','く','け','こ']],['さ',['さ','し','す','せ','そ']],['backspace','⌫']],
@@ -370,11 +373,12 @@
   ];
   let emojiRecents=[], emojiScrollTop=0, emojiCategory='recent';
   const voiceDemo={active:false,phase:'idle',partial:'',candidates:[],index:0,timers:[],returnState:null,committed:false,generation:0,selectionGeneration:0,turn:0,level:0};
-  const personalInfoValues=[['定型文','いつもありがとうございます。'],['氏名','山田 太郎'],['氏名（ひらがな）','やまだ たろう'],['氏名（カタカナ）','ヤマダ タロウ'],['氏名（英字）','Taro Yamada']]
+  const snippetValues=[['定型文','いつもありがとうございます。']];
+  const personalInfoValues=[['氏名','山田 太郎'],['氏名（ひらがな）','やまだ たろう'],['氏名（カタカナ）','ヤマダ タロウ'],['氏名（英字）','Taro Yamada']]
     .flatMap(([label,value])=>{const parts=value.trim().split(/\s+/,2);return parts.length===2?[[label+'（姓）',parts[0]],[label+'（名）',parts[1]]]:[[label,value]];})
     .concat([['メールアドレス','name@example.com'],['メールアドレス','work@example.com'],['メールアドレス','other@example.com'],['メールアドレス','contact@example.com'],['郵便番号','1000001'],['都道府県','東京都'],['市区町村','千代田区'],['住所1','千代田1-1'],['住所2','建物名']]);
   let personalInfoPickerVisible=false;
-  let personalInfoPickerExpanded=false;
+  let personalInfoPickerCategory='personal';
   let personalInfoReturnState=null;
   const voiceReturnLabels={
     'kana/letters':'あん',
@@ -629,10 +633,18 @@
   }
   function renderCandidates() {
     candidateBar.replaceChildren();
+    snippetAction.hidden=true;
     personalInfoAction.hidden=true;
-    personalInfoAction.querySelector('path').setAttribute('d',personalInfoPickerVisible?'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z':personalInfoCardPath);
-    personalInfoAction.setAttribute('aria-label',personalInfoPickerVisible?'個人情報の選択を戻る':'登録した個人情報を選ぶ');
-    personalInfoAction.title=personalInfoPickerVisible?'個人情報の選択を戻る':'登録した個人情報を選ぶ';
+    const backPath='M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z';
+    for(const [button,category,cardPath,label] of [[snippetAction,'snippets',snippetCardPath,'定型文'],[personalInfoAction,'personal',personalInfoCardPath,'個人情報']]) {
+      const active=personalInfoPickerVisible&&personalInfoPickerCategory===category;
+      const path=button.querySelector('path');
+      path.setAttribute('d',active?backPath:cardPath);
+      path.setAttribute('fill',active||category==='personal'?'currentColor':'none');
+      path.setAttribute('stroke',active||category==='personal'?'none':'currentColor');
+      button.setAttribute('aria-label',active?label+'の選択を戻る':'登録した'+label+'を選ぶ');
+      button.title=button.getAttribute('aria-label');
+    }
     candidateBar.classList.toggle('emoji-category-bar',!voiceDemo.active&&language==='kana'&&layer==='emoji');
     if(voiceDemo.active) {
       candidateBar.hidden=true;
@@ -650,7 +662,7 @@
       resetCandidateScrollIfChanged('emoji-category');return;
     }
     candidateBar.setAttribute('role','listbox');candidateBar.setAttribute('aria-label','入力候補');
-    if(personalInfoPickerVisible) { personalInfoAction.hidden=false;candidateBar.hidden=true;resetCandidateScrollIfChanged('personal-info-picker');return; }
+    if(personalInfoPickerVisible) { snippetAction.hidden=false;personalInfoAction.hidden=false;candidateBar.hidden=true;resetCandidateScrollIfChanged('quick-picker-'+personalInfoPickerCategory);return; }
     if(language==='kana'&&layer==='letters'&&composition.reading) {
       candidateBar.hidden=false;
       composition.candidates.forEach((candidate,index)=>{
@@ -658,7 +670,7 @@
         button.setAttribute('role','option');button.setAttribute('aria-selected',String(composition.converted&&index===composition.index));
         button.textContent=candidate;candidateBar.append(button);
       });
-      appendPersonalInfoAction();
+      appendQuickInputActions();
       resetCandidateScrollIfChanged('kana\0'+composition.candidates.join('\0')+'\0personal-info');return;
     }
     const command=slashPrefix();
@@ -669,7 +681,7 @@
         const button=document.createElement('button');button.type='button';button.dataset.slashCandidate=candidate;
         button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
       });
-      appendPersonalInfoAction();
+      appendQuickInputActions();
       resetCandidateScrollIfChanged('slash\0'+candidates.join('\0')+'\0personal-info');return;
     }
     const prefix=englishCandidatesEnabled?englishPrefix():null;
@@ -681,11 +693,14 @@
       const button=document.createElement('button');button.type='button';button.dataset.englishCandidate=candidate;
       button.setAttribute('role','option');button.setAttribute('aria-selected','false');button.textContent=candidate;candidateBar.append(button);
     });
-    appendPersonalInfoAction();
+    appendQuickInputActions();
     resetCandidateScrollIfChanged('english\0'+candidates.join('\0')+'\0personal-info');
   }
-  function appendPersonalInfoAction() {
-    if(!composition.reading&&!slashPrefix()&&!englishPrefix()) personalInfoAction.hidden=false;
+  function appendQuickInputActions() {
+    if(!composition.reading&&!slashPrefix()&&!englishPrefix()) {
+      snippetAction.hidden=false;
+      personalInfoAction.hidden=false;
+    }
   }
   function resetCandidateScrollIfChanged(contentKey) {
     if(contentKey===renderedCandidateContentKey)return;
@@ -796,7 +811,6 @@
     language='kana';layer='emoji';emojiCategory='recent';emojiScrollTop=0;clearComposition();
   }
   function action(id,modifier=currentModifier()) {
-    if(personalInfoPickerVisible&&id==='personal-info-more') {personalInfoPickerExpanded=true;render();return true;}
     if(personalInfoPickerVisible&&id==='personal-info-layer') {
       const previous=personalInfoReturnState||{language,layer};
       personalInfoPickerVisible=false;personalInfoReturnState=null;
@@ -828,7 +842,7 @@
       }
       render();return true;
     }
-    const specialKeys={backspace:'Backspace',space:' ',return:'Enter',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',home:'Home',end:'End'};
+    const specialKeys={backspace:'Backspace','flick-backspace':'Backspace',space:' ',return:'Enter',tab:'Tab',escape:'Escape',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',home:'Home',end:'End'};
     if(specialKeys[id]&&applyModified(specialKeys[id],modifier)) {render();return true;}
     if(id!=='space')lastSpace=-Infinity;
     if(id==='backspace'||id==='flick-backspace')erase();
@@ -858,6 +872,7 @@
         editor.setSelectionRange(pos-1,pos);insert('. ');lastSpace=-Infinity;
       }else {insert(' ');lastSpace=now;}
     }else if(id==='paste') {
+      if(modifier)clearModifierState();
       clearComposition();
       pasteText();
     }else if(id==='modifier-gesture') {
@@ -1116,7 +1131,7 @@
     if(personalInfoPickerVisible) {
       keyMap=new Map();keys.replaceChildren();keys.className='keys kana voice personal-info-picker';
       const values=document.createElement('div');values.className='personal-info-values';
-      personalInfoValues.filter(([label])=>personalInfoPickerExpanded||label==='定型文'||label==='メールアドレス').forEach(([label,value])=>{
+      (personalInfoPickerCategory==='snippets'?snippetValues:personalInfoValues).forEach(([label,value])=>{
         const button=document.createElement('button');button.type='button';button.dataset.personalInfo=value;
         button.setAttribute('aria-label',label+': '+value);button.textContent=value;values.append(button);
       });
@@ -1126,10 +1141,7 @@
         {special:true,side:true,navigation:layerNavigation,preview:'selection'}));
       layerButton.setAttribute('aria-label','タップで'+(voiceReturnLabels[original.language+'/'+original.layer]||'Az')+'へ戻る。左フリックで音声、上フリックで日本語、右フリックでQWERTY、下フリックでテンキー');
       bottom.append(layerButton);
-      if(!personalInfoPickerExpanded&&personalInfoValues.some(([label])=>label!=='定型文'&&label!=='メールアドレス')) {
-        const more=createKeyElement(makeKey('personal-info-more','more..',{special:true,side:true}));
-        more.dataset.personalInfoMore='';more.setAttribute('aria-label','その他の個人情報を表示');bottom.append(more);
-      } else bottom.append(document.createElement('span'));
+      bottom.append(document.createElement('span'));
       bottom.append(document.createElement('span'));
       bottom.append(...[
         makeKey('voice-punct','、。？！',{flick:['、','。','？','！','、'],preview:'press'}),
@@ -1265,10 +1277,16 @@
     if(key.text)for(const held of active.values())if(held!==p&&held.key.id==='modifier-gesture')held.used=true;
     if(key.preview==='press')showPopup(p);
     if(repeatKeys.includes(key.id)) {
-      const modified=action(key.id,p.keyModifier);if(!modified)p.timer=setTimeout(()=>{p.repeat=setInterval(()=>action(key.id),65);action(key.id);},420);
+      action(key.id,p.keyModifier);p.timer=setTimeout(()=>{p.repeat=setInterval(()=>action(key.id),65);action(key.id);},420);
+    } else if(key.id==='flick-backspace') {
+      p.timer=setTimeout(()=>{
+        p.longRepeated=true;
+        action(key.id,p.keyModifier);p.keyModifier=null;
+        p.repeat=setInterval(()=>action(key.id),65);
+      },420);
     } else if(key.id==='space') {
       if(!p.keyModifier)p.timer=setTimeout(()=>beginTrackpad(p),450);
-    } else if(key.text&&accents[key.text]&&language==='english'&&layer==='letters')p.timer=setTimeout(()=>showAccents(p),450);
+    } else if(!p.keyModifier&&key.text&&accents[key.text]&&language==='english'&&layer==='letters')p.timer=setTimeout(()=>showAccents(p),450);
   });
   function updatePointer(e,updateAccentSelection=true) {
     const emojiStart=emojiViewportStarts.get(e.pointerId);
@@ -1279,7 +1297,7 @@
     }
     const p=active.get(e.pointerId);if(!p)return;e.preventDefault();
     const dx=e.clientX-p.x,dy=e.clientY-p.y;
-    if(!p.trackpad&&p.origin==='space'&&!p.keyModifier&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
+    if(!p.trackpad&&p.origin==='space'&&Math.hypot(dx,dy)>=10)beginTrackpad(p,dx,dy);
     if(updateModifierFlick(p,dx,dy)) {
       p.element.classList.toggle('choice-active',Boolean(p.modifierChoice||p.modifierTab));
       p.element.querySelector('.key-main').textContent=p.modifierTab?'T':modifierGlyph(p.modifierChoice||pendingModifier)||p.key.label;
@@ -1301,8 +1319,20 @@
       if(!p.trackpadAxis)return;
       const steps=p.trackpadAxis==='horizontal'?Math.trunc((e.clientX-p.cursorX)/8):0;
       const lines=p.trackpadAxis==='vertical'?Math.trunc((e.clientY-p.cursorY)/24):0;
-      if(steps){moveCursor(steps);p.cursorX+=steps*8;}
-      if(lines){for(let i=0;i<Math.abs(lines);i++)moveVertical(Math.sign(lines));p.cursorY+=lines*24;}
+      if(steps){
+        if(p.keyModifier){
+          applyModified(steps>0?'ArrowRight':'ArrowLeft',p.keyModifier);p.keyModifier=null;
+          if(Math.abs(steps)>1)moveCursor(steps-Math.sign(steps));
+        }
+        else moveCursor(steps);
+        p.cursorX+=steps*8;
+      }
+      if(lines){
+        let plainLines=Math.abs(lines);
+        if(p.keyModifier){applyModified(lines>0?'ArrowDown':'ArrowUp',p.keyModifier);p.keyModifier=null;plainLines--;}
+        for(let i=0;i<plainLines;i++)moveVertical(Math.sign(lines));
+        p.cursorY+=lines*24;
+      }
       if(steps||lines) {
         p.trackpadMoved=true;
         const label=cursorDirectionLabel(steps,lines);
@@ -1355,13 +1385,13 @@
       else if(p.modifierFlick&&p.used) { /* modifier was held for another key */ }
       else if(p.key.transformActions) {transformKana(p.key.transformActions[p.dir]);lastSpace=-Infinity;}
       else if(p.key.flick) {insert(p.key.flick[p.dir]||'',{bypassComposition:personalInfoPickerVisible,preservePersonalPicker:personalInfoPickerVisible});lastSpace=-Infinity;}
-      else if(p.altSelected&&p.key.altAction) {action(p.key.altAction);lastSpace=-Infinity;}
+      else if(p.altSelected&&p.key.altAction) {action(p.key.altAction,p.keyModifier);lastSpace=-Infinity;}
       else if(p.key.text&&!p.outside) {
         if(!applyModified(keyOutput(p),p.keyModifier,Boolean(p.upperSelected))) {
           if(p.key.emoji)insertEmoji(keyOutput(p));else insert(keyOutput(p));
         }
         lastSpace=-Infinity;
-      }else if(!repeatKeys.includes(p.key.id))action(p.key.id,p.keyModifier);
+      }else if(!repeatKeys.includes(p.key.id)&&!p.longRepeated)action(p.key.id,p.keyModifier);
     }
     if(keyboard.hasPointerCapture(e.pointerId))keyboard.releasePointerCapture(e.pointerId);
     render();
@@ -1382,13 +1412,19 @@
     const voiceCandidate=e.target.closest('button[data-voice-candidate]');
     if(voiceCandidate) {commitVoiceCandidate(Number(voiceCandidate.dataset.voiceCandidate),voiceCandidate);return;}
     const personalInfo=e.target.closest('button[data-personal-info]');
-    if(personalInfo) {const scrollTop=keys.querySelector('.personal-info-values')?.scrollTop||0;insert(personalInfo.dataset.personalInfo,{bypassComposition:true,preservePersonalPicker:true});announce('個人情報を入力：'+personalInfo.dataset.personalInfo);render();const values=keys.querySelector('.personal-info-values');if(values)values.scrollTop=scrollTop;return;}
-    if(e.target.closest('button[data-personal-info-more]')) {personalInfoPickerExpanded=true;render();return;}
-    const personalInfoAction=e.target.closest('button[data-personal-info-action]');
-    if(personalInfoAction) {
-      personalInfoPickerVisible=!personalInfoPickerVisible;personalInfoPickerExpanded=false;
-      personalInfoReturnState=personalInfoPickerVisible?{language,layer}:null;
-      announce(personalInfoPickerVisible?'登録した個人情報を選択':'個人情報の選択を戻る');render();return;
+    if(personalInfo) {const scrollTop=keys.querySelector('.personal-info-values')?.scrollTop||0;insert(personalInfo.dataset.personalInfo,{bypassComposition:true,preservePersonalPicker:true});announce((personalInfoPickerCategory==='snippets'?'定型文':'個人情報')+'を入力：'+personalInfo.dataset.personalInfo);render();const values=keys.querySelector('.personal-info-values');if(values)values.scrollTop=scrollTop;return;}
+    const pickerButton=e.target.closest('button[data-quick-picker]');
+    if(pickerButton) {
+      const category=pickerButton.dataset.quickPicker;
+      if(personalInfoPickerVisible&&personalInfoPickerCategory===category) {
+        personalInfoPickerVisible=false;personalInfoReturnState=null;
+        announce('元のキーボードへ戻る');
+      } else {
+        if(!personalInfoPickerVisible)personalInfoReturnState={language,layer};
+        personalInfoPickerVisible=true;personalInfoPickerCategory=category;
+        announce(category==='snippets'?'登録した定型文を選択':'登録した個人情報を選択');
+      }
+      render();return;
     }
     const slashCandidate=e.target.closest('button[data-slash-candidate]');
     if(slashCandidate) {replaceSlashCommand(slashCandidate.dataset.slashCandidate);return;}
