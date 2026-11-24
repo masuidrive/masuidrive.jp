@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choc v1 細長キーキャップ | masuidrive</title>
+<meta name="description" content="Choc v1、16 mmピッチ向けの14.5 × 8 mmキーキャップ。Rev EのSTL・STEP、寸法図、試作の嵌合結果。">
+<link rel="canonical" href="https://masuidrive.jp/products/choc-v1-keycaps/">
+<link rel="icon" href="../../favicon.ico">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Choc v1 細長キーキャップ | masuidrive">
+<meta property="og:description" content="14.5 × 8 mmの試作キーキャップ。A/B/CのCADデータと寸法図。">
+<meta property="og:url" content="https://masuidrive.jp/products/choc-v1-keycaps/">
+<meta property="og:image" content="https://masuidrive.jp/products/choc-v1-keycaps/images/RevE_CAD_Preview.png">
+<style>
+:root{color-scheme:light;--ink:#16243a;--muted:#46566c;--blue:#2754a0;--line:#dbe2eb;--bg:#f5f7fa;--surface:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 Inter,"Noto Sans JP",system-ui,sans-serif}a{color:var(--blue);text-underline-offset:.2em}a:focus-visible{outline:3px solid #985c19;outline-offset:4px}.wrap{width:min(1040px,calc(100% - 40px));margin:auto}.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:#fff;padding:8px;z-index:2}nav,footer{display:flex;gap:14px;align-items:center;padding:20px 0;font-size:14px}nav{border-bottom:1px solid var(--line)}footer{border-top:1px solid var(--line);margin-top:46px;color:var(--muted)}.hero{display:grid;grid-template-columns:1fr 1.12fr;align-items:center;gap:32px;padding:48px 0 28px}.eyebrow{font-size:12px;font-weight:750;letter-spacing:.12em;color:var(--muted);margin:0 0 8px}h1{font-size:clamp(32px,5.3vw,55px);line-height:1.18;letter-spacing:-.04em;margin:0 0 16px}h2{font-size:25px;margin:0 0 12px}p{margin:0 0 14px}.lead,.muted,figcaption{color:var(--muted)}.button{display:inline-block;background:var(--blue);border-radius:9px;color:white;text-decoration:none;padding:10px 15px;font-weight:700}.actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:20px}figure{margin:0}img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}figcaption{font-size:13px;padding-top:6px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}.panel{padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:15px;min-width:0}.panel p:last-child{margin-bottom:0}.specs{width:100%;border-collapse:collapse;text-align:left;font-size:14px}.specs th,.specs td{padding:7px 8px;border-bottom:1px solid var(--line)}.specs th:first-child,.specs td:first-child{padding-left:0}.strong{font-weight:750;color:#193f7f}.drawing{margin-top:34px}@media(max-width:680px){.wrap{width:calc(100% - 28px)}.hero,.panels{grid-template-columns:1fr;gap:16px}.hero{padding:30px 0 6px}.panel{padding:16px}h2{font-size:21px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">本文へ移動</a>
+<div class="wrap">
+<nav aria-label="パンくず"><a href="../../">masuidrive.jp</a><span aria-hidden="true">/</span><a href="../">Products</a></nav>
+<main id="main">
+<section class="hero">
+<div><p class="eyebrow">3D PRINT · REV E</p><h1>Choc v1<br>細長キーキャップ</h1><p class="lead">16 mmピッチの自作キーボード向け。奥行き8 mmの小型キーキャップを、取り付け脚の太さが異なるA・B・Cの3種類で作りました。</p><div class="actions"><a class="button" href="downloads/ChocV1_14p5x8_RevE.zip" download>CAD一式（ZIP）</a><a href="https://github.com/masuidrive/keycaps-openscad/tree/main/choc-v1-half-depth">GitHubで見る</a></div></div>
+<figure><img src="images/RevE_CAD_Preview.png" alt="Rev EのA・B・Cについて、上側の面取りと裏側の識別溝を示すCAD図" width="1664" height="1120"><figcaption>Rev E の CAD 表示。実物写真ではありません。</figcaption></figure>
+</section>
+<div class="panels">
+<section class="panel"><h2>試作での嵌合</h2><p>手元で試したところ、<strong class="strong">JLC3DPではC</strong>、<strong class="strong">Bambu Lab A1 miniでPETGを使った場合はB</strong>がちょうどよくはまりました。</p><p class="muted">試作時の結果です。材料・造形条件・スイッチの個体差で嵌合は変わるので、まず少数で試してください。</p></section>
+<section class="panel"><h2>寸法と3種類の違い</h2><p>外形14.5 × 8.0 × 5.7 mm、脚の中心間5.7 mm。天面の外周だけを0.8 mm × 45°で面取りしています。</p>
+<table class="specs"><thead><tr><th scope="col">種類</th><th scope="col">脚の断面（mm）</th><th scope="col">裏の溝</th></tr></thead><tbody><tr><th scope="row">A</th><td>1.10 × 2.80</td><td>1本</td></tr><tr><th scope="row">B</th><td>1.15 × 2.85</td><td>2本</td></tr><tr><th scope="row">C</th><td>1.20 × 2.90</td><td>3本</td></tr></tbody></table></section>
+</div>
+<section class="drawing"><h2>Bambu Studio の造形設定</h2><figure><img src="images/bambu-a1-mini-print-setup.webp" alt="A1 mini・PETG MatteのBambu Studio画面。キーキャップを配置したプレートと造形設定を表示" width="1800" height="1179" loading="lazy"><figcaption>A1 mini と PETG Matte を選んだときの設定画面です。完成品の写真ではなく、上の嵌合結果を得た条件と同じとは限りません。</figcaption></figure></section>
+<section class="drawing"><h2>寸法図</h2><p class="muted">ZIPにはA・B・C各1種類のSTLとSTEP、寸法図、CadQueryソース、CAD検証結果が含まれます。STLはmmとして読み込んでください。</p><img src="images/RevE_Dimensional_Drawing.png" alt="外形14.5 × 8 × 5.7 mm、脚の中心間5.7 mm、天面のC0.8とA・B・Cの断面寸法を示す図" width="1925" height="1400" loading="lazy"></section>
+</main>
+<footer><a href="../">製品一覧へ戻る</a><span>Products by masuidrive</span></footer>
+</div>
+</body>
+</html>
